@@ -1,0 +1,25 @@
+Requires:
+ - python 2.6+
+ - python-oauth package (python module from http://code.google.com/p/oauth/)
+
+1) Extract the archive
+
+2) Install 
+This package uses distutils to install.
+After you extracted the archive and moved to the extracted directory:
+
+$ python setup.py install --user # to install in $HOME/.local
+$ python setup.py install --prefix=<path> # to install in a custom directory
+$ python setup.py install # for system wide installation
+
+3) Configure API keys
+Two keys are provided by Flickr and api_key and a secret. To make your
+application aware of these keys there are two methods:
+ i  - use the flickr_api.set_keys(api_key,secret_key) function. 
+ ii - create a flickr_keys.py file as follows. Create a file called
+      $INSTALL_DIR/flickr_api/flickr_keys.py. Edit it so it looks like :
+
+API_KEY = 'xxxxxxxxxxxxxxxxxxx'
+API_SECRET = 'yyyyyyyyyyyyyyy'
+
+where x's and y's are replaced by the values provided by flickr.
