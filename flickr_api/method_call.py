@@ -16,8 +16,8 @@ import json
 from flickrerrors import FlickrError,FlickrAPIError
 from cache import SimpleCache
 
-API_KEY = ""
-API_SECRET = ""
+API_KEY = None
+API_SECRET = None
 
 try :
     import flickr_keys 
@@ -52,7 +52,7 @@ def send_request(url,data):
         raise FlickrError( e.read().split('&')[0] )
     
 
-def call_api(api_key = API_KEY, api_secret = API_SECRET, auth_handler = None, needssigning = False,request_url = REST_URL, raw = False,**args):
+def call_api(api_key = None, api_secret = None, auth_handler = None, needssigning = False,request_url = REST_URL, raw = False,**args):
     """
         Performs the calls to the Flickr REST interface.
         
@@ -65,6 +65,14 @@ def call_api(api_key = API_KEY, api_secret = API_SECRET, auth_handler = None, ne
                   a dictionnary built from the JSON answer is returned.
             args : the arguments to pass to the method.
     """
+    
+    if not api_key :
+        api_key = API_KEY
+    if not api_secret :
+        api_secret = API_SECRET
+    
+    if not api_key or not api_secret :
+        raise FlickrError("The Flickr API keys have not been set")
 
     clean_args(args)
     args["api_key"] = api_key
