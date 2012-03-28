@@ -73,6 +73,8 @@ class FlickrObject(object):
         return self.__dict__.get("token",None)
 
     def __getattr__(self,name):
+        if name == 'id' and name not in self.__dict__ :
+            raise AttributeError("'%s' object has no attribute '%s'"%(self.__class__.__name__,name))
         if name not in self.__dict__ :
             if not self.loaded :
                 self.load()
