@@ -7,6 +7,7 @@ setup(
 	author = "Alexis Mignon",
 	author_email = "alexis.mignon@gmail.com",
 	url = "http://code.google.com/p/python-flickr-api/",
-	packages = ["flickr_api"]
+	packages = ["flickr_api"],
+	license = "GPL 2.0",
 )
 
