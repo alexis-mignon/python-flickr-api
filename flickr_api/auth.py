@@ -20,7 +20,7 @@
     - The authorization handler can then be set for the python session
       and will be automatically used when needed.
       
-    >>> flickr_api.set_authorization_handler(a)
+    >>> flickr_api.set_auth_handler(a)
     
     The authorization handler can also be saved and loaded :
     >>> a.write(filename)
