@@ -26,9 +26,9 @@
     >>> a.write(filename)
     >>> a = AuthHandler.load(filename)
 
-    Author : Alexis Mignon
-    e-mail : alexis.mignon@gmail.com
     Date   : 06/08/2011
+    Author: Alexis Mignon <alexis.mignon@gmail.com>
+    Author: Christoffer Viken <christoffer@viken.me>
 
 """
 
@@ -48,7 +48,9 @@ class AuthHandlerError(Exception):
     pass
 
 class AuthHandler(object):
-    def __init__(self,key = API_KEY, secret = API_SECRET, callback = None, access_token_key = None, access_token_secret = None):
+    def __init__(self,key = API_KEY, secret = API_SECRET, callback = None, 
+                 access_token_key = None, access_token_secret = None,
+                 request_token_key = None, request_token_secret = None):
         if callback is None :
             callback = "http://api.flickr.com/services/rest/?method=flickr.test.echo&api_key=%s"%key
         self.key = key
@@ -63,23 +65,26 @@ class AuthHandler(object):
         }
 
         self.consumer = oauth.OAuthConsumer(key=self.key, secret=self.secret)
-        if access_token_key is None :
+        if (access_token_key is None) and (request_token_key is None) :
             req = oauth.OAuthRequest(http_method="GET", http_url=TOKEN_REQUEST_URL, parameters=params)
             req.sign_request(oauth.OAuthSignatureMethod_HMAC_SHA1(),self.consumer,None)
             resp = urllib2.urlopen(req.to_url())
             request_token = dict(urlparse.parse_qsl(resp.read()))
             self.request_token = oauth.OAuthToken(request_token['oauth_token'],request_token['oauth_token_secret'])
             self.access_token = None
+        elif request_token_key is not None :
+            self.access_token = None
+            self.request_token = oauth.OAuthToken(request_token_key,request_token_secret)
         else :
             self.request_token = None
-            self.access_token = oauth.OAuthToken(access_token_key,access_token_secret) 
-        
+            self.access_token = oauth.OAuthToken(access_token_key,access_token_secret)
+
 
     def get_authorization_url(self,perms = 'read'):
         if self.request_token is None :
             raise AuthHandlerError("Request token is not defined. This ususally means that the access token has been loaded from a file.")
         return "%s?oauth_token=%s&perms=%s" % (AUTHORIZE_URL, self.request_token.key, perms)
-    
+
     def set_verifier(self,oauth_verifier):
         if self.request_token is None :
             raise AuthHandlerError("Request token is not defined. This ususally means that the access token has been loaded from a file.")
@@ -101,7 +106,7 @@ class AuthHandler(object):
         self.access_token = oauth.OAuthToken(access_token_resp["oauth_token"],access_token_resp["oauth_token_secret"])
 
     def complete_parameters(self,url,params = {},exclude_signature = []):
-        
+
         defaults = {
             'oauth_timestamp': str(int(time.time())),
             'oauth_nonce': oauth.generate_nonce(),
@@ -121,17 +126,39 @@ class AuthHandler(object):
 
         return req
 
-    def write(self,filename):
+    def tofile(self,filename):
         if self.access_token is None :
             raise AuthHandlerError("Access token not set yet.")
         with open(filename,"w") as f :
             f.write("\n".join([self.key,self.secret,self.access_token.key,self.access_token.secret]))
-    
+
     def save(self,filename):
-        self.write(filename)
-            
+        self.tofile(filename)
+    
+    def write(self,filename):
+        self.tofile(filename)
+        
+    def todict(self,include_api_keys=False):
+        """
+        Dumps the auth object to a dict,
+        Optional inclusion of API-keys, in case you are using multiple.
+        - include_api_keys: Whether API-keys should be included, False if you have control of them.
+        """
+        if self.access_token is not None:
+            dump = {'access_token_key':self.access_token.key,'access_token_secret':self.access_token.secret}
+        else:
+            dump = {'request_token_key':self.request_token.key,'request_token_secret':self.request_token.secret}
+        if include_api_keys:
+            dump['api_key'] = self.key
+            dump['api_secret'] = self.secret
+        return dump
+    
     @staticmethod
-    def load(filename = None):
+    def load(filename):
+        return AuthHandler.fromfile(filename)
+    
+    @staticmethod
+    def fromfile(filename):
         with open(filename,"r") as f :
             try :
                 key,secret,access_key,access_secret = f.read().split("\n")
@@ -140,9 +167,36 @@ class AuthHandler(object):
                 key = API_KEY
                 secret = API_SECRET
         return AuthHandler(key,secret,access_token_key = access_key,access_token_secret = access_secret)
-    
+
     @staticmethod
-    def create(token_key,token_secret):
+    def fromdict(input_dict):
+        """
+        Loads an auth object from a dict.
+        Structure identical to dict returned by todict
+        - input_dict: Dictionary to build from
+        """
+        access_key,access_secret = None,None
+        request_token_key,request_token_secret = None,None
+        try:
+            if 'api_key' in input_dict:
+                key = input_dict['api_key']
+                secret = input_dict['api_secret']
+            else:
+                key = API_KEY
+                secret = API_SECRET
+            if 'access_token_key' in input_dict:
+                access_key = input_dict['access_token_key']
+                access_secret = input_dict['access_token_secret']
+            elif 'request_token_key' in input_dict:
+                request_token_key = input_dict['request_token_key']
+                request_token_secret = input_dict['request_token_secret']
+        except Exception:
+            raise AuthHandlerError("Error occurred while processing data")
+        return AuthHandler(key,secret,access_token_key = access_key,access_token_secret = access_secret,
+                           request_token_key = request_token_key, request_token_secret = request_token_secret)
+
+    @staticmethod
+    def create(access_key,access_secret):
         return AuthHandler(access_token_key = access_key,access_token_secret = access_secret)
 
 def token_factory(filename = None, token_key = None, token_secret = None):
