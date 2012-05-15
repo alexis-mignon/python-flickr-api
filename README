@@ -14,7 +14,7 @@ Main features :
   *  A (django-complient) caching mechanism
 
 requires:
- * python 2.6+
+ * python >= 2.6.5 
  * python-oauth (or the python module from http://code.google.com/p/oauth/)
 
 
