@@ -818,7 +818,7 @@ class Photo(FlickrObject):
         if hasattr(self,"secret"):
             args["secret"] = self.secret
 
-        def result_format(r):
+        def format_result(r):
             try :
                 return [Photo.Exif(**e) for e in r["photo"]["exif"]]
             except KeyError :
