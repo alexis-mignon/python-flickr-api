@@ -21,7 +21,7 @@ except IndexError :
     print "usage: python download_album.py username album_idx [access_token_file]"
     print "Downloads the content of a user's album."
     print "'album_idx' stands of the album index as given by the 'show_albums.py'"
-    print "script. A new directory with the album title will be created and the
+    print "script. A new directory with the album title will be created and the"
     print "album content will be downloaded in this directory."
 
 
