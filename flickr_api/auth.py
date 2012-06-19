@@ -36,7 +36,7 @@ from oauth import oauth
 import time
 import urlparse
 import urllib2
-from method_call import API_KEY, API_SECRET
+import method_call
 
 TOKEN_REQUEST_URL = "http://www.flickr.com/services/oauth/request_token"
 AUTHORIZE_URL = "http://www.flickr.com/services/oauth/authorize"
@@ -48,13 +48,13 @@ class AuthHandlerError(Exception):
     pass
 
 class AuthHandler(object):
-    def __init__(self,key = API_KEY, secret = API_SECRET, callback = None, 
+    def __init__(self,key = None, secret = None, callback = None, 
                  access_token_key = None, access_token_secret = None,
                  request_token_key = None, request_token_secret = None):
         if callback is None :
             callback = "http://api.flickr.com/services/rest/?method=flickr.test.echo&api_key=%s"%key
-        self.key = key
-        self.secret = secret
+        self.key = key or method_call.API_KEY
+        self.secret = secret or method_call.API_SECRET
         params = {
             'oauth_timestamp': str(int(time.time())),
             'oauth_signature_method':"HMAC-SHA1",
