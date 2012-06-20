@@ -51,10 +51,16 @@ class AuthHandler(object):
     def __init__(self,key = None, secret = None, callback = None, 
                  access_token_key = None, access_token_secret = None,
                  request_token_key = None, request_token_secret = None):
-        if callback is None :
-            callback = "http://api.flickr.com/services/rest/?method=flickr.test.echo&api_key=%s"%key
+
         self.key = key or method_call.API_KEY
         self.secret = secret or method_call.API_SECRET
+
+        if self.key is None or self.secret is None:
+            raise ValueError("API keys have not been set.")
+        
+        if callback is None :
+            callback = "http://api.flickr.com/services/rest/?method=flickr.test.echo&api_key=%s"%self.key
+
         params = {
             'oauth_timestamp': str(int(time.time())),
             'oauth_signature_method':"HMAC-SHA1",
@@ -99,7 +105,7 @@ class AuthHandler(object):
             'oauth_verifier' : self.request_token.verifier
         }
 
-        req = oauth.OAuthRequest(http_method="GET", http_url=ACCESS_TOKEN_URL, parameters=access_token_parms)
+        req = oauth.OAuthRequest(http_method="POST", http_url=ACCESS_TOKEN_URL, parameters=access_token_parms)
         req.sign_request(oauth.OAuthSignatureMethod_HMAC_SHA1(),self.consumer,self.request_token)
         resp = urllib2.urlopen(req.to_url())
         access_token_resp = dict(urlparse.parse_qsl(resp.read()))
