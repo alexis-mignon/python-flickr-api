@@ -105,7 +105,7 @@ class AuthHandler(object):
             'oauth_verifier' : self.request_token.verifier
         }
 
-        req = oauth.OAuthRequest(http_method="POST", http_url=ACCESS_TOKEN_URL, parameters=access_token_parms)
+        req = oauth.OAuthRequest(http_method="GET", http_url=ACCESS_TOKEN_URL, parameters=access_token_parms)
         req.sign_request(oauth.OAuthSignatureMethod_HMAC_SHA1(),self.consumer,self.request_token)
         resp = urllib2.urlopen(req.to_url())
         access_token_resp = dict(urlparse.parse_qsl(resp.read()))
