@@ -1584,7 +1584,7 @@ class test(object):
         
     
     @static_caller("flickr.test.login")
-    def login(**args):
+    def login(token=None, **args):
         return args,lambda r : Person(token = token,**r["user"])
             
     @static_caller("flickr.test.null")
