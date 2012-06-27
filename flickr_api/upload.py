@@ -16,7 +16,6 @@
 
 
 import method_call
-from method_call import API_KEY
 from flickrerrors import FlickrError, FlickrAPIError
 from objects import Photo,UploadTicket
 import auth
@@ -41,7 +40,7 @@ def format_dict(d):
 
 def post(url,auth_handler,args,photo_file):
     args = format_dict(args)
-    args["api_key"] = API_KEY
+    args["api_key"] = method_call.API_KEY
     args["format"] = 'json'
     args["nojsoncallback"] = "1"
     params = auth_handler.complete_parameters(url,args).parameters
@@ -49,7 +48,7 @@ def post(url,auth_handler,args,photo_file):
     fields = params.items()
     
     files = [ ("photo",os.path.basename(photo_file),open(photo_file).read() )]
-    
+
     r = multipart.posturl(url,fields,files)
     if r.status != 200 :
         raise FlickrError("HTTP Error %i: %s"%(r.status,r.read()))
