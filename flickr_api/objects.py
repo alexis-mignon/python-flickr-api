@@ -384,9 +384,9 @@ class Group(FlickrObject):
     
     @static_caller("flickr.groups.pools.getGroups")
     def getGroups(**args):
-        def format_result(r,token):
+        def format_result(r, token):
             info = r["groups"]
-            return FlickrList([ Group(id = g["nsid"], **g) for g in info.pop("group") ],Info(**info))
+            return FlickrList([ Group(token=token, **g) for g in info.pop("group",[]) ],Info(**info))                
         return args,format_result
 
     @caller("flickr.groups.pools.getPhotos")
