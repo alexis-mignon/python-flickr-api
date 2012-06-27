@@ -1684,6 +1684,15 @@ class Walker(object):
         >>> for photo in w :
         >>>     print photo.title
 
+        You can also use slices:
+        ex:
+        >>> w = Walker(Photo.search,tags = "animals")
+        >>> for photo in w[:20] :
+        >>>     print photo.title
+        
+        but be aware that if a starting index is given all the items
+        till the wanted one will be iterated, so using a large
+        starting value might be slow.
     """
     def __init__(self,method,*args,**kwargs):
         """
@@ -1703,13 +1712,23 @@ class Walker(object):
         self._info = self._curr_list.info
         self._curr_index = 0
         self._page = 1
+        self.stop = None
     
     def __len__(self):
         return self._info.total
         
     def __iter__(self):
         return self
-    
+
+    def __getitem__(self, slice_):
+        if isinstance(slice_, slice):
+            return SlicedWalker(self,
+                slice_.start,
+                slice_.stop,
+                slice_.step)
+        else:
+            raise ValueError("Only slices can be used as subscript")
+
     def next(self):
         if self._curr_index == len(self._curr_list) :
             if self._page < self._info.pages :
@@ -1726,3 +1745,41 @@ class Walker(object):
         curr = self._curr_list[self._curr_index]
         self._curr_index += 1
         return curr
+
+class SlicedWalker(object):
+    """ Used to apply slices on objects.
+        Starting at a large index might be slow since all items till
+        the start one will be iterated.
+    """
+    def __init__(self, walker, start, stop, step):
+        self.walker = walker
+        self.start = start or 0
+        self.stop = stop or len(walker)
+        self.step = step or 1
+
+        self._begin = True
+        self._total = 0
+
+    def __len__(self):
+        return (self.stop - self.start)//self.step
+
+    def __iter__(self):
+        return self
+
+    def next(self):
+        if self._begin:
+            for i in range(self.start):
+                self.walker.next()
+                self._total += 1
+            self._begin = False
+        else:
+            for i in range(self.step-1):
+                self._total += 1
+                self.walker.next()
+
+        if self._total < self.stop:
+            self._total += 1
+            return self.walker.next()
+        else:
+            raise StopIteration()
+    
