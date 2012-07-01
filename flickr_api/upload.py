@@ -86,14 +86,14 @@ def upload(**args):
             set to 1 for async mode, 0 for sync mode 
     
     """
-    if "async" not in args : args["async"] = True
+    if "async" not in args : args["async"] = False
     
     photo_file = args.pop("photo_file")
     r = post(UPLOAD_URL,auth.AUTH_HANDLER,args,photo_file)
 
     t = r[0]
     if t.tag == 'photoid' :
-        return Photo(id = t.text)
+        return Photo(id = t.text, editurl='http://www.flickr.com/photos/upload/edit/?ids='+t.text)
     elif t.tag == 'ticketid' :
         return UploadTicket(id = t.text)
     else :
