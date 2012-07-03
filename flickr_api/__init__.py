@@ -20,13 +20,16 @@
     Date   : 05/08/2011
     
 """
-
-from objects import *
-import objects
+try:
+    from objects import *
+    import objects
+    import upload as Upload
+    from upload import upload,replace
+except Exception, e:
+    print "Could not all modules"
+    print type(e), e
+    
 from auth import set_auth_handler
-
-import upload as Upload
-from upload import upload,replace
 from method_call import set_keys,enable_cache,disable_cache
 
 #~ def set_auth_handler(auth_handler):
