@@ -376,7 +376,7 @@ u'flickr.photos.notes.delete': {
         'text': u'Recorded accuracy level of the location information. World level is 1, Country is ~3, Region ~6, City ~11, Street ~16. Current range is 1-16. Defaults to 16 if not specified.', u'optional': u'1', u'name': u'accuracy'
             }
             , {
-        'text': u'A comma-delimited list of extra information to fetch for each returned record. Currently supported fields are: <code>description</code>, <code>license</code>, <code>date_upload</code>, <code>date_taken</code>, <code>owner_name</code>, <code>icon_server</code>, <code>original_format</code>, <code>last_update</code>, <code>geo</code>, <code>tags</code>, <code>machine_tags</code>, <code>o_dims</code>, <code>views</code>, <code>media</code>, <code>path_alias</code>, <code>url_sq</code>, <code>url_t</code>, <code>url_s</code>, <code>url_q</code>, <code>url_m</code>, <code>url_n</code>, <code>url_z</code>, <code>url_l</code>, <code>url_o</code>', u'optional': 1, u'name': u'extras'
+        'text': u'A comma-delimited list of extra information to fetch for each returned record. Currently supported fields are: <code>description</code>, <code>license</code>, <code>date_upload</code>, <code>date_taken</code>, <code>owner_name</code>, <code>icon_server</code>, <code>original_format</code>, <code>last_update</code>, <code>geo</code>, <code>tags</code>, <code>machine_tags</code>, <code>o_dims</code>, <code>views</code>, <code>media</code>, <code>path_alias</code>, <code>url_sq</code>, <code>url_t</code>, <code>url_s</code>, <code>url_q</code>, <code>url_m</code>, <code>url_n</code>, <code>url_z</code>, <code>url_c</code>, <code>url_l</code>, <code>url_o</code>', u'optional': 1, u'name': u'extras'
             }
             , {
         'text': u'Number of photos to return per page. If this argument is omitted, it defaults to 100. The maximum allowed value is 500.', u'optional': 1, u'name': u'per_page'
@@ -465,7 +465,7 @@ u'flickr.photos.notes.delete': {
             , {
         'text': u'Maximum taken date. Photos with an taken date less than or equal to this value will be returned. The date should be in the form of a mysql datetime.', u'optional': u'1', u'name': u'max_taken_date'
             }
-            ], 'needslogin': True, u'response': u'<places total="1">\r\n   <place place_id="kH8dLOubBZRvX_YZ" woeid="2487956"\r\n               latitude="37.779" longitude="-122.420"\r\n               place_url="/United+States/California/San+Francisco"\r\n               place_type="locality"\r\n               photo_count="156">San Francisco, California</place>\r\n</place>', u'name': u'flickr.places.placesForUser'
+            ], 'needslogin': True, u'response': u'<places total="1">\r\n   <place place_id="kH8dLOubBZRvX_YZ" woeid="2487956"\r\n               latitude="37.779" longitude="-122.420"\r\n               place_url="/United+States/California/San+Francisco"\r\n               place_type="locality"\r\n               photo_count="156">San Francisco, California</place>\r\n</places>', u'name': u'flickr.places.placesForUser'
         }
         , u'flickr.photos.getAllContexts': {
     u'errors': [{
@@ -580,6 +580,42 @@ u'flickr.photos.notes.delete': {
         'text': u'The id of the photo to get permissions for.', u'optional': u'0', u'name': u'photo_id'
             }
             ], 'needslogin': True, u'response': u'<perms id="2733" ispublic="1" isfriend="1" isfamily="0" permcomment="0" permaddmeta="1" /> ', u'name': u'flickr.photos.getPerms'
+        }
+        , u'flickr.tags.getListUserPopular': {
+    u'errors': [{
+        'text': u'The user NSID passed was not a valid user NSID and the calling user was not logged in.\r\n', u'message': u'User not found', u'code': u'1'
+            }
+            , {
+        'text': u'The API key passed was not valid or has expired.', u'message': u'Invalid API Key', u'code': 100
+            }
+            , {
+        'text': u'The requested service is temporarily unavailable.', u'message': u'Service currently unavailable', u'code': 105
+            }
+            , {
+        'text': u'The requested response format was not found.', u'message': u'Format "xxx" not found', u'code': 111
+            }
+            , {
+        'text': u'The requested method was not found.', u'message': u'Method "xxx" not found', u'code': 112
+            }
+            , {
+        'text': u'The SOAP envelope send in the request could not be parsed.', u'message': u'Invalid SOAP envelope', u'code': 114
+            }
+            , {
+        'text': u'The XML-RPC request document could not be parsed.', u'message': u'Invalid XML-RPC Method Call', u'code': 115
+            }
+            , {
+        'text': u'One or more arguments contained a URL that has been used for abuse on Flickr.', u'message': u'Bad URL found', u'code': 116
+            }
+            ], u'description': u'Get the popular tags for a given user (or the currently logged in user).', 'needssigning': False, u'requiredperms': 'none', u'arguments': [{
+        'text': u'Your API application key. <a href="/services/api/misc.api_keys.html">See here</a> for more details.', u'optional': 0, u'name': u'api_key'
+            }
+            , {
+        'text': u'The NSID of the user to fetch the tag list for. If this argument is not specified, the currently logged in user (if any) is assumed.', u'optional': u'1', u'name': u'user_id'
+            }
+            , {
+        'text': u'Number of popular tags to return. defaults to 10 when this argument is not present.', u'optional': u'1', u'name': u'count'
+            }
+            ], 'needslogin': False, u'response': u'<who id="12037949754@N01">\r\n\t<tags>\r\n\t\t<tag count="10">bar</tag> \r\n\t\t<tag count="11">foo</tag> \r\n\t\t<tag count="147">gull</tag> \r\n\t\t<tag count="3">tags</tag> \r\n\t\t<tag count="3">test</tag> \r\n\t</tags>\r\n</who>', u'name': u'flickr.tags.getListUserPopular'
         }
         , u'flickr.photos.geo.correctLocation': {
     'needssigning': True, u'requiredperms': 'write', u'errors': [{
@@ -1140,7 +1176,64 @@ u'flickr.photos.notes.delete': {
             , {
         'text': u'Maximum taken date. Photos with an taken date less than or equal to this value will be returned. The date should be in the form of a mysql datetime.', u'optional': u'1', u'name': u'max_taken_date'
             }
-            ], 'needslogin': False, u'response': u'<places total="1">\r\n   <place place_id="kH8dLOubBZRvX_YZ" woeid="2487956"\r\n               latitude="37.779" longitude="-122.420"\r\n               place_url="/United+States/California/San+Francisco"\r\n               place_type="locality"\r\n               photo_count="156">San Francisco, California</place>\r\n</place>', u'name': u'flickr.places.placesForTags'
+            ], 'needslogin': False, u'response': u'<places total="1">\r\n   <place place_id="kH8dLOubBZRvX_YZ" woeid="2487956"\r\n               latitude="37.779" longitude="-122.420"\r\n               place_url="/United+States/California/San+Francisco"\r\n               place_type="locality"\r\n               photo_count="156">San Francisco, California</place>\r\n</places>', u'name': u'flickr.places.placesForTags'
+        }
+        , u'flickr.photosets.addPhoto': {
+    'needssigning': True, u'requiredperms': 'write', u'errors': [{
+        'text': u'The photoset id passed was not the id of avalid photoset owned by the calling user.', u'message': u'Photoset not found', u'code': u'1'
+            }
+            , {
+        'text': u'The photo id passed was not the id of a valid photo owned by the calling user.', u'message': u'Photo not found', u'code': u'2'
+            }
+            , {
+        'text': u'The photo is already a member of the photoset.', u'message': u'Photo already in set', u'code': u'3'
+            }
+            , {
+        'text': u'A set has reached the upper limit for the number of photos allowed.', u'message': u'Maximum number of photos in set', u'code': u'10'
+            }
+            , {
+        'text': u'The passed signature was invalid.', u'message': u'Invalid signature', u'code': 96
+            }
+            , {
+        'text': u'The call required signing but no signature was sent.', u'message': u'Missing signature', u'code': 97
+            }
+            , {
+        'text': u'The login details or auth token passed were invalid.', u'message': u'Login failed / Invalid auth token', u'code': 98
+            }
+            , {
+        'text': u'The method requires user authentication but the user was not logged in, or the authenticated method call did not have the required permissions.', u'message': u'User not logged in / Insufficient permissions', u'code': 99
+            }
+            , {
+        'text': u'The API key passed was not valid or has expired.', u'message': u'Invalid API Key', u'code': 100
+            }
+            , {
+        'text': u'The requested service is temporarily unavailable.', u'message': u'Service currently unavailable', u'code': 105
+            }
+            , {
+        'text': u'The requested response format was not found.', u'message': u'Format "xxx" not found', u'code': 111
+            }
+            , {
+        'text': u'The requested method was not found.', u'message': u'Method "xxx" not found', u'code': 112
+            }
+            , {
+        'text': u'The SOAP envelope send in the request could not be parsed.', u'message': u'Invalid SOAP envelope', u'code': 114
+            }
+            , {
+        'text': u'The XML-RPC request document could not be parsed.', u'message': u'Invalid XML-RPC Method Call', u'code': 115
+            }
+            , {
+        'text': u'One or more arguments contained a URL that has been used for abuse on Flickr.', u'message': u'Bad URL found', u'code': 116
+            }
+            ], u'arguments': [{
+        'text': u'Your API application key. <a href="/services/api/misc.api_keys.html">See here</a> for more details.', u'optional': 0, u'name': u'api_key'
+            }
+            , {
+        'text': u'The id of the photoset to add a photo to.', u'optional': u'0', u'name': u'photoset_id'
+            }
+            , {
+        'text': u'The id of the photo to add to the set.', u'optional': u'0', u'name': u'photo_id'
+            }
+            ], u'description': u'Add a photo to the end of an existing photoset.', 'needslogin': True, u'name': u'flickr.photosets.addPhoto'
         }
         , u'flickr.photos.geo.setPerms': {
     'needssigning': True, u'requiredperms': 'write', u'errors': [{
@@ -1825,7 +1918,7 @@ u'flickr.photos.notes.delete': {
         'text': u'The name of the panda to ask for photos from. There are currently three pandas named:<br /><br />\r\n\r\n<ul>\r\n<li><strong><a href="http://flickr.com/photos/ucumari/126073203/">ling ling</a></strong></li>\r\n<li><strong><a href="http://flickr.com/photos/lynnehicks/136407353">hsing hsing</a></strong></li>\r\n<li><strong><a href="http://flickr.com/photos/perfectpandas/1597067182/">wang wang</a></strong></li>\r\n</ul>\r\n\r\n<br />You can fetch a list of all the current pandas using the <a href="/services/api/flickr.panda.getList.html">flickr.panda.getList</a> API method.', u'optional': u'0', u'name': u'panda_name'
             }
             , {
-        'text': u'A comma-delimited list of extra information to fetch for each returned record. Currently supported fields are: <code>description</code>, <code>license</code>, <code>date_upload</code>, <code>date_taken</code>, <code>owner_name</code>, <code>icon_server</code>, <code>original_format</code>, <code>last_update</code>, <code>geo</code>, <code>tags</code>, <code>machine_tags</code>, <code>o_dims</code>, <code>views</code>, <code>media</code>, <code>path_alias</code>, <code>url_sq</code>, <code>url_t</code>, <code>url_s</code>, <code>url_q</code>, <code>url_m</code>, <code>url_n</code>, <code>url_z</code>, <code>url_l</code>, <code>url_o</code>', u'optional': 1, u'name': u'extras'
+        'text': u'A comma-delimited list of extra information to fetch for each returned record. Currently supported fields are: <code>description</code>, <code>license</code>, <code>date_upload</code>, <code>date_taken</code>, <code>owner_name</code>, <code>icon_server</code>, <code>original_format</code>, <code>last_update</code>, <code>geo</code>, <code>tags</code>, <code>machine_tags</code>, <code>o_dims</code>, <code>views</code>, <code>media</code>, <code>path_alias</code>, <code>url_sq</code>, <code>url_t</code>, <code>url_s</code>, <code>url_q</code>, <code>url_m</code>, <code>url_n</code>, <code>url_z</code>, <code>url_c</code>, <code>url_l</code>, <code>url_o</code>', u'optional': 1, u'name': u'extras'
             }
             , {
         'text': u'Number of photos to return per page. If this argument is omitted, it defaults to 100. The maximum allowed value is 500.', u'optional': 1, u'name': u'per_page'
@@ -1921,7 +2014,7 @@ u'flickr.photos.notes.delete': {
         'text': u'', u'optional': u'1', u'name': u'jump_to'
             }
             , {
-        'text': u'A comma-delimited list of extra information to fetch for each returned record. Currently supported fields are: <code>description</code>, <code>license</code>, <code>date_upload</code>, <code>date_taken</code>, <code>owner_name</code>, <code>icon_server</code>, <code>original_format</code>, <code>last_update</code>, <code>geo</code>, <code>tags</code>, <code>machine_tags</code>, <code>o_dims</code>, <code>views</code>, <code>media</code>, <code>path_alias</code>, <code>url_sq</code>, <code>url_t</code>, <code>url_s</code>, <code>url_q</code>, <code>url_m</code>, <code>url_n</code>, <code>url_z</code>, <code>url_l</code>, <code>url_o</code>', u'optional': 1, u'name': u'extras'
+        'text': u'A comma-delimited list of extra information to fetch for each returned record. Currently supported fields are: <code>description</code>, <code>license</code>, <code>date_upload</code>, <code>date_taken</code>, <code>owner_name</code>, <code>icon_server</code>, <code>original_format</code>, <code>last_update</code>, <code>geo</code>, <code>tags</code>, <code>machine_tags</code>, <code>o_dims</code>, <code>views</code>, <code>media</code>, <code>path_alias</code>, <code>url_sq</code>, <code>url_t</code>, <code>url_s</code>, <code>url_q</code>, <code>url_m</code>, <code>url_n</code>, <code>url_z</code>, <code>url_c</code>, <code>url_l</code>, <code>url_o</code>', u'optional': 1, u'name': u'extras'
             }
             , {
         'text': u'Number of photos to return per page. If this argument is omitted, it defaults to 100. The maximum allowed value is 500.', u'optional': 1, u'name': u'per_page'
@@ -2050,7 +2143,7 @@ u'flickr.photos.notes.delete': {
         'text': u'Filter results by media type. Possible values are <code>all</code> (default), <code>photos</code> or <code>videos</code>', u'optional': u'1', u'name': u'media'
             }
             , {
-        'text': u'A comma-delimited list of extra information to fetch for each returned record. Currently supported fields are: <code>description</code>, <code>license</code>, <code>date_upload</code>, <code>date_taken</code>, <code>owner_name</code>, <code>icon_server</code>, <code>original_format</code>, <code>last_update</code>, <code>geo</code>, <code>tags</code>, <code>machine_tags</code>, <code>o_dims</code>, <code>views</code>, <code>media</code>, <code>path_alias</code>, <code>url_sq</code>, <code>url_t</code>, <code>url_s</code>, <code>url_q</code>, <code>url_m</code>, <code>url_n</code>, <code>url_z</code>, <code>url_l</code>, <code>url_o</code>', u'optional': 1, u'name': u'extras'
+        'text': u'A comma-delimited list of extra information to fetch for each returned record. Currently supported fields are: <code>description</code>, <code>license</code>, <code>date_upload</code>, <code>date_taken</code>, <code>owner_name</code>, <code>icon_server</code>, <code>original_format</code>, <code>last_update</code>, <code>geo</code>, <code>tags</code>, <code>machine_tags</code>, <code>o_dims</code>, <code>views</code>, <code>media</code>, <code>path_alias</code>, <code>url_sq</code>, <code>url_t</code>, <code>url_s</code>, <code>url_q</code>, <code>url_m</code>, <code>url_n</code>, <code>url_z</code>, <code>url_c</code>, <code>url_l</code>, <code>url_o</code>', u'optional': 1, u'name': u'extras'
             }
             , {
         'text': u'Number of photos to return per page. If this argument is omitted, it defaults to 100. The maximum allowed value is 500.', u'optional': 1, u'name': u'per_page'
@@ -2318,6 +2411,57 @@ u'flickr.photos.notes.delete': {
             }
             ], 'needslogin': True, u'response': u'<groups>\r\n  <group nsid="17274427@N00" name="Cream of the Crop - Please read the rules" iconfarm="1" iconserver="1" admin="0" eighteenplus="0" invitation_only="0" members="11935" pool_count="12522" />\r\n  <group nsid="20083316@N00" name="Apple" iconfarm="1" iconserver="1" admin="0" eighteenplus="0" invitation_only="0" members="11776" pool_count="62438" />\r\n  <group nsid="34427469792@N01" name="FlickrCentral" iconfarm="1" iconserver="1" admin="0" eighteenplus="0" invitation_only="0" members="168055" pool_count="5280930" />\r\n  <group nsid="37718678610@N01" name="Typography and Lettering" iconfarm="1" iconserver="1" admin="0" eighteenplus="0" invitation_only="0" members="17318" pool_count="130169" />\r\n</groups>', u'description': u'Returns the list of groups a user is a member of.'
         }
+        , u'flickr.places.getTopPlacesList': {
+    u'errors': [{
+        'text': u'One or more required parameters with missing from your request.', u'message': u'Required parameter missing', u'code': u'1'
+            }
+            , {
+        'text': u'An unknown or unsupported place type ID was passed with your request.', u'message': u'Not a valid place type.', u'code': u'2'
+            }
+            , {
+        'text': u'The date argument passed with your request is invalid.', u'message': u'Not a valid date.', u'code': u'3'
+            }
+            , {
+        'text': u'An invalid Places (or WOE) identifier was included with your request.', u'message': u'Not a valid Place ID', u'code': u'4'
+            }
+            , {
+        'text': u'The API key passed was not valid or has expired.', u'message': u'Invalid API Key', u'code': 100
+            }
+            , {
+        'text': u'The requested service is temporarily unavailable.', u'message': u'Service currently unavailable', u'code': 105
+            }
+            , {
+        'text': u'The requested response format was not found.', u'message': u'Format "xxx" not found', u'code': 111
+            }
+            , {
+        'text': u'The requested method was not found.', u'message': u'Method "xxx" not found', u'code': 112
+            }
+            , {
+        'text': u'The SOAP envelope send in the request could not be parsed.', u'message': u'Invalid SOAP envelope', u'code': 114
+            }
+            , {
+        'text': u'The XML-RPC request document could not be parsed.', u'message': u'Invalid XML-RPC Method Call', u'code': 115
+            }
+            , {
+        'text': u'One or more arguments contained a URL that has been used for abuse on Flickr.', u'message': u'Bad URL found', u'code': 116
+            }
+            ], u'description': u'Return the top 100 most geotagged places for a day.', 'needssigning': False, u'requiredperms': 'none', u'arguments': [{
+        'text': u'Your API application key. <a href="/services/api/misc.api_keys.html">See here</a> for more details.', u'optional': 0, u'name': u'api_key'
+            }
+            , {
+        'text': u'The numeric ID for a specific place type to cluster photos by. <br /><br />\r\n\r\nValid place type IDs are :\r\n\r\n<ul>\r\n<li><strong>22</strong>: neighbourhood</li>\r\n<li><strong>7</strong>: locality</li>\r\n<li><strong>8</strong>: region</li>\r\n<li><strong>12</strong>: country</li>\r\n<li><strong>29</strong>: continent</li>\r\n</ul>', u'optional': u'0', u'name': u'place_type_id'
+            }
+            , {
+        'text': u'A valid date in YYYY-MM-DD format. The default is yesterday.', u'optional': u'1', u'name': u'date'
+            }
+            , {
+        'text': u'Limit your query to only those top places belonging to a specific Where on Earth (WOE) identifier.', u'optional': u'1', u'name': u'woe_id'
+            }
+            , {
+        'text': u'Limit your query to only those top places belonging to a specific Flickr Places identifier.', u'optional': u'1', u'name': u'place_id'
+            }
+            ], 'needslogin': False, u'response': u'<places total="100" date_start="1246320000" date_stop="1246406399">\r\n   <place place_id="4KO02SibApitvSBieQ" woeid="23424977"\r\n       latitude="48.890" longitude="-116.982" \r\n       place_url="/United+States" place_type="country" \r\n       place_type_id="12" photo_count="23371">United States</place>\r\n   <!-- and so on... -->\r\n</places>', u'name': u'flickr.places.getTopPlacesList'
+        }
         , u'flickr.photos.getInfo': {
     u'errors': [{
         'text': u'The photo id was either invalid or was for a photo not viewable by the calling user.', u'message': u'Photo not found.', u'code': u'1'
@@ -2364,6 +2508,9 @@ u'flickr.photos.notes.delete': {
             , {
         'text': u"Return geofence information in the photo's location property", u'optional': u'1', u'name': u'get_geofences'
             }
+            , {
+        'text': u'', u'optional': u'1', u'name': u'extras'
+            }
             ], 'needslogin': False, u'response': u'<photo id="2733" secret="123456" server="12"\r\n\tisfavorite="0" license="3" rotation="90" \r\n\toriginalsecret="1bc09ce34a" originalformat="png">\r\n\t<owner nsid="12037949754@N01" username="Bees"\r\n\t\trealname="Cal Henderson" location="Bedford, UK" />\r\n\t<title>orford_castle_taster</title>\r\n\t<description>hello!</description>\r\n\t<visibility ispublic="1" isfriend="0" isfamily="0" />\r\n\t<dates posted="1100897479" taken="2004-11-19 12:51:19"\r\n\t\ttakengranularity="0" lastupdate="1093022469" />\r\n\t<permissions permcomment="3" permaddmeta="2" />\r\n\t<editability cancomment="1" canaddmeta="1" />\r\n\t<comments>1</comments>\r\n\t<notes>\r\n\t\t<note id="313" author="12037949754@N01"\r\n\t\t\tauthorname="Bees" x="10" y="10"\r\n\t\t\tw="50" h="50">foo</note>\r\n\t</notes>\r\n\t<tags>\r\n\t\t<tag id="1234" author="12037949754@N01" raw="woo yay">wooyay</tag>\r\n\t\t<tag id="1235" author="12037949754@N01" raw="hoopla">hoopla</tag>\r\n\t</tags>\r\n\t<urls>\r\n\t\t<url type="photopage">http://www.flickr.com/photos/bees/2733/</url> \r\n\t</urls>\r\n</photo>', u'description': u'Get information about a photo. The calling user must have permission to view the photo.'
         }
         , u'flickr.photos.getSizes': {
@@ -2400,7 +2547,7 @@ u'flickr.photos.notes.delete': {
             , {
         'text': u'The id of the photo to fetch size information for.', u'optional': u'0', u'name': u'photo_id'
             }
-            ], 'needslogin': False, u'response': u'<sizes canblog="1" canprint="1" candownload="1">\r\n    <size label="Square" width="75" height="75" source="http://farm2.staticflickr.com/1103/567229075_2cf8456f01_s.jpg" url="http://www.flickr.com/photos/stewart/567229075/sizes/sq/" media="photo" />\r\n    <size label="Large Square" width="150" height="150" source="http://farm2.staticflickr.com/1103/567229075_2cf8456f01_q.jpg" url="http://www.flickr.com/photos/stewart/567229075/sizes/q/" media="photo" />\r\n    <size label="Thumbnail" width="100" height="75" source="http://farm2.staticflickr.com/1103/567229075_2cf8456f01_t.jpg" url="http://www.flickr.com/photos/stewart/567229075/sizes/t/" media="photo" />\r\n    <size label="Small" width="240" height="180" source="http://farm2.staticflickr.com/1103/567229075_2cf8456f01_m.jpg" url="http://www.flickr.com/photos/stewart/567229075/sizes/s/" media="photo" />\r\n    <size label="Small 320" width="320" height="240" source="http://farm2.staticflickr.com/1103/567229075_2cf8456f01_n.jpg" url="http://www.flickr.com/photos/stewart/567229075/sizes/n/" media="photo" />\r\n    <size label="Medium" width="500" height="375" source="http://farm2.staticflickr.com/1103/567229075_2cf8456f01.jpg" url="http://www.flickr.com/photos/stewart/567229075/sizes/m/" media="photo" />\r\n    <size label="Medium 640" width="640" height="480" source="http://farm2.staticflickr.com/1103/567229075_2cf8456f01_z.jpg?zz=1" url="http://www.flickr.com/photos/stewart/567229075/sizes/z/" media="photo" />\r\n    <size label="Original" width="640" height="480" source="http://farm2.staticflickr.com/1103/567229075_6dc09dc6da_o.jpg" url="http://www.flickr.com/photos/stewart/567229075/sizes/o/" media="photo" />\r\n</sizes>\r\n', u'name': u'flickr.photos.getSizes'
+            ], 'needslogin': False, u'response': u'<sizes canblog="1" canprint="1" candownload="1">\r\n    <size label="Square" width="75" height="75" source="http://farm2.staticflickr.com/1103/567229075_2cf8456f01_s.jpg" url="http://www.flickr.com/photos/stewart/567229075/sizes/sq/" media="photo" />\r\n    <size label="Large Square" width="150" height="150" source="http://farm2.staticflickr.com/1103/567229075_2cf8456f01_q.jpg" url="http://www.flickr.com/photos/stewart/567229075/sizes/q/" media="photo" />\r\n    <size label="Thumbnail" width="100" height="75" source="http://farm2.staticflickr.com/1103/567229075_2cf8456f01_t.jpg" url="http://www.flickr.com/photos/stewart/567229075/sizes/t/" media="photo" />\r\n    <size label="Small" width="240" height="180" source="http://farm2.staticflickr.com/1103/567229075_2cf8456f01_m.jpg" url="http://www.flickr.com/photos/stewart/567229075/sizes/s/" media="photo" />\r\n    <size label="Small 320" width="320" height="240" source="http://farm2.staticflickr.com/1103/567229075_2cf8456f01_n.jpg" url="http://www.flickr.com/photos/stewart/567229075/sizes/n/" media="photo" />\r\n    <size label="Medium" width="500" height="375" source="http://farm2.staticflickr.com/1103/567229075_2cf8456f01.jpg" url="http://www.flickr.com/photos/stewart/567229075/sizes/m/" media="photo" />\r\n    <size label="Medium 640" width="640" height="480" source="http://farm2.staticflickr.com/1103/567229075_2cf8456f01_z.jpg?zz=1" url="http://www.flickr.com/photos/stewart/567229075/sizes/z/" media="photo" />\r\n    <size label="Medium 800" width="800" height="600" source="http://farm2.staticflickr.com/1103/567229075_2cf8456f01_c.jpg" url="http://www.flickr.com/photos/stewart/567229075/sizes/c/" media="photo" />\r\n    <size label="Large" width="1024" height="768" source="http://farm2.staticflickr.com/1103/567229075_2cf8456f01_b.jpg" url="http://www.flickr.com/photos/stewart/567229075/sizes/l/" media="photo" />\r\n    <size label="Original" width="2400" height="1800" source="http://farm2.staticflickr.com/1103/567229075_6dc09dc6da_o.jpg" url="http://www.flickr.com/photos/stewart/567229075/sizes/o/" media="photo" />\r\n</sizes>\r\n', u'name': u'flickr.photos.getSizes'
         }
         , u'flickr.prefs.getSafetyLevel': {
     u'errors': [{
@@ -2497,6 +2644,45 @@ u'flickr.photos.notes.delete': {
         'text': u'The first photo to add to your gallery', u'optional': u'1', u'name': u'primary_photo_id'
             }
             ], 'needslogin': True, u'response': u'  <gallery id="50736-72157623680420409" url="http://www.flickr.com/photos/kellan/galleries/72157623680420409" /> \r\n', u'description': u'Create a new gallery for the calling user.'
+        }
+        , u'flickr.groups.discuss.topics.getList': {
+    u'errors': [{
+        'text': u'The group_id is invalid', u'message': u'Group not found', u'code': u'1'
+            }
+            , {
+        'text': u'The API key passed was not valid or has expired.', u'message': u'Invalid API Key', u'code': 100
+            }
+            , {
+        'text': u'The requested service is temporarily unavailable.', u'message': u'Service currently unavailable', u'code': 105
+            }
+            , {
+        'text': u'The requested response format was not found.', u'message': u'Format "xxx" not found', u'code': 111
+            }
+            , {
+        'text': u'The requested method was not found.', u'message': u'Method "xxx" not found', u'code': 112
+            }
+            , {
+        'text': u'The SOAP envelope send in the request could not be parsed.', u'message': u'Invalid SOAP envelope', u'code': 114
+            }
+            , {
+        'text': u'The XML-RPC request document could not be parsed.', u'message': u'Invalid XML-RPC Method Call', u'code': 115
+            }
+            , {
+        'text': u'One or more arguments contained a URL that has been used for abuse on Flickr.', u'message': u'Bad URL found', u'code': 116
+            }
+            ], u'description': u'Get a list of discussion topics in a group.', 'needssigning': False, u'requiredperms': 'none', u'arguments': [{
+        'text': u'Your API application key. <a href="/services/api/misc.api_keys.html">See here</a> for more details.', u'optional': 0, u'name': u'api_key'
+            }
+            , {
+        'text': u'The NSID of the group to fetch information for.', u'optional': u'0', u'name': u'group_id'
+            }
+            , {
+        'text': u'Number of photos to return per page. If this argument is omitted, it defaults to 100. The maximum allowed value is 500.', u'optional': u'1', u'name': u'per_page'
+            }
+            , {
+        'text': u'The page of results to return. If this argument is omitted, it defaults to 1.', u'optional': u'1', u'name': u'page'
+            }
+            ], 'needslogin': False, u'response': u'<rsp stat="ok">\r\n  <topics group_id="46744914@N00" iconserver="1" iconfarm="1" name="Tell a story in 5 frames (Visual story telling)" members="12428" privacy="3" lang="en-us" ispoolmoderated="1" total="4621" page="1" per_page="2" pages="2310">\r\n    <topic id="72157625038324579" subject="A long time ago in a galaxy far, far away..." author="53930889@N04" authorname="Smallportfolio_jm08" role="member" iconserver="5169" iconfarm="6" count_replies="8" can_edit="0" can_delete="0" can_reply="0" is_sticky="0" is_locked="" datecreate="1287070965" datelastpost="1336905518">\r\n      <message>&lt;div&gt;&lt;span class=&quot;photo_container pc_m bbml_img&quot;&gt;&lt;a href=&quot;/photos/53930889@N04/5080874079/&quot; title=&quot;Star Wars 1 by Smallportfolio_jm08&quot;&gt;&lt;img class=&quot;notsowide&quot; src=&quot;http://farm5.staticflickr.com/4035/5080874079_684cf874e0_m.jpg&quot; width=&quot;240&quot; height=&quot;180&quot; alt=&quot;Star Wars 1 by Smallportfolio_jm08&quot;  class=&quot;pc_img&quot; border=&quot;0&quot; /&gt;&lt;/a&gt;&lt;/span&gt;&lt;/div&gt;\r\n\r\n&lt;div&gt;&lt;span class=&quot;photo_container pc_m bbml_img&quot;&gt;&lt;a href=&quot;/photos/53930889@N04/5081467846/&quot; title=&quot;Star Wars 2 by Smallportfolio_jm08&quot;&gt;&lt;img class=&quot;notsowide&quot; src=&quot;http://farm5.staticflickr.com/4071/5081467846_2eec86176d_m.jpg&quot; width=&quot;240&quot; height=&quot;180&quot; alt=&quot;Star Wars 2 by Smallportfolio_jm08&quot;  class=&quot;pc_img&quot; border=&quot;0&quot; /&gt;&lt;/a&gt;&lt;/span&gt;&lt;/div&gt;\r\n\r\n&lt;div&gt;&lt;span class=&quot;photo_container pc_m bbml_img&quot;&gt;&lt;a href=&quot;/photos/53930889@N04/5081467886/&quot; title=&quot;Star Wars 3 by Smallportfolio_jm08&quot;&gt;&lt;img class=&quot;notsowide&quot; src=&quot;http://farm5.staticflickr.com/4021/5081467886_d8cca6c8e8_m.jpg&quot; width=&quot;240&quot; height=&quot;180&quot; alt=&quot;Star Wars 3 by Smallportfolio_jm08&quot;  class=&quot;pc_img&quot; border=&quot;0&quot; /&gt;&lt;/a&gt;&lt;/span&gt;&lt;/div&gt;\r\n\r\n&lt;div&gt;&lt;span class=&quot;photo_container pc_m bbml_img&quot;&gt;&lt;a href=&quot;/photos/53930889@N04/5081467910/&quot; title=&quot;Star Wars 4 by Smallportfolio_jm08&quot;&gt;&lt;img class=&quot;notsowide&quot; src=&quot;http://farm5.staticflickr.com/4084/5081467910_274bb11fdc_m.jpg&quot; width=&quot;240&quot; height=&quot;180&quot; alt=&quot;Star Wars 4 by Smallportfolio_jm08&quot;  class=&quot;pc_img&quot; border=&quot;0&quot; /&gt;&lt;/a&gt;&lt;/span&gt;&lt;/div&gt;\r\n\r\n&lt;div&gt;&lt;span class=&quot;photo_container pc_m bbml_img&quot;&gt;&lt;a href=&quot;/photos/53930889@N04/5081467948/&quot; title=&quot;Star Wars 5 by Smallportfolio_jm08&quot;&gt;&lt;img class=&quot;notsowide&quot; src=&quot;http://farm5.staticflickr.com/4154/5081467948_1a5f200bc0_m.jpg&quot; width=&quot;240&quot; height=&quot;180&quot; alt=&quot;Star Wars 5 by Smallportfolio_jm08&quot;  class=&quot;pc_img&quot; border=&quot;0&quot; /&gt;&lt;/a&gt;&lt;/span&gt;&lt;/div&gt;</message>\r\n    </topic>\r\n    <topic id="72157629635119774" subject="Where The Fish Are" author="75240402@N04" authorname="Nokinrocks" role="member" iconserver="7027" iconfarm="8" count_replies="0" can_edit="0" can_delete="0" can_reply="0" is_sticky="0" is_locked="" datecreate="1336485653" datelastpost="1336485653">\r\n      <message>&lt;a href=&quot;http://www.flickr.com/photos/nokinrocks/7120495637/&quot;&gt;&lt;img class=&quot;notsowide&quot; src=&quot;http://farm9.staticflickr.com/8005/7120495637_fec0382b4b_n.jpg&quot; width=&quot;320&quot; height=&quot;256&quot; alt=&quot;Step It Up&quot; /&gt;&lt;/a&gt;\r\n\r\n&lt;a href=&quot;http://www.flickr.com/photos/nokinrocks/7122908705/&quot;&gt;&lt;img class=&quot;notsowide&quot; src=&quot;http://farm8.staticflickr.com/7259/7122908705_3bef338378_n.jpg&quot; width=&quot;240&quot; height=&quot;320&quot; alt=&quot;P1050351&quot; /&gt;&lt;/a&gt;\r\n\r\n&lt;a href=&quot;http://www.flickr.com/photos/nokinrocks/7122922123/&quot;&gt;&lt;img class=&quot;notsowide&quot; src=&quot;http://farm8.staticflickr.com/7052/7122922123_2bfcb6707c_n.jpg&quot; width=&quot;214&quot; height=&quot;320&quot; alt=&quot;Frog On A Log&quot; /&gt;&lt;/a&gt;\r\n\r\n&lt;a href=&quot;http://www.flickr.com/photos/nokinrocks/7122929521/&quot;&gt;&lt;img class=&quot;notsowide&quot; src=&quot;http://farm8.staticflickr.com/7047/7122929521_8ffebdd424_n.jpg&quot; width=&quot;320&quot; height=&quot;200&quot; alt=&quot;P1050397&quot; /&gt;&lt;/a&gt;\r\n\r\n&lt;a href=&quot;http://www.flickr.com/photos/nokinrocks/7122916999/&quot;&gt;&lt;img class=&quot;notsowide&quot; src=&quot;http://farm8.staticflickr.com/7200/7122916999_a7328f9dcc_n.jpg&quot; width=&quot;320&quot; height=&quot;261&quot; alt=&quot;P1050361&quot; /&gt;&lt;/a&gt;</message>\r\n    </topic>\r\n  </topics>\r\n</rsp>', u'name': u'flickr.groups.discuss.topics.getList'
         }
         , u'flickr.stats.getPopularPhotos': {
     u'errors': [{
@@ -2702,6 +2888,45 @@ u'flickr.photos.notes.delete': {
             }
             ], 'needslogin': True, u'response': u'<photoset id="1234" url="http://www.flickr.com/photos/bees/sets/1234/" />', u'description': u'Create a new photoset for the calling user.'
         }
+        , u'flickr.people.getLimits': {
+    u'errors': [{
+        'text': u'The passed signature was invalid.', u'message': u'Invalid signature', u'code': 96
+            }
+            , {
+        'text': u'The call required signing but no signature was sent.', u'message': u'Missing signature', u'code': 97
+            }
+            , {
+        'text': u'The login details or auth token passed were invalid.', u'message': u'Login failed / Invalid auth token', u'code': 98
+            }
+            , {
+        'text': u'The method requires user authentication but the user was not logged in, or the authenticated method call did not have the required permissions.', u'message': u'User not logged in / Insufficient permissions', u'code': 99
+            }
+            , {
+        'text': u'The API key passed was not valid or has expired.', u'message': u'Invalid API Key', u'code': 100
+            }
+            , {
+        'text': u'The requested service is temporarily unavailable.', u'message': u'Service currently unavailable', u'code': 105
+            }
+            , {
+        'text': u'The requested response format was not found.', u'message': u'Format "xxx" not found', u'code': 111
+            }
+            , {
+        'text': u'The requested method was not found.', u'message': u'Method "xxx" not found', u'code': 112
+            }
+            , {
+        'text': u'The SOAP envelope send in the request could not be parsed.', u'message': u'Invalid SOAP envelope', u'code': 114
+            }
+            , {
+        'text': u'The XML-RPC request document could not be parsed.', u'message': u'Invalid XML-RPC Method Call', u'code': 115
+            }
+            , {
+        'text': u'One or more arguments contained a URL that has been used for abuse on Flickr.', u'message': u'Bad URL found', u'code': 116
+            }
+            ], u'name': u'flickr.people.getLimits', u'explanation': u'<ul>\r\n<li>photos/@maxdisplaypx: maximum size in pixels for photos displayed on the site (0 means that no limit is in place). No limit is placed on the dimension of photos uploaded.</li>\r\n<li>photos/@maxupload: maximum file size in bytes for photo uploads.</li>\r\n<li>videos/@maxduration: maximum duration in seconds of a video.</li>\r\n<li>videos/@maxupload: maximum file size in bytes for video uploads.</li>\r\n</ul>\r\n\r\n<p>For more details, see the documentation about <a href="http://www.flickr.com/help/limits/">limits</a>.</p>', 'needssigning': True, u'requiredperms': 'read', u'arguments': [{
+        'text': u'Your API application key. <a href="/services/api/misc.api_keys.html">See here</a> for more details.', u'optional': 0, u'name': u'api_key'
+            }
+            ], 'needslogin': True, u'response': u'<person nsid="30135021@N05">\r\n\t<photos maxdisplaypx="1024" maxupload="15728640" />\r\n\t<videos maxduration="90" maxupload="157286400" />\r\n</person>', u'description': u'Returns the photo and video limits that apply to the calling user account.'
+        }
         , u'flickr.collections.getInfo': {
     u'errors': [{
         'text': u'The requested collection could not be found or is not visible to the calling user.', u'message': u'Collection not found', u'code': u'1'
@@ -2745,7 +2970,7 @@ u'flickr.photos.notes.delete': {
             , {
         'text': u'The ID of the collection to fetch information for.', u'optional': u'0', u'name': u'collection_id'
             }
-            ], 'needslogin': True, u'response': u'collection id="12-72157594586579649" child_count="6" datecreate="1173812218" iconlarge="http://farm1.static.flickr.com/187/cols/73743fac2cf79_l.jpg" iconsmall="http://farm1.static.flickr.com/187/cols/72157594586579649_43fac2cf79_s.jpg" server="187" secret="36">\r\n<title>All My Photos</title>\r\n<description>Photos!</description>\r\n<iconphotos>\r\n<photo id="14" owner="12@N01" secret="b57ba5c" server="51" farm="1" title="in full cap and gown" ispublic="1" isfriend="0" isfamily="0"/>\r\n<photo id="15" owner="12@N01" secret="ba1c2a8" server="58" farm="1" title="Just beyond the door" ispublic="0" isfriend="1" isfamily="0"/>\r\n<photo id="17" owner="12@N01" secret="0001969" server="73" farm="1" title="IMG_3787.JPG" ispublic="1" isfriend="0" isfamily="0"/>\r\n....\r\n</iconphotos>\r\n</collection>', u'name': u'flickr.collections.getInfo'
+            ], 'needslogin': True, u'response': u'<collection id="12-72157594586579649" child_count="6" datecreate="1173812218" iconlarge="http://farm1.static.flickr.com/187/cols/73743fac2cf79_l.jpg" iconsmall="http://farm1.static.flickr.com/187/cols/72157594586579649_43fac2cf79_s.jpg" server="187" secret="36">\r\n<title>All My Photos</title>\r\n<description>Photos!</description>\r\n<iconphotos>\r\n<photo id="14" owner="12@N01" secret="b57ba5c" server="51" farm="1" title="in full cap and gown" ispublic="1" isfriend="0" isfamily="0"/>\r\n<photo id="15" owner="12@N01" secret="ba1c2a8" server="58" farm="1" title="Just beyond the door" ispublic="0" isfriend="1" isfamily="0"/>\r\n<photo id="17" owner="12@N01" secret="0001969" server="73" farm="1" title="IMG_3787.JPG" ispublic="1" isfriend="0" isfamily="0"/>\r\n....\r\n</iconphotos>\r\n</collection>', u'name': u'flickr.collections.getInfo'
         }
         , u'flickr.stats.getCSVFiles': {
     u'errors': [{
@@ -2907,7 +3132,70 @@ u'flickr.photos.notes.delete': {
             , {
         'text': u'A comma-delimited list of extra information to fetch for each returned record. Currently supported fields include: license, date_upload, date_taken, owner_name, icon_server, original_format, last_update. For more information see extras under <a href="/services/api/flickr.photos.search.html">flickr.photos.search</a>.', u'optional': u'1', u'name': u'extras'
             }
-            ], 'needslogin': True, u'response': u'<photos>\r\n\t<photo id="2801" owner="12037949629@N01"\r\n\t\tsecret="123456" server="1"\r\n\t\tusername="Eric is "the best"" title="grease" /> \r\n\t<photo id="2499" owner="33853651809@N01"\r\n\t\tsecret="123456" server="1"\r\n\t\tusername="cal18" title="36679_o" /> \r\n\t<photo id="2437" owner="12037951898@N01"\r\n\t\tsecret="123456" server="1"\r\n\t\tusername="georgie parker" title="phoenix9_stewart" /> \r\n</photos>', u'name': u'flickr.photos.getContactsPhotos'
+            ], 'needslogin': True, u'response': u'<photos>\r\n\t<photo id="2801" owner="12037949629@N01"\r\n\t\tsecret="123456" server="1"\r\n\t\tusername="Eric is the best" title="grease" /> \r\n\t<photo id="2499" owner="33853651809@N01"\r\n\t\tsecret="123456" server="1"\r\n\t\tusername="cal18" title="36679_o" /> \r\n\t<photo id="2437" owner="12037951898@N01"\r\n\t\tsecret="123456" server="1"\r\n\t\tusername="georgie parker" title="phoenix9_stewart" /> \r\n</photos>', u'name': u'flickr.photos.getContactsPhotos'
+        }
+        , u'flickr.groups.discuss.replies.edit': {
+    'needssigning': True, u'requiredperms': 'write', u'errors': [{
+        'text': u'The topic_id is invalid', u'message': u'Topic not found', u'code': u'1'
+            }
+            , {
+        'text': u'The reply_id is invalid.', u'message': u'Reply not found', u'code': u'2'
+            }
+            , {
+        'text': u'The topic_id and reply_id are required.', u'message': u'Missing required arguments', u'code': u'3'
+            }
+            , {
+        'text': u'Replies can only be edited by their owner.', u'message': u'Cannot edit reply', u'code': u'4'
+            }
+            , {
+        'text': u'Either this account is not a member of the group, or discussion in this group is disabled.', u'message': u'Cannot post to group', u'code': u'5'
+            }
+            , {
+        'text': u'The passed signature was invalid.', u'message': u'Invalid signature', u'code': 96
+            }
+            , {
+        'text': u'The call required signing but no signature was sent.', u'message': u'Missing signature', u'code': 97
+            }
+            , {
+        'text': u'The login details or auth token passed were invalid.', u'message': u'Login failed / Invalid auth token', u'code': 98
+            }
+            , {
+        'text': u'The method requires user authentication but the user was not logged in, or the authenticated method call did not have the required permissions.', u'message': u'User not logged in / Insufficient permissions', u'code': 99
+            }
+            , {
+        'text': u'The API key passed was not valid or has expired.', u'message': u'Invalid API Key', u'code': 100
+            }
+            , {
+        'text': u'The requested service is temporarily unavailable.', u'message': u'Service currently unavailable', u'code': 105
+            }
+            , {
+        'text': u'The requested response format was not found.', u'message': u'Format "xxx" not found', u'code': 111
+            }
+            , {
+        'text': u'The requested method was not found.', u'message': u'Method "xxx" not found', u'code': 112
+            }
+            , {
+        'text': u'The SOAP envelope send in the request could not be parsed.', u'message': u'Invalid SOAP envelope', u'code': 114
+            }
+            , {
+        'text': u'The XML-RPC request document could not be parsed.', u'message': u'Invalid XML-RPC Method Call', u'code': 115
+            }
+            , {
+        'text': u'One or more arguments contained a URL that has been used for abuse on Flickr.', u'message': u'Bad URL found', u'code': 116
+            }
+            ], u'arguments': [{
+        'text': u'Your API application key. <a href="/services/api/misc.api_keys.html">See here</a> for more details.', u'optional': 0, u'name': u'api_key'
+            }
+            , {
+        'text': u'The ID of the topic the post is in.', u'optional': u'0', u'name': u'topic_id'
+            }
+            , {
+        'text': u'The ID of the reply post to edit.', u'optional': u'0', u'name': u'reply_id'
+            }
+            , {
+        'text': u'The message to edit the post with.', u'optional': u'0', u'name': u'message'
+            }
+            ], u'description': u'Edit a topic reply.', 'needslogin': True, u'name': u'flickr.groups.discuss.replies.edit'
         }
         , u'flickr.tags.getListUser': {
     u'errors': [{
@@ -2973,7 +3261,7 @@ u'flickr.photos.notes.delete': {
             , {
         'text': u'', u'optional': u'1', u'name': u'batch_id'
             }
-            ], 'needslogin': False, u'response': u'<?xml version="1.0" encoding="utf-8" ?>\r\n<uploader>\r\n\t<ticket id="128" complete="1" photoid="2995" />\r\n\t<ticket id="129" complete="0" />\r\n\t<ticket id="130" complete="2" />\r\n\t<ticket id="131" invalid="1" />\r\n</uploader>\r\n', u'description': u'Checks the status of one or more asynchronous photo upload tickets.'
+            ], 'needslogin': False, u'response': u'<uploader>\r\n\t<ticket id="128" complete="1" photoid="2995" />\r\n\t<ticket id="129" complete="0" />\r\n\t<ticket id="130" complete="2" />\r\n\t<ticket id="131" invalid="1" />\r\n</uploader>\r\n', u'description': u'Checks the status of one or more asynchronous photo upload tickets.'
         }
         , u'flickr.photosets.comments.getList': {
     u'errors': [{
@@ -3191,6 +3479,9 @@ u'flickr.photos.notes.delete': {
             }
             , {
         'text': u'', u'optional': u'1', u'name': u'is_family'
+            }
+            , {
+        'text': u'The venue ID for a Foursquare location.', u'optional': u'1', u'name': u'foursquare_id'
             }
             ], u'description': u'Sets the geo data (latitude and longitude and, optionally, the accuracy level) for a photo.\r\n\r\nBefore users may assign location data to a photo they must define who, by default, may view that information. Users can edit this preference at <a href="http://www.flickr.com/account/geo/privacy/">http://www.flickr.com/account/geo/privacy/</a>. If a user has not set this preference, the API method will return an error.', 'needslogin': True, u'name': u'flickr.photos.geo.setLocation'
         }
@@ -3596,6 +3887,60 @@ u'flickr.photos.notes.delete': {
             }
             ], 'needslogin': False, u'response': u'<galleries total="9" page="1" pages="1" per_page="100" user_id="34427469121@N01">\r\n   <gallery id="5704-72157622637971865" \r\n             url="http://www.flickr.com/photos/george/galleries/72157622637971865" \r\n             owner="34427469121@N01" date_create="1257711422" date_update="1260360756"\r\n             primary_photo_id="107391222"  primary_photo_server="39" \r\n             primary_photo_farm="1" primary_photo_secret="ffa"\r\n             count_photos="16" count_videos="2" >\r\n       <title>I like me some black &amp; white</title>\r\n       <description>black and whites</description>\r\n   </gallery>\r\n   <gallery id="5704-72157622566655097" \r\n            url="http://www.flickr.com/photos/george/galleries/72157622566655097" \r\n            owner="34427469121@N01" date_create="1256852229" date_update="1260462343" \r\n            primary_photo_id="497374910" primary_photo_server="231" \r\n            primary_photo_farm="1" primary_photo_secret="9ae0f"\r\n            count_photos="18" count_videos="0" >\r\n       <title>People Sleeping in Libraries</title>\r\n       <description />\r\n   </gallery>\r\n</galleries>', u'name': u'flickr.galleries.getList'
         }
+        , u'flickr.groups.discuss.replies.add': {
+    'needssigning': True, u'requiredperms': 'write', u'errors': [{
+        'text': u'The topic_id is invalid.', u'message': u'Topic not found', u'code': u'1'
+            }
+            , {
+        'text': u'Either this account is not a member of the group, or discussion in this group is disabled.\r\n', u'message': u'Cannot post to group', u'code': u'2'
+            }
+            , {
+        'text': u'The topic_id and message are required.', u'message': u'Missing required arguments', u'code': u'3'
+            }
+            , {
+        'text': u'The passed signature was invalid.', u'message': u'Invalid signature', u'code': 96
+            }
+            , {
+        'text': u'The call required signing but no signature was sent.', u'message': u'Missing signature', u'code': 97
+            }
+            , {
+        'text': u'The login details or auth token passed were invalid.', u'message': u'Login failed / Invalid auth token', u'code': 98
+            }
+            , {
+        'text': u'The method requires user authentication but the user was not logged in, or the authenticated method call did not have the required permissions.', u'message': u'User not logged in / Insufficient permissions', u'code': 99
+            }
+            , {
+        'text': u'The API key passed was not valid or has expired.', u'message': u'Invalid API Key', u'code': 100
+            }
+            , {
+        'text': u'The requested service is temporarily unavailable.', u'message': u'Service currently unavailable', u'code': 105
+            }
+            , {
+        'text': u'The requested response format was not found.', u'message': u'Format "xxx" not found', u'code': 111
+            }
+            , {
+        'text': u'The requested method was not found.', u'message': u'Method "xxx" not found', u'code': 112
+            }
+            , {
+        'text': u'The SOAP envelope send in the request could not be parsed.', u'message': u'Invalid SOAP envelope', u'code': 114
+            }
+            , {
+        'text': u'The XML-RPC request document could not be parsed.', u'message': u'Invalid XML-RPC Method Call', u'code': 115
+            }
+            , {
+        'text': u'One or more arguments contained a URL that has been used for abuse on Flickr.', u'message': u'Bad URL found', u'code': 116
+            }
+            ], u'arguments': [{
+        'text': u'Your API application key. <a href="/services/api/misc.api_keys.html">See here</a> for more details.', u'optional': 0, u'name': u'api_key'
+            }
+            , {
+        'text': u'The ID of the topic to post a comment to.', u'optional': u'0', u'name': u'topic_id'
+            }
+            , {
+        'text': u'The message to post to the topic.', u'optional': u'0', u'name': u'message'
+            }
+            ], u'description': u'Post a new reply to a group discussion topic.', 'needslogin': True, u'name': u'flickr.groups.discuss.replies.add'
+        }
         , u'flickr.favorites.getList': {
     'needssigning': True, u'requiredperms': 'read', u'errors': [{
         'text': u'The specified user NSID was not a valid flickr user.', u'message': u'User not found', u'code': u'1'
@@ -3649,7 +3994,7 @@ u'flickr.photos.notes.delete': {
         'text': u'Maximum date that a photo was favorited on. The date should be in the form of a unix timestamp.', u'optional': u'1', u'name': u'max_fave_date'
             }
             , {
-        'text': u'A comma-delimited list of extra information to fetch for each returned record. Currently supported fields are: <code>description</code>, <code>license</code>, <code>date_upload</code>, <code>date_taken</code>, <code>owner_name</code>, <code>icon_server</code>, <code>original_format</code>, <code>last_update</code>, <code>geo</code>, <code>tags</code>, <code>machine_tags</code>, <code>o_dims</code>, <code>views</code>, <code>media</code>, <code>path_alias</code>, <code>url_sq</code>, <code>url_t</code>, <code>url_s</code>, <code>url_q</code>, <code>url_m</code>, <code>url_n</code>, <code>url_z</code>, <code>url_l</code>, <code>url_o</code>', u'optional': 1, u'name': u'extras'
+        'text': u'A comma-delimited list of extra information to fetch for each returned record. Currently supported fields are: <code>description</code>, <code>license</code>, <code>date_upload</code>, <code>date_taken</code>, <code>owner_name</code>, <code>icon_server</code>, <code>original_format</code>, <code>last_update</code>, <code>geo</code>, <code>tags</code>, <code>machine_tags</code>, <code>o_dims</code>, <code>views</code>, <code>media</code>, <code>path_alias</code>, <code>url_sq</code>, <code>url_t</code>, <code>url_s</code>, <code>url_q</code>, <code>url_m</code>, <code>url_n</code>, <code>url_z</code>, <code>url_c</code>, <code>url_l</code>, <code>url_o</code>', u'optional': 1, u'name': u'extras'
             }
             , {
         'text': u'Number of photos to return per page. If this argument is omitted, it defaults to 100. The maximum allowed value is 500.', u'optional': 1, u'name': u'per_page'
@@ -3835,7 +4180,7 @@ u'flickr.photos.notes.delete': {
         'text': u'Maximum date that a photo was favorited on. The date should be in the form of a unix timestamp.', u'optional': u'1', u'name': u'max_fave_date'
             }
             , {
-        'text': u'A comma-delimited list of extra information to fetch for each returned record. Currently supported fields are: <code>description</code>, <code>license</code>, <code>date_upload</code>, <code>date_taken</code>, <code>owner_name</code>, <code>icon_server</code>, <code>original_format</code>, <code>last_update</code>, <code>geo</code>, <code>tags</code>, <code>machine_tags</code>, <code>o_dims</code>, <code>views</code>, <code>media</code>, <code>path_alias</code>, <code>url_sq</code>, <code>url_t</code>, <code>url_s</code>, <code>url_q</code>, <code>url_m</code>, <code>url_n</code>, <code>url_z</code>, <code>url_l</code>, <code>url_o</code>', u'optional': 1, u'name': u'extras'
+        'text': u'A comma-delimited list of extra information to fetch for each returned record. Currently supported fields are: <code>description</code>, <code>license</code>, <code>date_upload</code>, <code>date_taken</code>, <code>owner_name</code>, <code>icon_server</code>, <code>original_format</code>, <code>last_update</code>, <code>geo</code>, <code>tags</code>, <code>machine_tags</code>, <code>o_dims</code>, <code>views</code>, <code>media</code>, <code>path_alias</code>, <code>url_sq</code>, <code>url_t</code>, <code>url_s</code>, <code>url_q</code>, <code>url_m</code>, <code>url_n</code>, <code>url_z</code>, <code>url_c</code>, <code>url_l</code>, <code>url_o</code>', u'optional': 1, u'name': u'extras'
             }
             , {
         'text': u'Number of photos to return per page. If this argument is omitted, it defaults to 100. The maximum allowed value is 500.', u'optional': 1, u'name': u'per_page'
@@ -3880,7 +4225,7 @@ u'flickr.photos.notes.delete': {
         'text': u'An NSID of a Flickr member. This will restrict the list of photos to those taken by that member.', u'optional': u'1', u'name': u'owner_id'
             }
             , {
-        'text': u'A comma-delimited list of extra information to fetch for each returned record. Currently supported fields are: <code>description</code>, <code>license</code>, <code>date_upload</code>, <code>date_taken</code>, <code>date_person_added</code>, <code>owner_name</code>, <code>icon_server</code>, <code>original_format</code>, <code>last_update</code>, <code>geo</code>, <code>tags</code>, <code>machine_tags</code>, <code>o_dims</code>, <code>views</code>, <code>media</code>, <code>path_alias</code>, <code>url_sq</code>, <code>url_t</code>, <code>url_s</code>, <code>url_q</code>, <code>url_m</code>, <code>url_n</code>, <code>url_z</code>, <code>url_l</code>, <code>url_o</code>', u'optional': 1, u'name': u'extras'
+        'text': u'A comma-delimited list of extra information to fetch for each returned record. Currently supported fields are: <code>description</code>, <code>license</code>, <code>date_upload</code>, <code>date_taken</code>, <code>date_person_added</code>, <code>owner_name</code>, <code>icon_server</code>, <code>original_format</code>, <code>last_update</code>, <code>geo</code>, <code>tags</code>, <code>machine_tags</code>, <code>o_dims</code>, <code>views</code>, <code>media</code>, <code>path_alias</code>, <code>url_sq</code>, <code>url_t</code>, <code>url_s</code>, <code>url_q</code>, <code>url_m</code>, <code>url_n</code>, <code>url_z</code>, <code>url_c</code>, <code>url_l</code>, <code>url_o</code>', u'optional': 1, u'name': u'extras'
             }
             , {
         'text': u'Number of photos to return per page. If this argument is omitted, it defaults to 100. The maximum allowed value is 500.', u'optional': 1, u'name': u'per_page'
@@ -3977,6 +4322,75 @@ u'flickr.photos.notes.delete': {
             }
             ], 'needslogin': False, u'response': u'<tags total="100">\r\n   <tag count="31775">montreal</tag>\r\n   <tag count="20585">canada</tag>\r\n   <tag count="12319">montr\xe9al</tag>\r\n   <tag count="12154">quebec</tag>\r\n   <tag count="6471">qu\xe9bec</tag>\r\n   <tag count="2173">sylvainmichaud</tag>\r\n   <tag count="2091">nikon</tag>\r\n   <tag count="1541">lucbus</tag>\r\n   <tag count="1539">music</tag>\r\n   <tag count="1479">urban</tag>\r\n   <tag count="1425">lucbussieres</tag>\r\n   <tag count="1419">festival</tag>\r\n   <!-- and so on -->\r\n</tags>', u'name': u'flickr.places.tagsForPlace'
         }
+        , u'flickr.groups.joinRequest': {
+    'needssigning': True, u'requiredperms': 'write', u'errors': [{
+        'text': u'The group_id or message argument are missing.', u'message': u'Required arguments missing', u'code': u'1'
+            }
+            , {
+        'text': u'The Group does not exist', u'message': u'Group does not exist', u'code': u'2'
+            }
+            , {
+        'text': u'The authed account does not have permission to view/join the group.', u'message': u'Group not available to the account', u'code': u'3'
+            }
+            , {
+        'text': u'The authed account has previously joined this group', u'message': u'Account is already in that group', u'code': u'4'
+            }
+            , {
+        'text': u'The group does not require an invitation to join, please use flickr.groups.join.', u'message': u'Group is public and open', u'code': u'5'
+            }
+            , {
+        'text': u'The user must read and accept the rules before joining. Please see the accept_rules argument for this method.', u'message': u'User must accept the group rules before joining', u'code': u'6'
+            }
+            , {
+        'text': u'A request has already been sent and is pending approval.', u'message': u'User has already requested to join that group', u'code': u'7'
+            }
+            , {
+        'text': u'The passed signature was invalid.', u'message': u'Invalid signature', u'code': 96
+            }
+            , {
+        'text': u'The call required signing but no signature was sent.', u'message': u'Missing signature', u'code': 97
+            }
+            , {
+        'text': u'The login details or auth token passed were invalid.', u'message': u'Login failed / Invalid auth token', u'code': 98
+            }
+            , {
+        'text': u'The method requires user authentication but the user was not logged in, or the authenticated method call did not have the required permissions.', u'message': u'User not logged in / Insufficient permissions', u'code': 99
+            }
+            , {
+        'text': u'The API key passed was not valid or has expired.', u'message': u'Invalid API Key', u'code': 100
+            }
+            , {
+        'text': u'The requested service is temporarily unavailable.', u'message': u'Service currently unavailable', u'code': 105
+            }
+            , {
+        'text': u'The requested response format was not found.', u'message': u'Format "xxx" not found', u'code': 111
+            }
+            , {
+        'text': u'The requested method was not found.', u'message': u'Method "xxx" not found', u'code': 112
+            }
+            , {
+        'text': u'The SOAP envelope send in the request could not be parsed.', u'message': u'Invalid SOAP envelope', u'code': 114
+            }
+            , {
+        'text': u'The XML-RPC request document could not be parsed.', u'message': u'Invalid XML-RPC Method Call', u'code': 115
+            }
+            , {
+        'text': u'One or more arguments contained a URL that has been used for abuse on Flickr.', u'message': u'Bad URL found', u'code': 116
+            }
+            ], u'arguments': [{
+        'text': u'Your API application key. <a href="/services/api/misc.api_keys.html">See here</a> for more details.', u'optional': 0, u'name': u'api_key'
+            }
+            , {
+        'text': u'The NSID of the group to request joining.', u'optional': u'0', u'name': u'group_id'
+            }
+            , {
+        'text': u'Message to the administrators.', u'optional': u'0', u'name': u'message'
+            }
+            , {
+        'text': u'If the group has rules, they must be displayed to the user prior to joining. Passing a true value for this argument specifies that the application has displayed the group rules to the user, and that the user has agreed to them. (See flickr.groups.getInfo).', u'optional': u'0', u'name': u'accept_rules'
+            }
+            ], u'description': u'Request to join a group that is invitation-only.', 'needslogin': True, u'name': u'flickr.groups.joinRequest'
+        }
         , u'flickr.photos.setSafetyLevel': {
     u'errors': [{
         'text': u'The photo id passed was not a valid photo id of a photo belonging to the calling user.', u'message': u'Photo not found', u'code': u'1'
@@ -4069,6 +4483,57 @@ u'flickr.photos.notes.delete': {
         'text': u'A Flickr Places URL.  \r\n<br /><br />\r\nFlickr Place URLs are of the form /country/region/city', u'optional': u'0', u'name': u'url'
             }
             ], 'needslogin': False, u'response': u'<location place_id="kH8dLOubBZRvX_YZ" woeid="2487956" \r\n                latitude="37.779" longitude="-122.420"\r\n                place_url="/United+States/California/San+Francisco"\r\n                place_type="locality">\r\n   <locality place_id="kH8dLOubBZRvX_YZ" woeid="2487956"\r\n                 latitude="37.779" longitude="-122.420" \r\n                 place_url="/United+States/California/San+Francisco">San Francisco</locality>\r\n   <county place_id="hCca8XSYA5nn0X1Sfw" woeid="12587707"\r\n                 latitude="37.759" longitude="-122.435" \r\n                 place_url="/hCca8XSYA5nn0X1Sfw">San Francisco</county>\r\n   <region place_id="SVrAMtCbAphCLAtP" woeid="2347563" \r\n                latitude="37.271" longitude="-119.270" \r\n                place_url="/United+States/California">California</region>\r\n   <country place_id="4KO02SibApitvSBieQ" woeid="23424977"\r\n                  latitude="48.890" longitude="-116.982" \r\n                  place_url="/United+States">United States</country>\r\n</location>', u'name': u'flickr.places.resolvePlaceURL'
+        }
+        , u'flickr.contacts.getTaggingSuggestions': {
+    u'errors': [{
+        'text': u'The passed signature was invalid.', u'message': u'Invalid signature', u'code': 96
+            }
+            , {
+        'text': u'The call required signing but no signature was sent.', u'message': u'Missing signature', u'code': 97
+            }
+            , {
+        'text': u'The login details or auth token passed were invalid.', u'message': u'Login failed / Invalid auth token', u'code': 98
+            }
+            , {
+        'text': u'The method requires user authentication but the user was not logged in, or the authenticated method call did not have the required permissions.', u'message': u'User not logged in / Insufficient permissions', u'code': 99
+            }
+            , {
+        'text': u'The API key passed was not valid or has expired.', u'message': u'Invalid API Key', u'code': 100
+            }
+            , {
+        'text': u'The requested service is temporarily unavailable.', u'message': u'Service currently unavailable', u'code': 105
+            }
+            , {
+        'text': u'The requested response format was not found.', u'message': u'Format "xxx" not found', u'code': 111
+            }
+            , {
+        'text': u'The requested method was not found.', u'message': u'Method "xxx" not found', u'code': 112
+            }
+            , {
+        'text': u'The SOAP envelope send in the request could not be parsed.', u'message': u'Invalid SOAP envelope', u'code': 114
+            }
+            , {
+        'text': u'The XML-RPC request document could not be parsed.', u'message': u'Invalid XML-RPC Method Call', u'code': 115
+            }
+            , {
+        'text': u'One or more arguments contained a URL that has been used for abuse on Flickr.', u'message': u'Bad URL found', u'code': 116
+            }
+            ], u'description': u"Get suggestions for tagging people in photos based on the calling user's contacts.", 'needssigning': True, u'requiredperms': 'read', u'arguments': [{
+        'text': u'Your API application key. <a href="/services/api/misc.api_keys.html">See here</a> for more details.', u'optional': 0, u'name': u'api_key'
+            }
+            , {
+        'text': u'Return calling user in the list of suggestions. Default: true.', u'optional': u'1', u'name': u'include_self'
+            }
+            , {
+        'text': u"Include suggestions from the user's address book. Default: false", u'optional': u'1', u'name': u'include_address_book'
+            }
+            , {
+        'text': u'Number of contacts to return per page. If this argument is omitted, all contacts will be returned.', u'optional': u'1', u'name': u'per_page'
+            }
+            , {
+        'text': u'The page of results to return. If this argument is omitted, it defaults to 1.', u'optional': u'1', u'name': u'page'
+            }
+            ], 'needslogin': True, u'response': u'<rsp stat="ok">\r\n<contacts page="1" pages="1" perpage="1000" total="1">\r\n\t<contact nsid="30135021@N05" username="Hugo Haas" iconserver="1" iconfarm="1" realname="" friend="0" family="0" path_alias="" />\r\n</contacts>\r\n</rsp>', u'name': u'flickr.contacts.getTaggingSuggestions'
         }
         , u'flickr.tags.getListPhoto': {
     u'errors': [{
@@ -4172,18 +4637,27 @@ u'flickr.photos.notes.delete': {
             }
             ], 'needslogin': False, u'response': u'<auth> \r\n\t<access_token oauth_token="72157607082540144-8d5d7ea7696629bf" oauth_token_secret="f38bf58b2d95bc8b" /> \r\n</auth> ', u'name': u'flickr.auth.oauth.getAccessToken'
         }
-        , u'flickr.photosets.addPhoto': {
+        , u'flickr.groups.join': {
     'needssigning': True, u'requiredperms': 'write', u'errors': [{
-        'text': u'The photoset id passed was not the id of avalid photoset owned by the calling user.', u'message': u'Photoset not found', u'code': u'1'
+        'text': u"The group_id doesn't exist", u'message': u'Required arguments missing', u'code': u'1'
             }
             , {
-        'text': u'The photo id passed was not the id of a valid photo owned by the calling user.', u'message': u'Photo not found', u'code': u'2'
+        'text': u'The Group does not exist', u'message': u'Group does not exist', u'code': u'2'
             }
             , {
-        'text': u'The photo is already a member of the photoset.', u'message': u'Photo already in set', u'code': u'3'
+        'text': u'The authed account does not have permission to view/join the group.', u'message': u'Group not availabie to the account', u'code': u'3'
             }
             , {
-        'text': u'A set has reached the upper limit for the number of photos allowed.', u'message': u'Maximum number of photos in set', u'code': u'10'
+        'text': u'The authed account has previously joined this group', u'message': u'Account is already in that group', u'code': u'4'
+            }
+            , {
+        'text': u'Use flickr.groups.joinRequest to contact the administrations for an invitation.', u'message': u'Membership in group is by invitation only.', u'code': u'5'
+            }
+            , {
+        'text': u'The user must read and accept the rules before joining. Please see the accept_rules argument for this method.', u'message': u'User must accept the group rules before joining', u'code': u'6'
+            }
+            , {
+        'text': u'The account is a member of the maximum number of groups.', u'message': u'Account in maximum number of groups', u'code': u'10'
             }
             , {
         'text': u'The passed signature was invalid.', u'message': u'Invalid signature', u'code': 96
@@ -4222,12 +4696,12 @@ u'flickr.photos.notes.delete': {
         'text': u'Your API application key. <a href="/services/api/misc.api_keys.html">See here</a> for more details.', u'optional': 0, u'name': u'api_key'
             }
             , {
-        'text': u'The id of the photoset to add a photo to.', u'optional': u'0', u'name': u'photoset_id'
+        'text': u'The NSID of the Group in question', u'optional': u'0', u'name': u'group_id'
             }
             , {
-        'text': u'The id of the photo to add to the set.', u'optional': u'0', u'name': u'photo_id'
+        'text': u'If the group has rules, they must be displayed to the user prior to joining. Passing a true value for this argument specifies that the application has displayed the group rules to the user, and that the user has agreed to them. (See flickr.groups.getInfo).', u'optional': u'1', u'name': u'accept_rules'
             }
-            ], u'description': u'Add a photo to the end of an existing photoset.', 'needslogin': True, u'name': u'flickr.photosets.addPhoto'
+            ], u'description': u'Join a public group as a member.', 'needslogin': True, u'name': u'flickr.groups.join'
         }
         , u'flickr.photosets.setPrimaryPhoto': {
     'needssigning': True, u'requiredperms': 'write', u'errors': [{
@@ -4720,7 +5194,7 @@ u'flickr.photos.notes.delete': {
         'text': u'Limit the scope of the search to only photos that are for sale on Getty. Default is false.', u'optional': u'1', u'name': u'is_getty'
             }
             , {
-        'text': u'A comma-delimited list of extra information to fetch for each returned record. Currently supported fields are: <code>description</code>, <code>license</code>, <code>date_upload</code>, <code>date_taken</code>, <code>owner_name</code>, <code>icon_server</code>, <code>original_format</code>, <code>last_update</code>, <code>geo</code>, <code>tags</code>, <code>machine_tags</code>, <code>o_dims</code>, <code>views</code>, <code>media</code>, <code>path_alias</code>, <code>url_sq</code>, <code>url_t</code>, <code>url_s</code>, <code>url_q</code>, <code>url_m</code>, <code>url_n</code>, <code>url_z</code>, <code>url_l</code>, <code>url_o</code>', u'optional': 1, u'name': u'extras'
+        'text': u'A comma-delimited list of extra information to fetch for each returned record. Currently supported fields are: <code>description</code>, <code>license</code>, <code>date_upload</code>, <code>date_taken</code>, <code>owner_name</code>, <code>icon_server</code>, <code>original_format</code>, <code>last_update</code>, <code>geo</code>, <code>tags</code>, <code>machine_tags</code>, <code>o_dims</code>, <code>views</code>, <code>media</code>, <code>path_alias</code>, <code>url_sq</code>, <code>url_t</code>, <code>url_s</code>, <code>url_q</code>, <code>url_m</code>, <code>url_n</code>, <code>url_z</code>, <code>url_c</code>, <code>url_l</code>, <code>url_o</code>', u'optional': 1, u'name': u'extras'
             }
             , {
         'text': u'Number of photos to return per page. If this argument is omitted, it defaults to 100. The maximum allowed value is 500.', u'optional': 1, u'name': u'per_page'
@@ -5322,7 +5796,7 @@ u'flickr.photos.notes.delete': {
             , {
         'text': u'Maximum taken date. Photos with an taken date less than or equal to this value will be returned. The date should be in the form of a mysql datetime.', u'optional': u'1', u'name': u'max_taken_date'
             }
-            ], 'needslogin': True, u'response': u'<places total="1">\r\n   <place place_id="kH8dLOubBZRvX_YZ" woeid="2487956"\r\n               latitude="37.779" longitude="-122.420"\r\n               place_url="/United+States/California/San+Francisco"\r\n               place_type="locality"\r\n               photo_count="156">San Francisco, California</place>\r\n</place>', u'name': u'flickr.places.placesForContacts'
+            ], 'needslogin': True, u'response': u'<places total="1">\r\n   <place place_id="kH8dLOubBZRvX_YZ" woeid="2487956"\r\n               latitude="37.779" longitude="-122.420"\r\n               place_url="/United+States/California/San+Francisco"\r\n               place_type="locality"\r\n               photo_count="156">San Francisco, California</place>\r\n</places>', u'name': u'flickr.places.placesForContacts'
         }
         , u'flickr.photos.licenses.setLicense': {
     'needssigning': True, u'requiredperms': 'write', u'errors': [{
@@ -5374,6 +5848,39 @@ u'flickr.photos.notes.delete': {
         'text': u'The license to apply, or 0 (zero) to remove the current license. Note : as of this writing the "no known copyright restrictions" license (7) is not a valid argument.', u'optional': u'0', u'name': u'license_id'
             }
             ], u'description': u'Sets the license for a photo.', 'needslogin': True, u'name': u'flickr.photos.licenses.setLicense'
+        }
+        , u'flickr.groups.discuss.topics.getInfo': {
+    u'errors': [{
+        'text': u'The topic_id is invalid', u'message': u'Topic not found', u'code': u'1'
+            }
+            , {
+        'text': u'The API key passed was not valid or has expired.', u'message': u'Invalid API Key', u'code': 100
+            }
+            , {
+        'text': u'The requested service is temporarily unavailable.', u'message': u'Service currently unavailable', u'code': 105
+            }
+            , {
+        'text': u'The requested response format was not found.', u'message': u'Format "xxx" not found', u'code': 111
+            }
+            , {
+        'text': u'The requested method was not found.', u'message': u'Method "xxx" not found', u'code': 112
+            }
+            , {
+        'text': u'The SOAP envelope send in the request could not be parsed.', u'message': u'Invalid SOAP envelope', u'code': 114
+            }
+            , {
+        'text': u'The XML-RPC request document could not be parsed.', u'message': u'Invalid XML-RPC Method Call', u'code': 115
+            }
+            , {
+        'text': u'One or more arguments contained a URL that has been used for abuse on Flickr.', u'message': u'Bad URL found', u'code': 116
+            }
+            ], u'description': u'Get information about a group discussion topic.', 'needssigning': False, u'requiredperms': 'none', u'arguments': [{
+        'text': u'Your API application key. <a href="/services/api/misc.api_keys.html">See here</a> for more details.', u'optional': 0, u'name': u'api_key'
+            }
+            , {
+        'text': u'The ID for the topic to edit.', u'optional': u'0', u'name': u'topic_id'
+            }
+            ], 'needslogin': False, u'response': u'<?xml version="1.0" encoding="utf-8" ?>\r\n<rsp stat="ok">\r\n  <topic id="72157607082559966" subject="Who\'s still around?" author="30134652@N05" authorname="JAMAL\'S ACCOUNT" is_pro="0" role="admin" iconserver="0" iconfarm="0" count_replies="1" can_edit="1" can_delete="0" can_reply="0" is_sticky="0" is_locked="0" datecreate="1337975869" datelastpost="1337975921" last_reply="72157607082559968">\r\n    <message>Is anyone still around in this group?</message>\r\n  </topic>\r\n</rsp>', u'name': u'flickr.groups.discuss.topics.getInfo'
         }
         , u'flickr.photosets.editPhotos': {
     'needssigning': True, u'requiredperms': 'write', u'errors': [{
@@ -5634,7 +6141,7 @@ u'flickr.photos.notes.delete': {
             , {
         'text': u'The page of results to return. If this argument is omitted, it defaults to 1.', u'optional': u'1', u'name': u'page'
             }
-            ], 'needslogin': False, u'response': u'<pairs page="1" total="1228" perpage="500" pages="3">\r\n   <pair namespace="aero" predicate="airline" usage="1093">aero:airline</pairs>\r\n   <pair namespace="aero" predicate="icao" usage="4">aero:icao</pair>\r\n   <pair namespace="aero" predicate="model" usage="1026">aero:model</pair>\r\n   <pair namespace="aero" predicate="tail" usage="1048">aero:tail</pair>\r\n</pairs>', u'name': u'flickr.machinetags.getPairs'
+            ], 'needslogin': False, u'response': u'<pairs page="1" total="1228" perpage="500" pages="3">\r\n   <pair namespace="aero" predicate="airline" usage="1093">aero:airline</pair>\r\n   <pair namespace="aero" predicate="icao" usage="4">aero:icao</pair>\r\n   <pair namespace="aero" predicate="model" usage="1026">aero:model</pair>\r\n   <pair namespace="aero" predicate="tail" usage="1048">aero:tail</pair>\r\n</pairs>', u'name': u'flickr.machinetags.getPairs'
         }
         , u'flickr.photos.getWithoutGeoData': {
     'needssigning': True, u'requiredperms': 'read', u'errors': [{
@@ -5695,7 +6202,7 @@ u'flickr.photos.notes.delete': {
         'text': u'Minimum upload date. Photos with an upload date greater than or equal to this value will be returned. The date can be in the form of a unix timestamp or mysql datetime.', u'optional': u'1', u'name': u'min_upload_date'
             }
             , {
-        'text': u'A comma-delimited list of extra information to fetch for each returned record. Currently supported fields are: <code>description</code>, <code>license</code>, <code>date_upload</code>, <code>date_taken</code>, <code>owner_name</code>, <code>icon_server</code>, <code>original_format</code>, <code>last_update</code>, <code>geo</code>, <code>tags</code>, <code>machine_tags</code>, <code>o_dims</code>, <code>views</code>, <code>media</code>, <code>path_alias</code>, <code>url_sq</code>, <code>url_t</code>, <code>url_s</code>, <code>url_q</code>, <code>url_m</code>, <code>url_n</code>, <code>url_z</code>, <code>url_l</code>, <code>url_o</code>', u'optional': 1, u'name': u'extras'
+        'text': u'A comma-delimited list of extra information to fetch for each returned record. Currently supported fields are: <code>description</code>, <code>license</code>, <code>date_upload</code>, <code>date_taken</code>, <code>owner_name</code>, <code>icon_server</code>, <code>original_format</code>, <code>last_update</code>, <code>geo</code>, <code>tags</code>, <code>machine_tags</code>, <code>o_dims</code>, <code>views</code>, <code>media</code>, <code>path_alias</code>, <code>url_sq</code>, <code>url_t</code>, <code>url_s</code>, <code>url_q</code>, <code>url_m</code>, <code>url_n</code>, <code>url_z</code>, <code>url_c</code>, <code>url_l</code>, <code>url_o</code>', u'optional': 1, u'name': u'extras'
             }
             , {
         'text': u'Number of photos to return per page. If this argument is omitted, it defaults to 100. The maximum allowed value is 500.', u'optional': 1, u'name': u'per_page'
@@ -5812,7 +6319,7 @@ u'flickr.photos.notes.delete': {
         'text': u'Minimum upload date. Photos with an upload date greater than or equal to this value will be returned. The date can be in the form of a unix timestamp or mysql datetime.', u'optional': u'1', u'name': u'min_upload_date'
             }
             , {
-        'text': u'A comma-delimited list of extra information to fetch for each returned record. Currently supported fields are: <code>description</code>, <code>license</code>, <code>date_upload</code>, <code>date_taken</code>, <code>owner_name</code>, <code>icon_server</code>, <code>original_format</code>, <code>last_update</code>, <code>geo</code>, <code>tags</code>, <code>machine_tags</code>, <code>o_dims</code>, <code>views</code>, <code>media</code>, <code>path_alias</code>, <code>url_sq</code>, <code>url_t</code>, <code>url_s</code>, <code>url_q</code>, <code>url_m</code>, <code>url_n</code>, <code>url_z</code>, <code>url_l</code>, <code>url_o</code>', u'optional': 1, u'name': u'extras'
+        'text': u'A comma-delimited list of extra information to fetch for each returned record. Currently supported fields are: <code>description</code>, <code>license</code>, <code>date_upload</code>, <code>date_taken</code>, <code>owner_name</code>, <code>icon_server</code>, <code>original_format</code>, <code>last_update</code>, <code>geo</code>, <code>tags</code>, <code>machine_tags</code>, <code>o_dims</code>, <code>views</code>, <code>media</code>, <code>path_alias</code>, <code>url_sq</code>, <code>url_t</code>, <code>url_s</code>, <code>url_q</code>, <code>url_m</code>, <code>url_n</code>, <code>url_z</code>, <code>url_c</code>, <code>url_l</code>, <code>url_o</code>', u'optional': 1, u'name': u'extras'
             }
             , {
         'text': u'Number of photos to return per page. If this argument is omitted, it defaults to 100. The maximum allowed value is 500.', u'optional': 1, u'name': u'per_page'
@@ -5821,6 +6328,45 @@ u'flickr.photos.notes.delete': {
         'text': u'The page of results to return. If this argument is omitted, it defaults to 1.', u'optional': 1, u'name': u'page'
             }
             ], u'description': u'Returns a list of your photos that are not part of any sets.', 'needslogin': True, u'name': u'flickr.photos.getNotInSet'
+        }
+        , u'flickr.groups.discuss.replies.getList': {
+    u'errors': [{
+        'text': u'The topic_id is invalid.', u'message': u'Topic not found', u'code': u'1'
+            }
+            , {
+        'text': u'The API key passed was not valid or has expired.', u'message': u'Invalid API Key', u'code': 100
+            }
+            , {
+        'text': u'The requested service is temporarily unavailable.', u'message': u'Service currently unavailable', u'code': 105
+            }
+            , {
+        'text': u'The requested response format was not found.', u'message': u'Format "xxx" not found', u'code': 111
+            }
+            , {
+        'text': u'The requested method was not found.', u'message': u'Method "xxx" not found', u'code': 112
+            }
+            , {
+        'text': u'The SOAP envelope send in the request could not be parsed.', u'message': u'Invalid SOAP envelope', u'code': 114
+            }
+            , {
+        'text': u'The XML-RPC request document could not be parsed.', u'message': u'Invalid XML-RPC Method Call', u'code': 115
+            }
+            , {
+        'text': u'One or more arguments contained a URL that has been used for abuse on Flickr.', u'message': u'Bad URL found', u'code': 116
+            }
+            ], u'description': u'Get a list of replies from a group discussion topic.', 'needssigning': False, u'requiredperms': 'none', u'arguments': [{
+        'text': u'Your API application key. <a href="/services/api/misc.api_keys.html">See here</a> for more details.', u'optional': 0, u'name': u'api_key'
+            }
+            , {
+        'text': u'The ID of the topic to fetch replies for.', u'optional': u'0', u'name': u'topic_id'
+            }
+            , {
+        'text': u'Number of photos to return per page. If this argument is omitted, it defaults to 100. The maximum allowed value is 500.', u'optional': u'0', u'name': u'per_page'
+            }
+            , {
+        'text': u'The page of results to return. If this argument is omitted, it defaults to 1.', u'optional': u'1', u'name': u'page'
+            }
+            ], 'needslogin': False, u'response': u'<rsp stat="ok">\r\n  <replies>\r\n    <topic topic_id="72157625038324579" subject="A long time ago in a galaxy far, far away..." group_id="46744914@N00" iconserver="1" iconfarm="1" name="Tell a story in 5 frames (Visual story telling)" author="53930889@N04" authorname="Smallportfolio_jm08" role="member" author_iconserver="5169" author_iconfarm="6" can_edit="0" can_delete="0" can_reply="0" is_sticky="0" is_locked="" datecreate="1287070965" datelastpost="1336905518" total="8" page="1" per_page="3" pages="2">\r\n      <message>&lt;div&gt;&lt;span class=&quot;photo_container pc_m bbml_img&quot;&gt;&lt;a href=&quot;/photos/53930889@N04/5080874079/&quot; title=&quot;Star Wars 1 by Smallportfolio_jm08&quot;&gt;&lt;img class=&quot;notsowide&quot; src=&quot;http://farm5.staticflickr.com/4035/5080874079_684cf874e0_m.jpg&quot; width=&quot;240&quot; height=&quot;180&quot; alt=&quot;Star Wars 1 by Smallportfolio_jm08&quot;  class=&quot;pc_img&quot; border=&quot;0&quot; /&gt;&lt;/a&gt;&lt;/span&gt;&lt;/div&gt;\r\n\r\n&lt;div&gt;&lt;span class=&quot;photo_container pc_m bbml_img&quot;&gt;&lt;a href=&quot;/photos/53930889@N04/5081467846/&quot; title=&quot;Star Wars 2 by Smallportfolio_jm08&quot;&gt;&lt;img class=&quot;notsowide&quot; src=&quot;http://farm5.staticflickr.com/4071/5081467846_2eec86176d_m.jpg&quot; width=&quot;240&quot; height=&quot;180&quot; alt=&quot;Star Wars 2 by Smallportfolio_jm08&quot;  class=&quot;pc_img&quot; border=&quot;0&quot; /&gt;&lt;/a&gt;&lt;/span&gt;&lt;/div&gt;\r\n\r\n&lt;div&gt;&lt;span class=&quot;photo_container pc_m bbml_img&quot;&gt;&lt;a href=&quot;/photos/53930889@N04/5081467886/&quot; title=&quot;Star Wars 3 by Smallportfolio_jm08&quot;&gt;&lt;img class=&quot;notsowide&quot; src=&quot;http://farm5.staticflickr.com/4021/5081467886_d8cca6c8e8_m.jpg&quot; width=&quot;240&quot; height=&quot;180&quot; alt=&quot;Star Wars 3 by Smallportfolio_jm08&quot;  class=&quot;pc_img&quot; border=&quot;0&quot; /&gt;&lt;/a&gt;&lt;/span&gt;&lt;/div&gt;\r\n\r\n&lt;div&gt;&lt;span class=&quot;photo_container pc_m bbml_img&quot;&gt;&lt;a href=&quot;/photos/53930889@N04/5081467910/&quot; title=&quot;Star Wars 4 by Smallportfolio_jm08&quot;&gt;&lt;img class=&quot;notsowide&quot; src=&quot;http://farm5.staticflickr.com/4084/5081467910_274bb11fdc_m.jpg&quot; width=&quot;240&quot; height=&quot;180&quot; alt=&quot;Star Wars 4 by Smallportfolio_jm08&quot;  class=&quot;pc_img&quot; border=&quot;0&quot; /&gt;&lt;/a&gt;&lt;/span&gt;&lt;/div&gt;\r\n\r\n&lt;div&gt;&lt;span class=&quot;photo_container pc_m bbml_img&quot;&gt;&lt;a href=&quot;/photos/53930889@N04/5081467948/&quot; title=&quot;Star Wars 5 by Smallportfolio_jm08&quot;&gt;&lt;img class=&quot;notsowide&quot; src=&quot;http://farm5.staticflickr.com/4154/5081467948_1a5f200bc0_m.jpg&quot; width=&quot;240&quot; height=&quot;180&quot; alt=&quot;Star Wars 5 by Smallportfolio_jm08&quot;  class=&quot;pc_img&quot; border=&quot;0&quot; /&gt;&lt;/a&gt;&lt;/span&gt;&lt;/div&gt;</message>\r\n    </topic>\r\n    <reply id="72157625163054214" author="41380738@N05" authorname="BlueRidgeKitties" role="member" iconserver="2459" iconfarm="3" can_edit="0" can_delete="0" datecreate="1287071539" lastedit="0">\r\n      <message>*LOL* The universe is full of &lt;a href=&quot;http://www.flickr.com/groups/visualstory/discuss/72157622533160886/&quot;&gt;giant furry space monsters&lt;/a&gt; it seems! Love it.</message>\r\n    </reply>\r\n    <reply id="72157625163539300" author="52101018@N00" authorname="pterandon" role="admin" iconserver="1" iconfarm="1" can_edit="0" can_delete="0" datecreate="1287076748" lastedit="0">\r\n      <message>Great work. Good focus on different aspects of scene in each frame.  Funny ending-- even better that I didn\'t notice the cat right away!  Being a hopeless Trekkie, I was wondering why Han was doing the Vulcan death grip on one of his allies....</message>\r\n    </reply>\r\n    <reply id="72157625040116805" author="54830408@N02" authorname="tay.grisham" role="member" iconserver="0" iconfarm="0" can_edit="0" can_delete="0" datecreate="1287089858" lastedit="0">\r\n      <message>On a scale of 1 to 10 of awesome. This is a 15</message>\r\n    </reply>\r\n  </replies>\r\n</rsp>', u'name': u'flickr.groups.discuss.replies.getList'
         }
         , u'flickr.photos.getFavorites': {
     u'errors': [{
@@ -6059,6 +6605,45 @@ u'flickr.photos.notes.delete': {
             }
             ], u'description': u'Remove multiple photos from a photoset.', 'needslogin': True, u'name': u'flickr.photosets.removePhotos'
         }
+        , u'flickr.tags.getMostFrequentlyUsed': {
+    u'errors': [{
+        'text': u'The passed signature was invalid.', u'message': u'Invalid signature', u'code': 96
+            }
+            , {
+        'text': u'The call required signing but no signature was sent.', u'message': u'Missing signature', u'code': 97
+            }
+            , {
+        'text': u'The login details or auth token passed were invalid.', u'message': u'Login failed / Invalid auth token', u'code': 98
+            }
+            , {
+        'text': u'The method requires user authentication but the user was not logged in, or the authenticated method call did not have the required permissions.', u'message': u'User not logged in / Insufficient permissions', u'code': 99
+            }
+            , {
+        'text': u'The API key passed was not valid or has expired.', u'message': u'Invalid API Key', u'code': 100
+            }
+            , {
+        'text': u'The requested service is temporarily unavailable.', u'message': u'Service currently unavailable', u'code': 105
+            }
+            , {
+        'text': u'The requested response format was not found.', u'message': u'Format "xxx" not found', u'code': 111
+            }
+            , {
+        'text': u'The requested method was not found.', u'message': u'Method "xxx" not found', u'code': 112
+            }
+            , {
+        'text': u'The SOAP envelope send in the request could not be parsed.', u'message': u'Invalid SOAP envelope', u'code': 114
+            }
+            , {
+        'text': u'The XML-RPC request document could not be parsed.', u'message': u'Invalid XML-RPC Method Call', u'code': 115
+            }
+            , {
+        'text': u'One or more arguments contained a URL that has been used for abuse on Flickr.', u'message': u'Bad URL found', u'code': 116
+            }
+            ], u'description': u'Returns a list of most frequently used tags for a user.', 'needssigning': True, u'requiredperms': 'read', u'arguments': [{
+        'text': u'Your API application key. <a href="/services/api/misc.api_keys.html">See here</a> for more details.', u'optional': 0, u'name': u'api_key'
+            }
+            ], 'needslogin': True, u'response': u'<rsp stat="ok">\r\n<who id="30135021@N05">\r\n\t<tags>\r\n\t\t<tag count="1">blah</tag>\r\n\t\t<tag count="5">publicdomain</tag>\r\n\t</tags>\r\n</who>\r\n</rsp>', u'name': u'flickr.tags.getMostFrequentlyUsed'
+        }
         , u'flickr.prefs.getContentType': {
     u'errors': [{
         'text': u'The passed signature was invalid.', u'message': u'Invalid signature', u'code': 96
@@ -6133,7 +6718,7 @@ u'flickr.photos.notes.delete': {
         'text': u'Safe search setting:\r\n\r\n<ul>\r\n<li>1 for safe.</li>\r\n<li>2 for moderate.</li>\r\n<li>3 for restricted.</li>\r\n</ul>\r\n\r\n(Please note: Un-authed calls can only see Safe content.)', u'optional': u'1', u'name': u'safe_search'
             }
             , {
-        'text': u'A comma-delimited list of extra information to fetch for each returned record. Currently supported fields are: <code>description</code>, <code>license</code>, <code>date_upload</code>, <code>date_taken</code>, <code>owner_name</code>, <code>icon_server</code>, <code>original_format</code>, <code>last_update</code>, <code>geo</code>, <code>tags</code>, <code>machine_tags</code>, <code>o_dims</code>, <code>views</code>, <code>media</code>, <code>path_alias</code>, <code>url_sq</code>, <code>url_t</code>, <code>url_s</code>, <code>url_q</code>, <code>url_m</code>, <code>url_n</code>, <code>url_z</code>, <code>url_l</code>, <code>url_o</code>', u'optional': 1, u'name': u'extras'
+        'text': u'A comma-delimited list of extra information to fetch for each returned record. Currently supported fields are: <code>description</code>, <code>license</code>, <code>date_upload</code>, <code>date_taken</code>, <code>owner_name</code>, <code>icon_server</code>, <code>original_format</code>, <code>last_update</code>, <code>geo</code>, <code>tags</code>, <code>machine_tags</code>, <code>o_dims</code>, <code>views</code>, <code>media</code>, <code>path_alias</code>, <code>url_sq</code>, <code>url_t</code>, <code>url_s</code>, <code>url_q</code>, <code>url_m</code>, <code>url_n</code>, <code>url_z</code>, <code>url_c</code>, <code>url_l</code>, <code>url_o</code>', u'optional': 1, u'name': u'extras'
             }
             , {
         'text': u'Number of photos to return per page. If this argument is omitted, it defaults to 100. The maximum allowed value is 500.', u'optional': 1, u'name': u'per_page'
@@ -6143,9 +6728,27 @@ u'flickr.photos.notes.delete': {
             }
             ], u'description': u'Get a list of public photos for the given user.', 'needslogin': False, u'name': u'flickr.people.getPublicPhotos'
         }
-        , u'flickr.tags.getListUserPopular': {
-    u'errors': [{
-        'text': u'The user NSID passed was not a valid user NSID and the calling user was not logged in.\r\n', u'message': u'User not found', u'code': u'1'
+        , u'flickr.groups.discuss.replies.delete': {
+    'needssigning': True, u'requiredperms': 'delete', u'errors': [{
+        'text': u'The topic_id is invalid.', u'message': u'Topic not found', u'code': u'1'
+            }
+            , {
+        'text': u'The reply_id is invalid.', u'message': u'Reply not found', u'code': u'2'
+            }
+            , {
+        'text': u'Replies can only be edited by their owner.', u'message': u'Cannot delete reply', u'code': u'3'
+            }
+            , {
+        'text': u'The passed signature was invalid.', u'message': u'Invalid signature', u'code': 96
+            }
+            , {
+        'text': u'The call required signing but no signature was sent.', u'message': u'Missing signature', u'code': 97
+            }
+            , {
+        'text': u'The login details or auth token passed were invalid.', u'message': u'Login failed / Invalid auth token', u'code': 98
+            }
+            , {
+        'text': u'The method requires user authentication but the user was not logged in, or the authenticated method call did not have the required permissions.', u'message': u'User not logged in / Insufficient permissions', u'code': 99
             }
             , {
         'text': u'The API key passed was not valid or has expired.', u'message': u'Invalid API Key', u'code': 100
@@ -6168,16 +6771,16 @@ u'flickr.photos.notes.delete': {
             , {
         'text': u'One or more arguments contained a URL that has been used for abuse on Flickr.', u'message': u'Bad URL found', u'code': 116
             }
-            ], u'description': u'Get the popular tags for a given user (or the currently logged in user).', 'needssigning': False, u'requiredperms': 'none', u'arguments': [{
+            ], u'arguments': [{
         'text': u'Your API application key. <a href="/services/api/misc.api_keys.html">See here</a> for more details.', u'optional': 0, u'name': u'api_key'
             }
             , {
-        'text': u'The NSID of the user to fetch the tag list for. If this argument is not specified, the currently logged in user (if any) is assumed.', u'optional': u'1', u'name': u'user_id'
+        'text': u'The ID of the topic the post is in.', u'optional': u'0', u'name': u'topic_id'
             }
             , {
-        'text': u'Number of popular tags to return. defaults to 10 when this argument is not present.', u'optional': u'1', u'name': u'count'
+        'text': u'The ID of the reply to delete.', u'optional': u'0', u'name': u'reply_id'
             }
-            ], 'needslogin': False, u'response': u'<who id="12037949754@N01">\r\n\t<tags>\r\n\t\t<tag count="10">bar</tag> \r\n\t\t<tag count="11">foo</tag> \r\n\t\t<tag count="147">gull</tag> \r\n\t\t<tag count="3">tags</tag> \r\n\t\t<tag count="3">test</tag> \r\n\t</tags>\r\n</who>', u'name': u'flickr.tags.getListUserPopular'
+            ], u'description': u'Delete a reply from a group topic.', 'needslogin': True, u'name': u'flickr.groups.discuss.replies.delete'
         }
         , u'flickr.groups.browse': {
     u'errors': [{
@@ -6718,7 +7321,7 @@ u'flickr.photos.notes.delete': {
         'text': u'Always ask the pandas for interesting photos. This is a temporary argument to allow developers to update their code.', u'optional': u'1', u'name': u'use_panda'
             }
             , {
-        'text': u'A comma-delimited list of extra information to fetch for each returned record. Currently supported fields are: <code>description</code>, <code>license</code>, <code>date_upload</code>, <code>date_taken</code>, <code>owner_name</code>, <code>icon_server</code>, <code>original_format</code>, <code>last_update</code>, <code>geo</code>, <code>tags</code>, <code>machine_tags</code>, <code>o_dims</code>, <code>views</code>, <code>media</code>, <code>path_alias</code>, <code>url_sq</code>, <code>url_t</code>, <code>url_s</code>, <code>url_q</code>, <code>url_m</code>, <code>url_n</code>, <code>url_z</code>, <code>url_l</code>, <code>url_o</code>', u'optional': 1, u'name': u'extras'
+        'text': u'A comma-delimited list of extra information to fetch for each returned record. Currently supported fields are: <code>description</code>, <code>license</code>, <code>date_upload</code>, <code>date_taken</code>, <code>owner_name</code>, <code>icon_server</code>, <code>original_format</code>, <code>last_update</code>, <code>geo</code>, <code>tags</code>, <code>machine_tags</code>, <code>o_dims</code>, <code>views</code>, <code>media</code>, <code>path_alias</code>, <code>url_sq</code>, <code>url_t</code>, <code>url_s</code>, <code>url_q</code>, <code>url_m</code>, <code>url_n</code>, <code>url_z</code>, <code>url_c</code>, <code>url_l</code>, <code>url_o</code>', u'optional': 1, u'name': u'extras'
             }
             , {
         'text': u'Number of photos to return per page. If this argument is omitted, it defaults to 100. The maximum allowed value is 500.', u'optional': 1, u'name': u'per_page'
@@ -6874,7 +7477,7 @@ u'flickr.photos.notes.delete': {
         'text': u'A Unix timestamp or any English textual datetime description indicating the date from which modifications should be compared.', u'optional': u'0', u'name': u'min_date'
             }
             , {
-        'text': u'A comma-delimited list of extra information to fetch for each returned record. Currently supported fields are: <code>description</code>, <code>license</code>, <code>date_upload</code>, <code>date_taken</code>, <code>owner_name</code>, <code>icon_server</code>, <code>original_format</code>, <code>last_update</code>, <code>geo</code>, <code>tags</code>, <code>machine_tags</code>, <code>o_dims</code>, <code>views</code>, <code>media</code>, <code>path_alias</code>, <code>url_sq</code>, <code>url_t</code>, <code>url_s</code>, <code>url_q</code>, <code>url_m</code>, <code>url_n</code>, <code>url_z</code>, <code>url_l</code>, <code>url_o</code>', u'optional': 1, u'name': u'extras'
+        'text': u'A comma-delimited list of extra information to fetch for each returned record. Currently supported fields are: <code>description</code>, <code>license</code>, <code>date_upload</code>, <code>date_taken</code>, <code>owner_name</code>, <code>icon_server</code>, <code>original_format</code>, <code>last_update</code>, <code>geo</code>, <code>tags</code>, <code>machine_tags</code>, <code>o_dims</code>, <code>views</code>, <code>media</code>, <code>path_alias</code>, <code>url_sq</code>, <code>url_t</code>, <code>url_s</code>, <code>url_q</code>, <code>url_m</code>, <code>url_n</code>, <code>url_z</code>, <code>url_c</code>, <code>url_l</code>, <code>url_o</code>', u'optional': 1, u'name': u'extras'
             }
             , {
         'text': u'Number of photos to return per page. If this argument is omitted, it defaults to 100. The maximum allowed value is 500.', u'optional': 1, u'name': u'per_page'
@@ -6943,7 +7546,7 @@ u'flickr.photos.notes.delete': {
         'text': u'Filter results by media type. Possible values are <code>all</code> (default), <code>photos</code> or <code>videos</code>', u'optional': u'1', u'name': u'media'
             }
             , {
-        'text': u'A comma-delimited list of extra information to fetch for each returned record. Currently supported fields are: <code>description</code>, <code>license</code>, <code>date_upload</code>, <code>date_taken</code>, <code>owner_name</code>, <code>icon_server</code>, <code>original_format</code>, <code>last_update</code>, <code>geo</code>, <code>tags</code>, <code>machine_tags</code>, <code>o_dims</code>, <code>views</code>, <code>media</code>, <code>path_alias</code>, <code>url_sq</code>, <code>url_t</code>, <code>url_s</code>, <code>url_q</code>, <code>url_m</code>, <code>url_n</code>, <code>url_z</code>, <code>url_l</code>, <code>url_o</code>', u'optional': 1, u'name': u'extras'
+        'text': u'A comma-delimited list of extra information to fetch for each returned record. Currently supported fields are: <code>description</code>, <code>license</code>, <code>date_upload</code>, <code>date_taken</code>, <code>owner_name</code>, <code>icon_server</code>, <code>original_format</code>, <code>last_update</code>, <code>geo</code>, <code>tags</code>, <code>machine_tags</code>, <code>o_dims</code>, <code>views</code>, <code>media</code>, <code>path_alias</code>, <code>url_sq</code>, <code>url_t</code>, <code>url_s</code>, <code>url_q</code>, <code>url_m</code>, <code>url_n</code>, <code>url_z</code>, <code>url_c</code>, <code>url_l</code>, <code>url_o</code>', u'optional': 1, u'name': u'extras'
             }
             , {
         'text': u'Number of photos to return per page. If this argument is omitted, it defaults to 100. The maximum allowed value is 500.', u'optional': 1, u'name': u'per_page'
@@ -7073,6 +7676,66 @@ u'flickr.photos.notes.delete': {
             }
             ], 'needslogin': False, u'response': u'<gallery id="6065-72157617483228192" url="/photos/straup/galleries/72157617483228192" owner="35034348999@N01" \r\nprimary_photo_id="292882708" \r\ndate_create="1241028772" date_update="1270111667" \r\ncount_photos="17" count_videos="0" server="112" farm="1" secret="7f29861bc4">\r\n\t<title>Cat Pictures I\'ve Sent To Kevin Collins</title>\r\n\t<description />\r\n</gallery>', u'description': u'Returns gallery info, by url.'
         }
+        , u'flickr.groups.discuss.topics.add': {
+    'needssigning': True, u'requiredperms': 'write', u'errors': [{
+        'text': u'The group by that ID does not exist\r\n', u'message': u'Group not found', u'code': u'1'
+            }
+            , {
+        'text': u'Either this account is not a member of the group, or discussion in this group is disabled.', u'message': u'Cannot post to group', u'code': u'2'
+            }
+            , {
+        'text': u'The post message is too long.', u'message': u'Message is too long', u'code': u'3'
+            }
+            , {
+        'text': u'Subject and message are required.', u'message': u'Missing required arguments', u'code': u'4'
+            }
+            , {
+        'text': u'The passed signature was invalid.', u'message': u'Invalid signature', u'code': 96
+            }
+            , {
+        'text': u'The call required signing but no signature was sent.', u'message': u'Missing signature', u'code': 97
+            }
+            , {
+        'text': u'The login details or auth token passed were invalid.', u'message': u'Login failed / Invalid auth token', u'code': 98
+            }
+            , {
+        'text': u'The method requires user authentication but the user was not logged in, or the authenticated method call did not have the required permissions.', u'message': u'User not logged in / Insufficient permissions', u'code': 99
+            }
+            , {
+        'text': u'The API key passed was not valid or has expired.', u'message': u'Invalid API Key', u'code': 100
+            }
+            , {
+        'text': u'The requested service is temporarily unavailable.', u'message': u'Service currently unavailable', u'code': 105
+            }
+            , {
+        'text': u'The requested response format was not found.', u'message': u'Format "xxx" not found', u'code': 111
+            }
+            , {
+        'text': u'The requested method was not found.', u'message': u'Method "xxx" not found', u'code': 112
+            }
+            , {
+        'text': u'The SOAP envelope send in the request could not be parsed.', u'message': u'Invalid SOAP envelope', u'code': 114
+            }
+            , {
+        'text': u'The XML-RPC request document could not be parsed.', u'message': u'Invalid XML-RPC Method Call', u'code': 115
+            }
+            , {
+        'text': u'One or more arguments contained a URL that has been used for abuse on Flickr.', u'message': u'Bad URL found', u'code': 116
+            }
+            ], u'arguments': [{
+        'text': u'Your API application key. <a href="/services/api/misc.api_keys.html">See here</a> for more details.', u'optional': 0, u'name': u'api_key'
+            }
+            , {
+        'text': u'The NSID of the group to add a topic to.\r\n', u'optional': u'0', u'name': u'group_id'
+            }
+            , {
+        'text': u'The topic subject.', u'optional': u'0', u'name': u'subject'
+            }
+            , {
+        'text': u'The topic message.', u'optional': u'0', u'name': u'message'
+            }
+            ], u'description': u'Post a new discussion topic to a group.', 'needslogin': True, u'name': u'flickr.groups.discuss.topics.add'
+        }
         , u'flickr.galleries.editMeta': {
     'needssigning': True, u'requiredperms': 'write', u'errors': [{
         'text': u'One or more required parameters was missing from your request.', u'message': u'Required parameter missing', u'code': u'1'
@@ -7161,7 +7824,7 @@ u'flickr.photos.notes.delete': {
             , {
         'text': u'The page of results to return. If this argument is omitted, it defaults to 1.', u'optional': u'1', u'name': u'page'
             }
-            ], 'needslogin': False, u'response': u'<galleries total="7" page="1" pages="1" per_page="100">\r\n    <gallery id="9634-72157621980433950" \r\n             url="http://www.flickr.com/photos/revdancatt/galleries/72157621980433950" \r\n             owner="35468159852@N01" date_create="1249748647" date_update="1260486168" \r\n\t     primary_photo_id="2080242123" primary_photo_server="2209" \r\n\t     primary_photo_farm="3" primary_photo_secret="55c9"\r\n             count_photos="18" count_videos="0">\r\n        <title>Vivitar Ultra Wide &amp; Slim Selection</title>\r\n        <description>The cheap and cheerful camera that isn\'t quite as cheap as it used to be.</description>\r\n    </gallery>\r\n   <gallery id="22342631-72157622254010831" \r\n             url="http://www.flickr.com/photos/22365685@N03/galleries/72157622254010831" \r\n             owner="22365685@N03" date_create="1253035020" date_update="1260431618" \r\n             primary_photo_id="3182914049" primary_photo_server="3319" \r\n             primary_photo_farm="4" primary_photo_secret="b94fb"\r\n             count_photos="13" count_videos="0">\r\n        <title>Awesome Pics</title>\r\n        <description />\r\n    <gallery>\r\n</galleries>', u'name': u'flickr.galleries.getListForPhoto'
+            ], 'needslogin': False, u'response': u'<galleries total="7" page="1" pages="1" per_page="100">\r\n    <gallery id="9634-72157621980433950" \r\n             url="http://www.flickr.com/photos/revdancatt/galleries/72157621980433950" \r\n             owner="35468159852@N01" date_create="1249748647" date_update="1260486168" \r\n\t     primary_photo_id="2080242123" primary_photo_server="2209" \r\n\t     primary_photo_farm="3" primary_photo_secret="55c9"\r\n             count_photos="18" count_videos="0">\r\n        <title>Vivitar Ultra Wide &amp; Slim Selection</title>\r\n        <description>The cheap and cheerful camera that isn\'t quite as cheap as it used to be.</description>\r\n    </gallery>\r\n   <gallery id="22342631-72157622254010831" \r\n             url="http://www.flickr.com/photos/22365685@N03/galleries/72157622254010831" \r\n             owner="22365685@N03" date_create="1253035020" date_update="1260431618" \r\n             primary_photo_id="3182914049" primary_photo_server="3319" \r\n             primary_photo_farm="4" primary_photo_secret="b94fb"\r\n             count_photos="13" count_videos="0">\r\n        <title>Awesome Pics</title>\r\n        <description />\r\n    </gallery>\r\n</galleries>', u'name': u'flickr.galleries.getListForPhoto'
         }
         , u'flickr.tags.getClusterPhotos': {
     'needssigning': False, u'requiredperms': 'none', u'errors': [{
@@ -7356,7 +8019,7 @@ u'flickr.photos.notes.delete': {
             , {
         'text': u'A comma-delimited list of extra information to fetch for each returned record. Currently supported fields are: license, date_upload, date_taken, owner_name, icon_server, original_format, last_update.', u'optional': u'1', u'name': u'extras'
             }
-            ], 'needslogin': False, u'response': u'<photos>\r\n\t<photo id="2801" owner="12037949629@N01"\r\n\t\tsecret="123456" server="1"\r\n\t\tusername="Eric is "the best"" title="grease" /> \r\n\t<photo id="2499" owner="33853651809@N01"\r\n\t\tsecret="123456" server="1"\r\n\t\tusername="cal18" title="36679_o" /> \r\n\t<photo id="2437" owner="12037951898@N01"\r\n\t\tsecret="123456" server="1"\r\n\t\tusername="georgie parker" title="phoenix9_stewart" /> \r\n</photos>', u'name': u'flickr.photos.getContactsPublicPhotos'
+            ], 'needslogin': False, u'response': u'<photos>\r\n\t<photo id="2801" owner="12037949629@N01"\r\n\t\tsecret="123456" server="1"\r\n\t\tusername="Eric is the best" title="grease" /> \r\n\t<photo id="2499" owner="33853651809@N01"\r\n\t\tsecret="123456" server="1"\r\n\t\tusername="cal18" title="36679_o" /> \r\n\t<photo id="2437" owner="12037951898@N01"\r\n\t\tsecret="123456" server="1"\r\n\t\tusername="georgie parker" title="phoenix9_stewart" /> \r\n</photos>', u'name': u'flickr.photos.getContactsPublicPhotos'
         }
         , u'flickr.photosets.getList': {
     u'errors': [{
@@ -7459,7 +8122,7 @@ u'flickr.photos.notes.delete': {
         'text': u'The ID of the gallery of photos to return', u'optional': u'0', u'name': u'gallery_id'
             }
             , {
-        'text': u'A comma-delimited list of extra information to fetch for each returned record. Currently supported fields are: <code>description</code>, <code>license</code>, <code>date_upload</code>, <code>date_taken</code>, <code>owner_name</code>, <code>icon_server</code>, <code>original_format</code>, <code>last_update</code>, <code>geo</code>, <code>tags</code>, <code>machine_tags</code>, <code>o_dims</code>, <code>views</code>, <code>media</code>, <code>path_alias</code>, <code>url_sq</code>, <code>url_t</code>, <code>url_s</code>, <code>url_q</code>, <code>url_m</code>, <code>url_n</code>, <code>url_z</code>, <code>url_l</code>, <code>url_o</code>', u'optional': 1, u'name': u'extras'
+        'text': u'A comma-delimited list of extra information to fetch for each returned record. Currently supported fields are: <code>description</code>, <code>license</code>, <code>date_upload</code>, <code>date_taken</code>, <code>owner_name</code>, <code>icon_server</code>, <code>original_format</code>, <code>last_update</code>, <code>geo</code>, <code>tags</code>, <code>machine_tags</code>, <code>o_dims</code>, <code>views</code>, <code>media</code>, <code>path_alias</code>, <code>url_sq</code>, <code>url_t</code>, <code>url_s</code>, <code>url_q</code>, <code>url_m</code>, <code>url_n</code>, <code>url_z</code>, <code>url_c</code>, <code>url_l</code>, <code>url_o</code>', u'optional': 1, u'name': u'extras'
             }
             , {
         'text': u'Number of photos to return per page. If this argument is omitted, it defaults to 100. The maximum allowed value is 500.', u'optional': 1, u'name': u'per_page'
@@ -7468,6 +8131,45 @@ u'flickr.photos.notes.delete': {
         'text': u'The page of results to return. If this argument is omitted, it defaults to 1.', u'optional': 1, u'name': u'page'
             }
             ], 'needslogin': False, u'response': u'<photos page="1" pages="1" perpage="500" total="2">\r\n\t<photo id="2822546461" owner="78398753@N00" secret="2dbcdb589f" server="1" farm="1" title="FOO" \r\n     ispublic="1" isfriend="0" isfamily="0" is_primary="1" has_comment="1">\r\n\t\t<comment>best cat picture ever!</comment>\r\n\t</photo>\r\n\t<photo id="2822544806" owner="78398753@N00" secret="bd93cbe917" server="1" farm="1" title="OOK" \r\n     ispublic="1" isfriend="0" isfamily="0" is_primary="0" has_comment="0" />\r\n</photos>', u'description': u'Return the list of photos for a gallery'
+        }
+        , u'flickr.groups.discuss.replies.getInfo': {
+    u'errors': [{
+        'text': u'The topic_id is invalid', u'message': u'Topic not found', u'code': u'1'
+            }
+            , {
+        'text': u'The reply_id is invalid', u'message': u'Reply not found', u'code': u'2'
+            }
+            , {
+        'text': u'The API key passed was not valid or has expired.', u'message': u'Invalid API Key', u'code': 100
+            }
+            , {
+        'text': u'The requested service is temporarily unavailable.', u'message': u'Service currently unavailable', u'code': 105
+            }
+            , {
+        'text': u'The requested response format was not found.', u'message': u'Format "xxx" not found', u'code': 111
+            }
+            , {
+        'text': u'The requested method was not found.', u'message': u'Method "xxx" not found', u'code': 112
+            }
+            , {
+        'text': u'The SOAP envelope send in the request could not be parsed.', u'message': u'Invalid SOAP envelope', u'code': 114
+            }
+            , {
+        'text': u'The XML-RPC request document could not be parsed.', u'message': u'Invalid XML-RPC Method Call', u'code': 115
+            }
+            , {
+        'text': u'One or more arguments contained a URL that has been used for abuse on Flickr.', u'message': u'Bad URL found', u'code': 116
+            }
+            ], u'description': u'Get information on a group topic reply.', 'needssigning': False, u'requiredperms': 'none', u'arguments': [{
+        'text': u'Your API application key. <a href="/services/api/misc.api_keys.html">See here</a> for more details.', u'optional': 0, u'name': u'api_key'
+            }
+            , {
+        'text': u'The ID of the topic the post is in.', u'optional': u'0', u'name': u'topic_id'
+            }
+            , {
+        'text': u'The ID of the reply to fetch.', u'optional': u'0', u'name': u'reply_id'
+            }
+            ], 'needslogin': False, u'response': u'<?xml version="1.0" encoding="utf-8" ?>\r\n<rsp stat="ok">\r\n  <reply id="72157607082559968" author="30134652@N05" authorname="JAMAL\'S ACCOUNT" is_pro="0" role="admin" iconserver="0" iconfarm="0" can_edit="1" can_delete="1" datecreate="1337975921" lastedit="0">\r\n    <message>...well, too bad.</message>\r\n  </reply>\r\n</rsp>', u'name': u'flickr.groups.discuss.replies.getInfo'
         }
         , u'flickr.photos.geo.getLocation': {
     u'errors': [{
@@ -7502,6 +8204,9 @@ u'flickr.photos.notes.delete': {
             }
             , {
         'text': u'The id of the photo you want to retrieve location data for.', u'optional': u'0', u'name': u'photo_id'
+            }
+            , {
+        'text': u'Extra flags.', u'optional': u'1', u'name': u'extras'
             }
             ], 'needslogin': False, u'response': u'<photo id="123">\r\n        <location latitude="-17.685895" longitude="-63.36914" accuracy="6" />\r\n</photo>', u'name': u'flickr.photos.geo.getLocation'
         }
@@ -7666,7 +8371,7 @@ u'flickr.photos.notes.delete': {
         'text': u'A comma-separated list of contact NSIDs to limit the scope of the query to.', u'optional': u'1', u'name': u'contacts_filter'
             }
             , {
-        'text': u'A comma-delimited list of extra information to fetch for each returned record. Currently supported fields are: <code>description</code>, <code>license</code>, <code>date_upload</code>, <code>date_taken</code>, <code>owner_name</code>, <code>icon_server</code>, <code>original_format</code>, <code>last_update</code>, <code>geo</code>, <code>tags</code>, <code>machine_tags</code>, <code>o_dims</code>, <code>views</code>, <code>media</code>, <code>path_alias</code>, <code>url_sq</code>, <code>url_t</code>, <code>url_s</code>, <code>url_q</code>, <code>url_m</code>, <code>url_n</code>, <code>url_z</code>, <code>url_l</code>, <code>url_o</code>', u'optional': 1, u'name': u'extras'
+        'text': u'A comma-delimited list of extra information to fetch for each returned record. Currently supported fields are: <code>description</code>, <code>license</code>, <code>date_upload</code>, <code>date_taken</code>, <code>owner_name</code>, <code>icon_server</code>, <code>original_format</code>, <code>last_update</code>, <code>geo</code>, <code>tags</code>, <code>machine_tags</code>, <code>o_dims</code>, <code>views</code>, <code>media</code>, <code>path_alias</code>, <code>url_sq</code>, <code>url_t</code>, <code>url_s</code>, <code>url_q</code>, <code>url_m</code>, <code>url_n</code>, <code>url_z</code>, <code>url_c</code>, <code>url_l</code>, <code>url_o</code>', u'optional': 1, u'name': u'extras'
             }
             , {
         'text': u'Number of photos to return per page. If this argument is omitted, it defaults to 100. The maximum allowed value is 500.', u'optional': 1, u'name': u'per_page'
@@ -8428,7 +9133,7 @@ u'flickr.photos.notes.delete': {
         'text': u'', u'optional': u'1', u'name': u'jump_to'
             }
             , {
-        'text': u'A comma-delimited list of extra information to fetch for each returned record. Currently supported fields are: <code>description</code>, <code>license</code>, <code>date_upload</code>, <code>date_taken</code>, <code>owner_name</code>, <code>icon_server</code>, <code>original_format</code>, <code>last_update</code>, <code>geo</code>, <code>tags</code>, <code>machine_tags</code>, <code>o_dims</code>, <code>views</code>, <code>media</code>, <code>path_alias</code>, <code>url_sq</code>, <code>url_t</code>, <code>url_s</code>, <code>url_q</code>, <code>url_m</code>, <code>url_n</code>, <code>url_z</code>, <code>url_l</code>, <code>url_o</code>', u'optional': 1, u'name': u'extras'
+        'text': u'A comma-delimited list of extra information to fetch for each returned record. Currently supported fields are: <code>description</code>, <code>license</code>, <code>date_upload</code>, <code>date_taken</code>, <code>owner_name</code>, <code>icon_server</code>, <code>original_format</code>, <code>last_update</code>, <code>geo</code>, <code>tags</code>, <code>machine_tags</code>, <code>o_dims</code>, <code>views</code>, <code>media</code>, <code>path_alias</code>, <code>url_sq</code>, <code>url_t</code>, <code>url_s</code>, <code>url_q</code>, <code>url_m</code>, <code>url_n</code>, <code>url_z</code>, <code>url_c</code>, <code>url_l</code>, <code>url_o</code>', u'optional': 1, u'name': u'extras'
             }
             , {
         'text': u'Number of photos to return per page. If this argument is omitted, it defaults to 100. The maximum allowed value is 500.', u'optional': 1, u'name': u'per_page'
@@ -8554,7 +9259,7 @@ u'flickr.photos.notes.delete': {
         'text': u'Return photos only matching a certain privacy level. This only applies when making an authenticated call to view photos you own. Valid values are:\r\n<ul>\r\n<li>1 public photos</li>\r\n<li>2 private photos visible to friends</li>\r\n<li>3 private photos visible to family</li>\r\n<li>4 private photos visible to friends & family</li>\r\n<li>5 completely private photos</li>\r\n</ul>', u'optional': u'1', u'name': u'privacy_filter'
             }
             , {
-        'text': u'A comma-delimited list of extra information to fetch for each returned record. Currently supported fields are: <code>description</code>, <code>license</code>, <code>date_upload</code>, <code>date_taken</code>, <code>owner_name</code>, <code>icon_server</code>, <code>original_format</code>, <code>last_update</code>, <code>geo</code>, <code>tags</code>, <code>machine_tags</code>, <code>o_dims</code>, <code>views</code>, <code>media</code>, <code>path_alias</code>, <code>url_sq</code>, <code>url_t</code>, <code>url_s</code>, <code>url_q</code>, <code>url_m</code>, <code>url_n</code>, <code>url_z</code>, <code>url_l</code>, <code>url_o</code>', u'optional': 1, u'name': u'extras'
+        'text': u'A comma-delimited list of extra information to fetch for each returned record. Currently supported fields are: <code>description</code>, <code>license</code>, <code>date_upload</code>, <code>date_taken</code>, <code>owner_name</code>, <code>icon_server</code>, <code>original_format</code>, <code>last_update</code>, <code>geo</code>, <code>tags</code>, <code>machine_tags</code>, <code>o_dims</code>, <code>views</code>, <code>media</code>, <code>path_alias</code>, <code>url_sq</code>, <code>url_t</code>, <code>url_s</code>, <code>url_q</code>, <code>url_m</code>, <code>url_n</code>, <code>url_z</code>, <code>url_c</code>, <code>url_l</code>, <code>url_o</code>', u'optional': 1, u'name': u'extras'
             }
             , {
         'text': u'Number of photos to return per page. If this argument is omitted, it defaults to 100. The maximum allowed value is 500.', u'optional': 1, u'name': u'per_page'
@@ -8706,20 +9411,29 @@ u'flickr.photos.notes.delete': {
             , {
         'text': u'Perform a recursive place type search. For example, if you search for neighbourhoods in a given bounding box but there are no results the method will also query for localities and so on until one or more valid places are found.<br /<br /> \r\nRecursive searches do not change the bounding box size restrictions for the initial place type passed to the method.', u'optional': u'1', u'name': u'recursive'
             }
-            ], 'needslogin': False, u'response': u'<places place_type="neighbourhood" total="21"\r\n   pages="1" page="1" \r\n   bbox="-122.42307100000001,37.773779,-122.381071,37.815779">\r\n   <place place_id=".aaSwYSbApnq6seyGw" woeid="23512025"\r\n      latitude="37.788" longitude="-122.412" \r\n      place_url="/United+States/California/San+Francisco/Downtown"\r\n      place_type="neighbourhood">\r\n      Downtown, San Francisco, CA, US, United States\r\n   </place>\r\n   <place place_id="3KymK1GbCZ41eBVBxg" woeid="28288707"\r\n      latitude="37.776" longitude="-122.417" \r\n      place_url="/United+States/California/San+Francisco/Civic+Center"\r\n      place_type="neighbourhood">\r\n      Civic Center, San Francisco, CA, US, United States\r\n   </place>\r\n   <place place_id="9xdhxY.bAptvBjHo" woeid="2379855"   \r\n      latitude="37.796" longitude="-122.407" \r\n      place_url="/United+States/California/San+Francisco/Chinatown"\r\n      place_type="neighbourhood">\r\n      Chinatown, San Francisco, CA, US, United States\r\n   </place>\r\n   <!-- and so on --->\r\n</places>', u'name': u'flickr.places.placesForBoundingBox'
+            ], 'needslogin': False, u'response': u'<places place_type="neighbourhood" total="21"\r\n   pages="1" page="1" \r\n   bbox="-122.42307100000001,37.773779,-122.381071,37.815779">\r\n   <place place_id=".aaSwYSbApnq6seyGw" woeid="23512025"\r\n      latitude="37.788" longitude="-122.412" \r\n      place_url="/United+States/California/San+Francisco/Downtown"\r\n      place_type="neighbourhood">\r\n      Downtown, San Francisco, CA, US, United States\r\n   </place>\r\n   <place place_id="3KymK1GbCZ41eBVBxg" woeid="28288707"\r\n      latitude="37.776" longitude="-122.417" \r\n      place_url="/United+States/California/San+Francisco/Civic+Center"\r\n      place_type="neighbourhood">\r\n      Civic Center, San Francisco, CA, US, United States\r\n   </place>\r\n   <place place_id="9xdhxY.bAptvBjHo" woeid="2379855"   \r\n      latitude="37.796" longitude="-122.407" \r\n      place_url="/United+States/California/San+Francisco/Chinatown"\r\n      place_type="neighbourhood">\r\n      Chinatown, San Francisco, CA, US, United States\r\n   </place>\r\n   <!-- and so on -->\r\n</places>', u'name': u'flickr.places.placesForBoundingBox'
         }
-        , u'flickr.places.getTopPlacesList': {
-    u'errors': [{
-        'text': u'One or more required parameters with missing from your request.', u'message': u'Required parameter missing', u'code': u'1'
+        , u'flickr.groups.leave': {
+    'needssigning': True, u'requiredperms': 'delete', u'errors': [{
+        'text': u"The group_id doesn't exist", u'message': u'Required arguments missing', u'code': u'1'
             }
             , {
-        'text': u'An unknown or unsupported place type ID was passed with your request.', u'message': u'Not a valid place type.', u'code': u'2'
+        'text': u'The group by that ID does not exist', u'message': u'Group does not exist', u'code': u'2'
             }
             , {
-        'text': u'The date argument passed with your request is invalid.', u'message': u'Not a valid date.', u'code': u'3'
+        'text': u'The user is not a member of the group that was specified', u'message': u'Account is not in that group', u'code': u'3'
             }
             , {
-        'text': u'An invalid Places (or WOE) identifier was included with your request.', u'message': u'Not a valid Place ID', u'code': u'4'
+        'text': u'The passed signature was invalid.', u'message': u'Invalid signature', u'code': 96
+            }
+            , {
+        'text': u'The call required signing but no signature was sent.', u'message': u'Missing signature', u'code': 97
+            }
+            , {
+        'text': u'The login details or auth token passed were invalid.', u'message': u'Login failed / Invalid auth token', u'code': 98
+            }
+            , {
+        'text': u'The method requires user authentication but the user was not logged in, or the authenticated method call did not have the required permissions.', u'message': u'User not logged in / Insufficient permissions', u'code': 99
             }
             , {
         'text': u'The API key passed was not valid or has expired.', u'message': u'Invalid API Key', u'code': 100
@@ -8742,22 +9456,16 @@ u'flickr.photos.notes.delete': {
             , {
         'text': u'One or more arguments contained a URL that has been used for abuse on Flickr.', u'message': u'Bad URL found', u'code': 116
             }
-            ], u'description': u'Return the top 100 most geotagged places for a day.', 'needssigning': False, u'requiredperms': 'none', u'arguments': [{
+            ], u'arguments': [{
         'text': u'Your API application key. <a href="/services/api/misc.api_keys.html">See here</a> for more details.', u'optional': 0, u'name': u'api_key'
             }
             , {
-        'text': u'The numeric ID for a specific place type to cluster photos by. <br /><br />\r\n\r\nValid place type IDs are :\r\n\r\n<ul>\r\n<li><strong>22</strong>: neighbourhood</li>\r\n<li><strong>7</strong>: locality</li>\r\n<li><strong>8</strong>: region</li>\r\n<li><strong>12</strong>: country</li>\r\n<li><strong>29</strong>: continent</li>\r\n</ul>', u'optional': u'0', u'name': u'place_type_id'
+        'text': u'The NSID of the Group to leave', u'optional': u'0', u'name': u'group_id'
             }
             , {
-        'text': u'A valid date in YYYY-MM-DD format. The default is yesterday.', u'optional': u'1', u'name': u'date'
+        'text': u'Delete all photos by this user from the group', u'optional': u'1', u'name': u'delete_photos'
             }
-            , {
-        'text': u'Limit your query to only those top places belonging to a specific Where on Earth (WOE) identifier.', u'optional': u'1', u'name': u'woe_id'
-            }
-            , {
-        'text': u'Limit your query to only those top places belonging to a specific Flickr Places identifier.', u'optional': u'1', u'name': u'place_id'
-            }
-            ], 'needslogin': False, u'response': u'<places total="100" date_start="1246320000" date_stop="1246406399">\r\n   <place place_id="4KO02SibApitvSBieQ" woeid="23424977"\r\n       latitude="48.890" longitude="-116.982" \r\n       place_url="/United+States" place_type="country" \r\n       place_type_id="12" photo_count="23371">United States</place>\r\n   <!-- and so on... -->\r\n</places>', u'name': u'flickr.places.getTopPlacesList'
+            ], u'description': u'Leave a group.\r\n\r\n<br /><br />If the user is the only administrator left, and there are other members, the oldest member will be promoted to administrator.\r\n\r\n<br /><br />If the user is the last person in the group, the group will be deleted.', 'needslogin': True, u'name': u'flickr.groups.leave'
         }
         , u'flickr.galleries.getInfo': {
     u'errors': [{
