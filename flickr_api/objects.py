@@ -325,7 +325,86 @@ class Group(FlickrObject):
     ]
     __display__ = ["id","name"]
     __self_name__ = "group_id"
-    
+
+
+    class Topic(FlickrObject):
+        __display__ = ["id","subject"]
+        __self_name__ = "topic_id"
+
+        class Reply(FlickrObject):
+            __display__ = ["id"]
+            __self_name__ = "reply_id"
+
+            def getToken(self):
+                return self.topic.getToken()
+
+            @staticmethod
+            def _format_reply(reply):
+                author = {
+                    'id': reply.pop("author"),
+                    'role': reply.pop("role"),
+                    'is_pro': bool(reply.pop("is_pro")),
+                }
+                reply["author"] = Person(**author)
+                return reply
+
+            @caller("flickr.groups.discuss.replies.getInfo")
+            def getInfo(self, **args):
+                return args, self._format_reply(r["reply"])
+
+            @caller("flickr.groups.discuss.replies.delete")
+            def delete(self, **args):
+                args["topic_id"] = self.topic.id
+
+        def getToken(self):
+            return self.group.getToken()
+
+        @caller("flickr.groups.discuss.replies.add")
+        def addReply(self, **args):
+            return args, _none
+
+        @staticmethod
+        def _format_topic(topic):
+            """ reformat a topic dict
+            """
+
+            author = {
+                'id': topic.pop("author"),
+                'is_pro': bool(topic.pop('is_pro')),
+                'role': topic.pop("role"),
+            }
+            topic["author"] = Person(**author)
+            return topic
+
+        @caller("flickr.groups.discuss.topics.getInfo")
+        def getInfo(self, **args):
+            def format_result(r):
+                return self._format_topic(r["topic"])
+            return args, format_result
+
+        @caller("flickr.groups.discuss.replies.getList")
+        def getReplies(self, **args):
+            def format_result(r):
+                info = r["replies"]
+                return FlickrList([Group.Topic.Reply(topic=self, **Group.Topic.Reply._format_reply(rep))
+                                           for rep in info.pop("reply",[])], Info(**info))
+            return args, format_result
+
+        @caller("flickr.groups.discuss.replies.delete")
+        def delete(self, **args):
+            args["topic_id"] = self.topic.id
+            return args, _none
+
+        @caller("flickr.groups.discuss.replies.edit")
+        def edit(self, **args):
+            args["topic_id"] = self.topic.id
+            return args, _none
+
+
+    @caller("flickr.groups.discuss.topics.add")
+    def addDiscussTopic(**args):
+        return args, _none
+
     @static_caller("flickr.groups.browse")
     def browse(**args):
         def format_result(r,token):
@@ -381,6 +460,13 @@ class Group(FlickrObject):
     @caller("flickr.groups.pools.getContext")
     def getPoolContext(self,**args):
         return _format_id("photo",args), lambda r : Photo(**r["prevphoto"]),Photo(r["nextphoto"])
+
+    @caller("flickr.groups.discuss.topics.getList")
+    def getDiscussTopics(self, **args):
+        def format_result(r):
+            info = r["topics"]
+            return FlickrList([Group.Topic(group=self, **Group.Topic._format_topic(t)) for t in info.pop("topic",[])], Info(**info))
+        return args, format_result
     
     @static_caller("flickr.groups.pools.getGroups")
     def getGroups(**args):
@@ -397,6 +483,19 @@ class Group(FlickrObject):
     def removePhoto(self,**args):
         return _format_id("photo",args),_none
 
+    @caller("flickr.groups.join")
+    def join(self, **args):
+        return args, _none
+
+    @caller("flickr.groups.joinRequest")
+    def joinRequest(self, **args):
+        return args, _none
+
+    @caller("flickr.groups.leave")
+    def leave(self, **args):
+        return args, _none
+
+    
 
 class Licence(FlickrObject):
     __display__ = ["id","name"]
@@ -746,7 +845,7 @@ class Photo(FlickrObject):
             pools = []
             if r.has_key("pool"):
                 for p in r["pool"]:
-                    pools.append(Pool(token = token, **p))
+                    pools.append(Group(token = token, **p))
             return photosets,pools
         return args,format_result
     
