@@ -29,7 +29,7 @@ def post_multipart(host, selector, fields, files):
     content_type, body = encode_multipart_formdata(fields, files)
     h = httplib.HTTPConnection(host)
     headers = { "Content-Type": content_type, 'content-length': str(len(body)) }
-    h.request("POST",selector,body = body,headers = headers)
+    h.request("POST",selector,headers = headers)
     h.send(body)
     r = h.getresponse()
     h.close()

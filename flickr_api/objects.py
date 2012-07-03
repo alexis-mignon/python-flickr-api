@@ -724,9 +724,9 @@ class Photo(FlickrObject):
         return _format_id("place",args),_none
     
     @static_caller("flickr.photos.upload.checkTickets")
-    def checkUploadTickets(self,tickets,**args):
+    def checkUploadTickets(tickets,**args):
         def format_result(r,token = None):
-            tickets = r["wrapper"]["uploader"]["ticket"]
+            tickets = r["uploader"]["ticket"]
             if not isinstance(tickets,list):
                 tickets = [tickets]
             return [UploadTicket(**t) for t in tickets]

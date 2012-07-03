@@ -36,17 +36,17 @@ def format_dict(d):
         if isinstance(k,unicode):
             k = k.encode("utf8")
         v = str(v)
+        d_[k] = v
     return d_
 
 def post(url,auth_handler,args,photo_file):
     args = format_dict(args)
     args["api_key"] = method_call.API_KEY
-    args["format"] = 'json'
-    args["nojsoncallback"] = "1"
+
     params = auth_handler.complete_parameters(url,args).parameters
     
     fields = params.items()
-    
+
     files = [ ("photo",os.path.basename(photo_file),open(photo_file).read() )]
 
     r = multipart.posturl(url,fields,files)
@@ -86,15 +86,14 @@ def upload(**args):
             set to 1 for async mode, 0 for sync mode 
     
     """
-    if "async" not in args : args["async"] = True
+    if "async" not in args : args["async"] = False
     
     photo_file = args.pop("photo_file")
-
     r = post(UPLOAD_URL,auth.AUTH_HANDLER,args,photo_file)
 
     t = r[0]
     if t.tag == 'photoid' :
-        return Photo(id = t.text)
+        return Photo(id = t.text, editurl='http://www.flickr.com/photos/upload/edit/?ids='+t.text)
     elif t.tag == 'ticketid' :
         return UploadTicket(id = t.text)
     else :
