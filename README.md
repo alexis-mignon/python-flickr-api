@@ -14,8 +14,9 @@ Main features
   *  An interface for direct seamless calls to the Flickr API.
   *  A (django-complient) caching mechanism
 
-:Requires:
- * python >= 2.6.5 
- * python-oauth (or the python module from http://code.google.com/p/oauth/)
+Requires
+--------
+	* python >= 2.6.5 
+	* python-oauth (or the python module from http://code.google.com/p/oauth/)
 
 [![githalytics.com alpha](https://cruel-carlota.pagodabox.com/950bd311453e675e4a06ec3a5e99e420 "githalytics.com")](http://githalytics.com/alexis-mignon/python-flickr-api)
