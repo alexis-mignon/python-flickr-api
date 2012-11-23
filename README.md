@@ -5,7 +5,8 @@ The project provides an almost exhaustive access to the Flickr API, through an *
 The project is still at an early stage and requires a lot of testing.
 Any help including bug reports is appreciated.
 
-Main features :
+Main features
+-------------
   *  Object Oriented implementation
   *  (Almost) comprehensive implementation
   *  uses OAuth for authentication
@@ -13,7 +14,8 @@ Main features :
   *  An interface for direct seamless calls to the Flickr API.
   *  A (django-complient) caching mechanism
 
-requires:
+:Requires:
  * python >= 2.6.5 
  * python-oauth (or the python module from http://code.google.com/p/oauth/)
 
+[![githalytics.com alpha](https://cruel-carlota.pagodabox.com/950bd311453e675e4a06ec3a5e99e420 "githalytics.com")](http://githalytics.com/alexis-mignon/python-flickr-api)
