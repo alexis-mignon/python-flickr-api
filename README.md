@@ -1,3 +1,6 @@
+Python Flickr API
+-----------------
+
 As complete as possible implementation of Flickr API.
 
 The project provides an almost exhaustive access to the Flickr API, through an *object oriented* Python interface.
