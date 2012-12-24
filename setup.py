@@ -1,4 +1,4 @@
-from distutils.core import setup
+from setuptools import setup
 
 setup(
 	name = "flickr_api",
@@ -8,6 +8,8 @@ setup(
 	author_email = "alexis.mignon@gmail.com",
 	url = "http://code.google.com/p/python-flickr-api/",
 	packages = ["flickr_api"],
+	install_requires = [
+		"oauth",
+	],
 	license = "BSD License",
 )
-
