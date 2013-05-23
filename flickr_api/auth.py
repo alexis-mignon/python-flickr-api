@@ -36,7 +36,7 @@ from oauth import oauth
 import time
 import urlparse
 import urllib2
-import method_call
+import keys
 
 TOKEN_REQUEST_URL = "http://www.flickr.com/services/oauth/request_token"
 AUTHORIZE_URL = "http://www.flickr.com/services/oauth/authorize"
@@ -52,8 +52,8 @@ class AuthHandler(object):
                  access_token_key = None, access_token_secret = None,
                  request_token_key = None, request_token_secret = None):
 
-        self.key = key or method_call.API_KEY
-        self.secret = secret or method_call.API_SECRET
+        self.key = key or keys.API_KEY
+        self.secret = secret or keys.API_SECRET
 
         if self.key is None or self.secret is None:
             raise ValueError("API keys have not been set.")
@@ -170,7 +170,7 @@ class AuthHandler(object):
                 key,secret,access_key,access_secret = f.read().split("\n")
             except :
                 access_key,access_secret = f.read().split("\n")
-                key = API_KEY
+                key = keys.API_KEY
                 secret = API_SECRET
         return AuthHandler(key,secret,access_token_key = access_key,access_token_secret = access_secret)
 
@@ -188,8 +188,8 @@ class AuthHandler(object):
                 key = input_dict['api_key']
                 secret = input_dict['api_secret']
             else:
-                key = API_KEY
-                secret = API_SECRET
+                key = keys.API_KEY
+                secret = keys.API_SECRET
             if 'access_token_key' in input_dict:
                 access_key = input_dict['access_token_key']
                 access_secret = input_dict['access_token_secret']

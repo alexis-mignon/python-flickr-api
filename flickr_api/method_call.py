@@ -13,23 +13,9 @@ import urllib
 import hashlib
 import json
 
-from flickrerrors import FlickrError,FlickrAPIError
-from cache import SimpleCache
-
-API_KEY = None
-API_SECRET = None
-
-try :
-    import flickr_keys 
-    API_KEY = flickr_keys.API_KEY
-    API_SECRET = flickr_keys.API_SECRET
-except ImportError :
-    pass
-
-def set_keys(api_key,api_secret):
-    global API_KEY,API_SECRET
-    API_KEY = api_key
-    API_SECRET = api_secret
+from . import keys
+from .flickrerrors import FlickrError,FlickrAPIError
+from .cache import SimpleCache
 
 REST_URL = "http://api.flickr.com/services/rest/"
 
@@ -57,7 +43,7 @@ def call_api(api_key = None, api_secret = None, auth_handler = None, needssignin
         Performs the calls to the Flickr REST interface.
         
         Arguments :
-            api_key : The API_KEY to use, if none is given, the key from flickr_keys is used.
+            api_key : The keys.API_KEY to use, if none is given, the key from flickr_keys is used.
             api_secret : The API_SECRET to use, if none is given, the key from flickr_keys is used.
             auth_handler : The authentication handler object to use to perform authentication
             request_url : The url to the rest interface to use by default the url in REST_URL is used.
@@ -67,9 +53,9 @@ def call_api(api_key = None, api_secret = None, auth_handler = None, needssignin
     """
     
     if not api_key :
-        api_key = API_KEY
+        api_key = keys.API_KEY
     if not api_secret :
-        api_secret = API_SECRET
+        api_secret = keys.API_SECRET
     
     if not api_key or not api_secret :
         raise FlickrError("The Flickr API keys have not been set")

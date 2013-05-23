@@ -15,7 +15,7 @@
 """
 
 
-import method_call
+import keys
 from flickrerrors import FlickrError, FlickrAPIError
 from objects import Photo,UploadTicket
 import auth
@@ -41,7 +41,7 @@ def format_dict(d):
 
 def post(url,auth_handler,args,photo_file):
     args = format_dict(args)
-    args["api_key"] = method_call.API_KEY
+    args["api_key"] = keys.API_KEY
 
     params = auth_handler.complete_parameters(url,args).parameters
     

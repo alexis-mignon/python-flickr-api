@@ -30,13 +30,5 @@ except Exception, e:
     print type(e), e
     
 from auth import set_auth_handler
-from method_call import set_keys,enable_cache,disable_cache
-
-#~ def set_auth_handler(auth_handler):
-    #~ if isinstance(auth_handler,str):
-        #~ ah = AuthHandler.load(auth_handler)
-        #~ set_auth_handler(ah)
-    #~ else :
-        #~ objects.AUTH_HANDLER = auth_handler
-        #~ Upload.AUTH_HANDLER = auth_handler
-        #~ api.AUTH_HANDLER = auth_handler
+from method_call import enable_cache,disable_cache
+from keys import set_keys
