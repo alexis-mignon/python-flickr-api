@@ -34,7 +34,11 @@
 
 """
 
-from oauth import oauth
+try:  # fixes a reported bug. Seems that oauth can be packed in different ways.
+    from oauth import oauth
+except ImportError:
+    import oauth
+
 import time
 import urlparse
 import urllib2
