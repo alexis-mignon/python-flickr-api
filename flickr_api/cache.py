@@ -35,15 +35,17 @@ Designed to have the same interface as the `Django low-level cache API`_.
 Heavily inspired (read: mostly copied-and-pasted) from the Django framework -
 thanks to those guys for designing a simple and effective cache!
 
-.. _`Django low-level cache API`: http://www.djangoproject.com/documentation/cache/#the-low-level-cache-api
+.. _`Django low-level cache API`:
+    http://www.djangoproject.com/documentation/cache/#the-low-level-cache-api
 '''
 
 import threading
 import time
 
+
 class SimpleCache(object):
     '''Simple response cache for FlickrAPI calls.
-    
+
     This stores max 50 entries, timing them out after 120 seconds:
     >>> cache = SimpleCache(timeout=120, max_entries=50)
     '''
@@ -89,7 +91,7 @@ class SimpleCache(object):
         '''Set a value in the cache. If timeout is given, that timeout will be
         used for the key; otherwise the default cache timeout will be used.
         '''
-        
+
         if len(self.storage) >= self.max_entries:
             self.cull()
         if timeout is None:
@@ -99,7 +101,8 @@ class SimpleCache(object):
 
     @locking
     def delete(self, key):
-        '''Deletes a key from the cache, failing silently if it doesn't exist.'''
+        '''Deletes a key from the cache, failing silently if it doesn't exist.
+        '''
 
         if key in self.storage:
             del self.storage[key]
@@ -114,7 +117,7 @@ class SimpleCache(object):
     @locking
     def __contains__(self, key):
         '''Returns True if the key is in the cache and has not expired.'''
-        return self.has_key(key)
+        return key in self
 
     @locking
     def cull(self):
@@ -132,4 +135,3 @@ class SimpleCache(object):
         '''
 
         return len(self.storage)
-
