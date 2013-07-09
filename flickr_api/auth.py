@@ -259,6 +259,7 @@ def token_factory(filename=None, token_key=None, token_secret=None):
     else:
         return AuthHandler.load(filename)
 
+
 def set_auth_handler(auth_handler):
     global AUTH_HANDLER
     if isinstance(auth_handler, str):
