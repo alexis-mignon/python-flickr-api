@@ -57,6 +57,7 @@ def encode_multipart_formdata(fields, files):
         L.append('')
         L.append(value)
     for (key, filename, value) in files:
+        filename = filename.encode("utf8")
         L.append('--' + BOUNDARY)
         L.append(
             'Content-Disposition: form-data; name="%s"; filename="%s"' % (
