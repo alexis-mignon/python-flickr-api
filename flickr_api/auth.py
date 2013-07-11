@@ -9,7 +9,7 @@
     - Authorisation request:
     >>> a = AuthHandler(call_back_url)
     >>> a.get_authorization_url('write')
-    print  ('http: //www.flickr.com/services/oauth/'
+    print  ('http://www.flickr.com/services/oauth/'
             'authorize?oauth_token=xxxx&perms=write')
 
     - The user gives his authorization at the url given by
@@ -44,9 +44,9 @@ import urlparse
 import urllib2
 import keys
 
-TOKEN_REQUEST_URL = "http: //www.flickr.com/services/oauth/request_token"
-AUTHORIZE_URL = "http: //www.flickr.com/services/oauth/authorize"
-ACCESS_TOKEN_URL = "http: //www.flickr.com/services/oauth/access_token"
+TOKEN_REQUEST_URL = "http://www.flickr.com/services/oauth/request_token"
+AUTHORIZE_URL = "http://www.flickr.com/services/oauth/authorize"
+ACCESS_TOKEN_URL = "http://www.flickr.com/services/oauth/access_token"
 
 AUTH_HANDLER = None
 
