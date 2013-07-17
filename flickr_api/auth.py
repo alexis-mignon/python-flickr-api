@@ -67,7 +67,7 @@ class AuthHandler(object):
             raise ValueError("API keys have not been set.")
 
         if callback is None:
-            callback = ("http: //api.flickr.com/services/rest/"
+            callback = ("http://api.flickr.com/services/rest/"
                         "?method=flickr.test.echo&api_key=%s" % self.key)
 
         params = {
