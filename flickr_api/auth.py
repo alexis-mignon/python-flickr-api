@@ -217,7 +217,22 @@ class AuthHandler(object):
         return dump
 
     @staticmethod
-    def load(filename):
+    def load(filename, set_api_keys=False):
+        """ Load authentication information from a file.
+    
+    Parameters
+    ----------
+    filename: str
+        The file in which authentication information is stored.
+    
+    set_api_keys: bool, optional (default False)
+        If API keys are found in the file, should we use them to set the
+        API keys globally.
+        Default is False. The API keys should be stored separately from
+        authentication information. The recommanded way is to use a 
+        `flickr_keys.py` file. Setting `set_api_keys=True` should be considered
+        as a conveniency only for single user settings.
+"""
         return AuthHandler.fromfile(filename)
 
     @staticmethod
