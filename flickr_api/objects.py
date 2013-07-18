@@ -19,12 +19,11 @@
     email: alexis.mignon_at_gmail.com
     Date: 05/08/2011
 """
-import method_call
-from  flickrerrors import FlickrError
-from reflection import caller, static_caller, FlickrAutoDoc
+from .flickrerrors import FlickrError
+from .reflection import caller, static_caller, FlickrAutoDoc
 import urllib2
 from UserList import UserList
-import auth
+from . import auth
 
 try:
     import Image
@@ -226,7 +225,7 @@ class Collection(FlickrObject):
             collection = r["collection"]
             icon_photos = _check_list(collection["iconphotos"]["photo"])
             photos = []
-            for p in photos:
+            for p in icon_photos:
                 p["owner"] = Person(p["owner"])
                 photos.append(Photo(**p))
             collection["iconphotos"] = photos
@@ -720,7 +719,7 @@ class Person(FlickrObject):
             info = r["photosets"]
             photosets = info.pop("photoset")
             if not isinstance(photosets, list):
-                phototsets = [photosets]
+                photosets = [photosets]
             return FlickrList(
                 [Photoset(token=token, **ps) for ps in photosets],
                  Info(**info)
@@ -746,7 +745,7 @@ class Person(FlickrObject):
             galleries = _check_list(info.pop("gallery"))
             galleries_ = []
 
-            for g in galleries_:
+            for g in galleries:
                 g["owner"] = Person(g["owner"])
                 pp_id = g.pop("primary_photo_id")
                 pp_secret = g.pop("primary_photo_secret")
@@ -1065,7 +1064,7 @@ class Photo(FlickrObject):
             galleries = _check_list(info.pop("gallery"))
             galleries_ = []
 
-            for g in galleries_:
+            for g in galleries:
                 g["owner"] = Person(g["owner"])
                 pp_id = g.pop("primary_photo_id")
                 pp_secret = g.pop("primary_photo_secret")
@@ -1706,7 +1705,7 @@ class stats:
     def getCollectionReferrers(**args):
         def format_result(r):
             info = r["domain"]
-            referrers = [stats.Referrer(**r) for r in info.pop("referrer")]
+            referrers = [stats.Referrer(**ref) for ref in info.pop("referrer")]
             return FlickrList(referrers, Info(**info))
         return _format_id("collection", args), format_result
 
@@ -1726,7 +1725,7 @@ class stats:
     def getPhotoReferrers(**args):
         def format_result(r):
             info = r["domain"]
-            referrers = [stats.Referrer(**r) for r in info.pop("referrer")]
+            referrers = [stats.Referrer(**ref) for ref in info.pop("referrer")]
             return FlickrList(referrers, Info(**info))
         return _format_id("photo", args), format_result
 
@@ -1742,7 +1741,7 @@ class stats:
     def getPhotosetReferrers(**args):
         def format_result(r):
             info = r["domain"]
-            referrers = [stats.Referrer(**r) for r in info.pop("referrer")]
+            referrers = [stats.Referrer(**ref) for ref in info.pop("referrer")]
             return FlickrList(referrers, Info(**info))
         return _format_id("photoset", args), format_result
 
@@ -1758,7 +1757,7 @@ class stats:
     def getPhotostreamReferrers(**args):
         def format_result(r):
             info = r["domain"]
-            referrers = [stats.Referrer(**r) for r in info.pop("referrer")]
+            referrers = [stats.Referrer(**ref) for ref in info.pop("referrer")]
             return FlickrList(referrers, Info(**info))
         return args, format_result
 

@@ -11,9 +11,9 @@
 
 import re
 from functools import wraps
-import method_call
-import auth
-from flickrerrors import FlickrError
+from . import method_call
+from . import auth
+from .flickrerrors import FlickrError
 
 try:
     from methods import __methods__
