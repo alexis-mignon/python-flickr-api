@@ -168,18 +168,35 @@ class AuthHandler(object):
 
         return req
 
-    def tofile(self, filename):
+    def tofile(self, filename, include_api_keys=False):
+        """ saves authentication information to a file.
+    
+    Parameters:
+    ----------
+    filename: str
+        The name of the file to which we save the information.
+    
+    include_api_keys: bool, optional (default False)
+        Should we include the api keys in the file ? For security issues, it
+        is recommanded not to save the API keys information in several places
+        and the default behaviour is thus not to save the API keys.
+"""
         if self.access_token is None:
             raise AuthHandlerError("Access token not set yet.")
         with open(filename, "w") as f:
-            f.write("\n".join([self.key, self.secret, self.access_token.key,
-                               self.access_token.secret]))
+            if include_api_keys:
+                f.write("\n".join([self.key, self.secret,
+                        self.access_token.key, self.access_token.secret]))
+            else:
+                f.write("\n".join([self.access_token.key,
+                                   self.access_token.secret]))
+                
 
-    def save(self, filename):
-        self.tofile(filename)
+    def save(self, filename, include_api_keys=False):
+        self.tofile(filename, include_api_keys)
 
-    def write(self, filename):
-        self.tofile(filename)
+    def write(self, filename, include_api_keys=False):
+        self.tofile(filename, include_api_keys)
 
     def todict(self, include_api_keys=False):
         """
@@ -204,10 +221,27 @@ class AuthHandler(object):
         return AuthHandler.fromfile(filename)
 
     @staticmethod
-    def fromfile(filename):
+    def fromfile(filename, set_api_keys=False):
+        """ Load authentication information from a file.
+    
+    Parameters
+    ----------
+    filename: str
+        The file in which authentication information is stored.
+    
+    set_api_keys: bool, optional (default False)
+        If API keys are found in the file, should we use them to set the
+        API keys globally.
+        Default is False. The API keys should be stored separately from
+        authentication information. The recommanded way is to use a 
+        `flickr_keys.py` file. Setting `set_api_keys=True` should be considered
+        as a conveniency only for single user settings.
+"""
         with open(filename, "r") as f:
             try:
                 key, secret, access_key, access_secret = f.read().split("\n")
+                if set_api_keys:
+                    keys.set_keys(api_key=key, api_secret=secret)
             except:
                 access_key, access_secret = f.read().split("\n")
                 key = keys.API_KEY
@@ -260,10 +294,26 @@ def token_factory(filename=None, token_key=None, token_secret=None):
         return AuthHandler.load(filename)
 
 
-def set_auth_handler(auth_handler):
+def set_auth_handler(auth_handler, set_api_keys=False):
+    """ Set the authentication handler globally.
+    
+    Parameters
+    ----------
+    auth_handler: AuthHandler object or str
+        If a string is given, it corresponds to the file in which
+        authentication information is stored.
+    
+    set_api_keys: bool, optional (default False)
+        If API keys are found in the file, should we use them to set the
+        API keys globally.
+        Default is False. The API keys should be stored separately from
+        authentication information. The recommanded way is to use a 
+        `flickr_keys.py` file. Setting `set_api_keys=True` should be considered
+        as a conveniency only for single user settings.
+    """
     global AUTH_HANDLER
     if isinstance(auth_handler, str):
-        ah = AuthHandler.load(auth_handler)
+        ah = AuthHandler.load(auth_handler, set_api_keys)
         set_auth_handler(ah)
     else:
         AUTH_HANDLER = auth_handler

@@ -58,11 +58,13 @@ def call_api(api_key=None, api_secret=None, auth_handler=None,
 
     Parameters:
         api_key:
-            The keys.API_KEY to use, if none is given, the key from flickr_keys
-            is used.
+            The API_KEY to use. If none is given and a auth_handler is used
+            the key stored in the auth_handler is used, otherwise, the values
+            stored in the `flickr_keys` module are used.
         api_secret:
-            The API_SECRET to use, if none is given, the key from flickr_keys
-            is used.
+            The API_SECRET to use. If none is given and a auth_handler is used
+            the key stored in the auth_handler is used, otherwise, the values
+            stored in the `flickr_keys` module are used.
         auth_handler:
             The authentication handler object to use to perform authentication.
         request_url:
@@ -77,9 +79,15 @@ def call_api(api_key=None, api_secret=None, auth_handler=None,
     """
 
     if not api_key:
-        api_key = keys.API_KEY
+        if auth_handler is not None:
+            api_key = auth_handler.key
+        else:
+            api_key = keys.API_KEY
     if not api_secret:
-        api_secret = keys.API_SECRET
+        if auth_handler is not None:
+            api_secret = auth_handler.secret
+        else:
+            api_secret = keys.API_SECRET
 
     if not api_key or not api_secret:
         raise FlickrError("The Flickr API keys have not been set")
@@ -101,7 +109,6 @@ def call_api(api_key=None, api_secret=None, auth_handler=None,
             api_sig = m.digest()
             args["api_sig"] = api_sig
         data = urllib.urlencode(args)
-
     else:
         data = auth_handler.complete_parameters(
              url=request_url, params=args

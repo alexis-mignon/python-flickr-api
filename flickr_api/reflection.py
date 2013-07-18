@@ -10,7 +10,6 @@
 """
 
 import re
-import inspect
 from functools import wraps
 import method_call
 import auth
