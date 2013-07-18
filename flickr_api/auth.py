@@ -232,7 +232,7 @@ class AuthHandler(object):
         `flickr_keys.py` file. Setting `set_api_keys=True` should be considered
         as a conveniency only for single user settings.
 """
-        return AuthHandler.fromfile(filename)
+        return AuthHandler.fromfile(filename, set_api_keys)
 
     @staticmethod
     def fromfile(filename, set_api_keys=False):
@@ -257,7 +257,7 @@ class AuthHandler(object):
                 key, secret, access_key, access_secret = keys_info
                 if set_api_keys:
                     keys.set_keys(api_key=key, api_secret=secret)
-            except:
+            except ValueError:
                 access_key, access_secret = keys_info
                 key = keys.API_KEY
                 secret = keys.API_SECRET
