@@ -170,12 +170,12 @@ class AuthHandler(object):
 
     def tofile(self, filename, include_api_keys=False):
         """ saves authentication information to a file.
-    
+
     Parameters:
     ----------
     filename: str
         The name of the file to which we save the information.
-    
+
     include_api_keys: bool, optional (default False)
         Should we include the api keys in the file ? For security issues, it
         is recommanded not to save the API keys information in several places
@@ -190,7 +190,6 @@ class AuthHandler(object):
             else:
                 f.write("\n".join([self.access_token.key,
                                    self.access_token.secret]))
-                
 
     def save(self, filename, include_api_keys=False):
         self.tofile(filename, include_api_keys)
@@ -219,17 +218,17 @@ class AuthHandler(object):
     @staticmethod
     def load(filename, set_api_keys=False):
         """ Load authentication information from a file.
-    
+
     Parameters
     ----------
     filename: str
         The file in which authentication information is stored.
-    
+
     set_api_keys: bool, optional (default False)
         If API keys are found in the file, should we use them to set the
         API keys globally.
         Default is False. The API keys should be stored separately from
-        authentication information. The recommanded way is to use a 
+        authentication information. The recommanded way is to use a
         `flickr_keys.py` file. Setting `set_api_keys=True` should be considered
         as a conveniency only for single user settings.
 """
@@ -238,27 +237,28 @@ class AuthHandler(object):
     @staticmethod
     def fromfile(filename, set_api_keys=False):
         """ Load authentication information from a file.
-    
+
     Parameters
     ----------
     filename: str
         The file in which authentication information is stored.
-    
+
     set_api_keys: bool, optional (default False)
         If API keys are found in the file, should we use them to set the
         API keys globally.
         Default is False. The API keys should be stored separately from
-        authentication information. The recommanded way is to use a 
+        authentication information. The recommanded way is to use a
         `flickr_keys.py` file. Setting `set_api_keys=True` should be considered
         as a conveniency only for single user settings.
 """
         with open(filename, "r") as f:
+            keys_info = f.read().split("\n")
             try:
-                key, secret, access_key, access_secret = f.read().split("\n")
+                key, secret, access_key, access_secret = keys_info
                 if set_api_keys:
                     keys.set_keys(api_key=key, api_secret=secret)
             except:
-                access_key, access_secret = f.read().split("\n")
+                access_key, access_secret = keys_info
                 key = keys.API_KEY
                 secret = keys.API_SECRET
         return AuthHandler(key, secret, access_token_key=access_key,
@@ -311,18 +311,18 @@ def token_factory(filename=None, token_key=None, token_secret=None):
 
 def set_auth_handler(auth_handler, set_api_keys=False):
     """ Set the authentication handler globally.
-    
+
     Parameters
     ----------
     auth_handler: AuthHandler object or str
         If a string is given, it corresponds to the file in which
         authentication information is stored.
-    
+
     set_api_keys: bool, optional (default False)
         If API keys are found in the file, should we use them to set the
         API keys globally.
         Default is False. The API keys should be stored separately from
-        authentication information. The recommanded way is to use a 
+        authentication information. The recommanded way is to use a
         `flickr_keys.py` file. Setting `set_api_keys=True` should be considered
         as a conveniency only for single user settings.
     """
