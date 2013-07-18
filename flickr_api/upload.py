@@ -15,10 +15,10 @@
 """
 
 
-from flickrerrors import FlickrError, FlickrAPIError
-from objects import Photo, UploadTicket
-import auth
-import multipart
+from .flickrerrors import FlickrError, FlickrAPIError
+from .objects import Photo, UploadTicket
+from . import auth
+from . import multipart
 import os
 from xml.etree import ElementTree as ET
 
@@ -42,7 +42,7 @@ def format_dict(d):
 
 def post(url, auth_handler, args, photo_file):
     args = format_dict(args)
-    args["api_key"] = auth_handler.API_KEY
+    args["api_key"] = auth_handler.key
 
     params = auth_handler.complete_parameters(url, args).parameters
 
