@@ -134,7 +134,7 @@ class FlickrObject(object):
                 value = str(value)
             if len(value) > 20:
                 value = value[:20] + "..."
-            vals.append("%s = %s" % (k, value))
+            vals.append("%s=%s" % (k, value))
         return "%s(%s)" % (self.__class__.__name__, ", ".join(vals))
 
     def __repr__(self):
@@ -189,7 +189,7 @@ class Blog(FlickrObject):
 
 class BlogService(FlickrObject):
     __display__ = ["id", "text"]
-    __self_name__ = ["service"]
+    __self_name__ = "service"
 
     @caller("flickr.blogs.getList")
     def getList(self, **args):
@@ -216,9 +216,30 @@ class BlogService(FlickrObject):
                )
 
 
+class Camera(FlickrObject):
+    __display__ = ["name"]
+    __self_name__ = "camera"
+
+    class Brand(FlickrObject):
+        __display__ = ["name"]
+        __self_name__ = "brand"
+
+        @static_caller("flickr.cameras.getBrands")
+        def getList():
+            return ({},
+                    lambda r: [Camera.Brand(**b) for b in r["brands"]["brand"]]
+            )
+
+        @caller("flickr.cameras.getBrandModels")
+        def getModels(self):
+            return ({},
+                   lambda r: [Camera(**m) for m in r["cameras"]["camera"]]
+            )
+
+
 class Collection(FlickrObject):
     __display__ = ["id", "title"]
-    __self_name__ = ["collection_id"]
+    __self_name__ = "collection_id"
 
     @caller("flickr.collections.getInfo")
     def getInfo(self, **args):

@@ -675,6 +675,9 @@ u'flickr.photos.notes.delete': {
             , {
         'text': u'A Where On Earth (WOE) ID. (While optional, you must pass either a valid Places ID or a WOE ID.)', u'optional': u'1', u'name': u'woe_id'
             }
+            , {
+        'text': u'The venue ID for a Foursquare location. (If not passed in with correction, any existing foursquare venue will be removed).', u'optional': u'0', u'name': u'foursquare_id'
+            }
             ], u'description': u'', 'needslogin': True, u'name': u'flickr.photos.geo.correctLocation'
         }
         , u'flickr.photosets.getInfo': {
@@ -1616,6 +1619,12 @@ u'flickr.photos.notes.delete': {
             }
             , {
         'text': u'As an alternative to user_id, load a member based on URL, either photos or people URL.', u'optional': u'0', u'name': u'url'
+            }
+            , {
+        'text': u'If set to 1, it checks if the user is connected to Facebook and returns that information back.', u'optional': u'1', u'name': u'fb_connected'
+            }
+            , {
+        'text': u'If set to 1, it returns the storage information about the user, like the storage used and storage available.', u'optional': u'1', u'name': u'storage'
             }
             ], 'needslogin': False, u'response': u'<person nsid="12037949754@N01" ispro="0" iconserver="122" iconfarm="1">\r\n\t<username>bees</username>\r\n\t<realname>Cal Henderson</realname>\r\n        <mbox_sha1sum>eea6cd28e3d0003ab51b0058a684d94980b727ac</mbox_sha1sum>\r\n\t<location>Vancouver, Canada</location>\r\n\t<photosurl>http://www.flickr.com/photos/bees/</photosurl> \r\n\t<profileurl>http://www.flickr.com/people/bees/</profileurl> \r\n\t<photos>\r\n\t\t<firstdate>1071510391</firstdate>\r\n\t\t<firstdatetaken>1900-09-02 09:11:24</firstdatetaken>\r\n\t\t<count>449</count>\r\n\t</photos>\r\n</person>', u'description': u'Get information about a user.'
         }
@@ -2645,6 +2654,39 @@ u'flickr.photos.notes.delete': {
             }
             ], 'needslogin': True, u'response': u'  <gallery id="50736-72157623680420409" url="http://www.flickr.com/photos/kellan/galleries/72157623680420409" /> \r\n', u'description': u'Create a new gallery for the calling user.'
         }
+        , u'flickr.cameras.getBrandModels': {
+    u'errors': [{
+        'text': u'Unable to find the given brand ID.', u'message': u'Brand not found', u'code': u'1'
+            }
+            , {
+        'text': u'The API key passed was not valid or has expired.', u'message': u'Invalid API Key', u'code': 100
+            }
+            , {
+        'text': u'The requested service is temporarily unavailable.', u'message': u'Service currently unavailable', u'code': 105
+            }
+            , {
+        'text': u'The requested response format was not found.', u'message': u'Format "xxx" not found', u'code': 111
+            }
+            , {
+        'text': u'The requested method was not found.', u'message': u'Method "xxx" not found', u'code': 112
+            }
+            , {
+        'text': u'The SOAP envelope send in the request could not be parsed.', u'message': u'Invalid SOAP envelope', u'code': 114
+            }
+            , {
+        'text': u'The XML-RPC request document could not be parsed.', u'message': u'Invalid XML-RPC Method Call', u'code': 115
+            }
+            , {
+        'text': u'One or more arguments contained a URL that has been used for abuse on Flickr.', u'message': u'Bad URL found', u'code': 116
+            }
+            ], u'description': u'Retrieve all the models for a given camera brand.', 'needssigning': False, u'requiredperms': 'none', u'arguments': [{
+        'text': u'Your API application key. <a href="/services/api/misc.api_keys.html">See here</a> for more details.', u'optional': 0, u'name': u'api_key'
+            }
+            , {
+        'text': u'The ID of the requested brand (as returned from flickr.cameras.getBrands).', u'optional': u'0', u'name': u'brand'
+            }
+            ], 'needslogin': False, u'response': u'<rsp stat="ok">\r\n  <cameras brand="apple">\r\n    <camera id="iphone_9000">\r\n      <name>iPhone 9000</name>\r\n      <details>\r\n        <megapixels>22.0</megapixels>\r\n        <zoom>3.0</zoom>\r\n        <lcd_size>40.5</lcd_size>\r\n        <storage_type>Flash</storage_type>\r\n      </details>\r\n      <images>\r\n        <small>http://farm3.staticflickr.com/1234/cameras/123456_model_small_123456.jpg</small>\r\n        <large>http://farm3.staticflickr.com/1234/cameras/123456_model_large_123456.jpg</large>\r\n      </images>\r\n    </camera>\r\n  </cameras>\r\n</rsp>', u'name': u'flickr.cameras.getBrandModels'
+        }
         , u'flickr.groups.discuss.topics.getList': {
     u'errors': [{
         'text': u'The group_id is invalid', u'message': u'Group not found', u'code': u'1'
@@ -3482,6 +3524,9 @@ u'flickr.photos.notes.delete': {
             }
             , {
         'text': u'The venue ID for a Foursquare location.', u'optional': u'1', u'name': u'foursquare_id'
+            }
+            , {
+        'text': u'A Where On Earth (WOE) ID. (If passed in, will override the default venue based on the lat/lon.)', u'optional': u'1', u'name': u'woeid'
             }
             ], u'description': u'Sets the geo data (latitude and longitude and, optionally, the accuracy level) for a photo.\r\n\r\nBefore users may assign location data to a photo they must define who, by default, may view that information. Users can edit this preference at <a href="http://www.flickr.com/account/geo/privacy/">http://www.flickr.com/account/geo/privacy/</a>. If a user has not set this preference, the API method will return an error.', 'needslogin': True, u'name': u'flickr.photos.geo.setLocation'
         }
@@ -6098,14 +6143,8 @@ u'flickr.photos.notes.delete': {
             }
             ], u'description': u'Remove a photo from a photoset.', 'needslogin': True, u'name': u'flickr.photosets.removePhoto'
         }
-        , u'flickr.machinetags.getPairs': {
+        , u'flickr.cameras.getBrands': {
     u'errors': [{
-        'text': u'Missing or invalid namespace argument.', u'message': u'Not a valid namespace', u'code': u'1'
-            }
-            , {
-        'text': u'Missing or invalid predicate argument.', u'message': u'Not a valid predicate', u'code': u'2'
-            }
-            , {
         'text': u'The API key passed was not valid or has expired.', u'message': u'Invalid API Key', u'code': 100
             }
             , {
@@ -6126,22 +6165,10 @@ u'flickr.photos.notes.delete': {
             , {
         'text': u'One or more arguments contained a URL that has been used for abuse on Flickr.', u'message': u'Bad URL found', u'code': 116
             }
-            ], u'description': u'Return a list of unique namespace and predicate pairs, optionally limited by predicate or namespace, in alphabetical order.', 'needssigning': False, u'requiredperms': 'none', u'arguments': [{
+            ], u'description': u'Returns all the brands of cameras that Flickr knows about.', 'needssigning': False, u'requiredperms': 'none', u'arguments': [{
         'text': u'Your API application key. <a href="/services/api/misc.api_keys.html">See here</a> for more details.', u'optional': 0, u'name': u'api_key'
             }
-            , {
-        'text': u'Limit the list of pairs returned to those that have the following namespace.', u'optional': u'1', u'name': u'namespace'
-            }
-            , {
-        'text': u'Limit the list of pairs returned to those that have the following predicate.', u'optional': u'1', u'name': u'predicate'
-            }
-            , {
-        'text': u'Number of photos to return per page. If this argument is omitted, it defaults to 100. The maximum allowed value is 500.', u'optional': u'1', u'name': u'per_page'
-            }
-            , {
-        'text': u'The page of results to return. If this argument is omitted, it defaults to 1.', u'optional': u'1', u'name': u'page'
-            }
-            ], 'needslogin': False, u'response': u'<pairs page="1" total="1228" perpage="500" pages="3">\r\n   <pair namespace="aero" predicate="airline" usage="1093">aero:airline</pair>\r\n   <pair namespace="aero" predicate="icao" usage="4">aero:icao</pair>\r\n   <pair namespace="aero" predicate="model" usage="1026">aero:model</pair>\r\n   <pair namespace="aero" predicate="tail" usage="1048">aero:tail</pair>\r\n</pairs>', u'name': u'flickr.machinetags.getPairs'
+            ], 'needslogin': False, u'response': u'<rsp stat="ok">\r\n<brands>\r\n\t<brand id="canon">Canon</brand>\r\n\t<brand id="nikon">Nikon</brand>\r\n        <brand id="apple">Apple</brand>\r\n</brands>\r\n</rsp>', u'name': u'flickr.cameras.getBrands'
         }
         , u'flickr.photos.getWithoutGeoData': {
     'needssigning': True, u'requiredperms': 'read', u'errors': [{
@@ -6407,33 +6434,12 @@ u'flickr.photos.notes.delete': {
             }
             ], 'needslogin': False, u'response': u'<photo id="1253576" secret="81b96be690" server="1" farm="1"\r\n\tpage="1" pages="3" perpage="10" total="27">\r\n\t<person nsid="33939862@N00" username="Dementation" favedate="1166689690"/>\r\n\t<person nsid="49485425@N00" username="indigenous_prodigy" favedate="1166573724"/>\r\n\t<person nsid="46834205@N00" username="smaaz" favedate="1161874052"/>\r\n\t<person nsid="95626108@N00" username="chrome Foxpuppy" favedate="1160528154"/>\r\n\t<person nsid="44991966@N00" username="getnoid" favedate="1159828789"/>\r\n\t<person nsid="92544710@N00" username="miss_rogue" favedate="1158034266"/>\r\n\t<person nsid="50944224@N00" username="Infollatus" favedate="1155317436"/>\r\n\t<person nsid="80544408@N00" username="DafyddLlyr" favedate="1148511763"/>\r\n\t<person nsid="31154299@N00" username="c r i s" favedate="1143085224"/>\r\n\t<person nsid="54309070@N00" username="Shinayaker" favedate="1142584219"/>\r\n</photo>', u'name': u'flickr.photos.getFavorites'
         }
-        , u'flickr.push.unsubscribe': {
-    'needssigning': True, u'requiredperms': 'read', u'errors': [{
-        'text': u'One of the required arguments for the method was not provided.', u'message': u'Required parameter missing', u'code': u'1'
+        , u'flickr.machinetags.getPairs': {
+    u'errors': [{
+        'text': u'Missing or invalid namespace argument.', u'message': u'Not a valid namespace', u'code': u'1'
             }
             , {
-        'text': u'One of the arguments was specified with an illegal value.', u'message': u'Invalid parameter value', u'code': u'2'
-            }
-            , {
-        'text': u'The verification callback failed, or failed to return the expected response to confirm the un-subscription.', u'message': u'Callback failed or invalid response', u'code': u'4'
-            }
-            , {
-        'text': u'A subscription with those details exists already, but it is in a pending (non-verified) state. Please wait a bit for the verification callback to complete before attempting to update the subscription.', u'message': u'Subscription awaiting verification callback response - try again later', u'code': u'6'
-            }
-            , {
-        'text': u'No subscription matching the provided details for this user could be found.', u'message': u'Subscription not found', u'code': u'7'
-            }
-            , {
-        'text': u'The passed signature was invalid.', u'message': u'Invalid signature', u'code': 96
-            }
-            , {
-        'text': u'The call required signing but no signature was sent.', u'message': u'Missing signature', u'code': 97
-            }
-            , {
-        'text': u'The login details or auth token passed were invalid.', u'message': u'Login failed / Invalid auth token', u'code': 98
-            }
-            , {
-        'text': u'The method requires user authentication but the user was not logged in, or the authenticated method call did not have the required permissions.', u'message': u'User not logged in / Insufficient permissions', u'code': 99
+        'text': u'Missing or invalid predicate argument.', u'message': u'Not a valid predicate', u'code': u'2'
             }
             , {
         'text': u'The API key passed was not valid or has expired.', u'message': u'Invalid API Key', u'code': 100
@@ -6456,22 +6462,52 @@ u'flickr.photos.notes.delete': {
             , {
         'text': u'One or more arguments contained a URL that has been used for abuse on Flickr.', u'message': u'Bad URL found', u'code': 116
             }
-            ], u'arguments': [{
+            ], u'description': u'Return a list of unique namespace and predicate pairs, optionally limited by predicate or namespace, in alphabetical order.', 'needssigning': False, u'requiredperms': 'none', u'arguments': [{
         'text': u'Your API application key. <a href="/services/api/misc.api_keys.html">See here</a> for more details.', u'optional': 0, u'name': u'api_key'
             }
             , {
-        'text': u'The type of subscription. See <a href="http://www.flickr.com/services/api/flickr.push.getTopics.htm">flickr.push.getTopics</a>.', u'optional': u'0', u'name': u'topic'
+        'text': u'Limit the list of pairs returned to those that have the following namespace.', u'optional': u'1', u'name': u'namespace'
             }
             , {
-        'text': u'The url for the subscription endpoint (must be the same url as was used when creating the subscription).', u'optional': u'0', u'name': u'callback'
+        'text': u'Limit the list of pairs returned to those that have the following predicate.', u'optional': u'1', u'name': u'predicate'
             }
             , {
-        'text': u'The verification mode, either \'sync\' or \'async\'. See the <a href="http://pubsubhubbub.googlecode.com/svn/trunk/pubsubhubbub-core-0.3.html#subscribingl">Google PubSubHubbub spec</a> for details.', u'optional': u'0', u'name': u'verify'
+        'text': u'Number of photos to return per page. If this argument is omitted, it defaults to 100. The maximum allowed value is 500.', u'optional': u'1', u'name': u'per_page'
             }
             , {
-        'text': u'The verification token to be echoed back to the subscriber during the verification callback, as per the <a href="http://pubsubhubbub.googlecode.com/svn/trunk/pubsubhubbub-core-0.3.html#subscribing">Google PubSubHubbub spec</a>. Limited to 200 bytes.', u'optional': u'1', u'name': u'verify_token'
+        'text': u'The page of results to return. If this argument is omitted, it defaults to 1.', u'optional': u'1', u'name': u'page'
             }
-            ], u'description': u'Why would you want to do this?\r\n<br><br>\r\n<i>(this method is experimental and may change)</i>', 'needslogin': True, u'name': u'flickr.push.unsubscribe'
+            ], 'needslogin': False, u'response': u'<pairs page="1" total="1228" perpage="500" pages="3">\r\n   <pair namespace="aero" predicate="airline" usage="1093">aero:airline</pair>\r\n   <pair namespace="aero" predicate="icao" usage="4">aero:icao</pair>\r\n   <pair namespace="aero" predicate="model" usage="1026">aero:model</pair>\r\n   <pair namespace="aero" predicate="tail" usage="1048">aero:tail</pair>\r\n</pairs>', u'name': u'flickr.machinetags.getPairs'
+        }
+        , u'flickr.urls.lookupGallery': {
+    u'errors': [{
+        'text': u'The API key passed was not valid or has expired.', u'message': u'Invalid API Key', u'code': 100
+            }
+            , {
+        'text': u'The requested service is temporarily unavailable.', u'message': u'Service currently unavailable', u'code': 105
+            }
+            , {
+        'text': u'The requested response format was not found.', u'message': u'Format "xxx" not found', u'code': 111
+            }
+            , {
+        'text': u'The requested method was not found.', u'message': u'Method "xxx" not found', u'code': 112
+            }
+            , {
+        'text': u'The SOAP envelope send in the request could not be parsed.', u'message': u'Invalid SOAP envelope', u'code': 114
+            }
+            , {
+        'text': u'The XML-RPC request document could not be parsed.', u'message': u'Invalid XML-RPC Method Call', u'code': 115
+            }
+            , {
+        'text': u'One or more arguments contained a URL that has been used for abuse on Flickr.', u'message': u'Bad URL found', u'code': 116
+            }
+            ], u'name': u'flickr.urls.lookupGallery', u'explanation': u'This is the same format returned by <a href="http://www.flickr.com/services/api/flickr.galleries.getInfo.html">flickr.galleries.getInfo</a>.', 'needssigning': False, u'requiredperms': 'none', u'arguments': [{
+        'text': u'Your API application key. <a href="/services/api/misc.api_keys.html">See here</a> for more details.', u'optional': 0, u'name': u'api_key'
+            }
+            , {
+        'text': u"The gallery's URL.", u'optional': u'0', u'name': u'url'
+            }
+            ], 'needslogin': False, u'response': u'<gallery id="6065-72157617483228192" url="/photos/straup/galleries/72157617483228192" owner="35034348999@N01" \r\nprimary_photo_id="292882708" \r\ndate_create="1241028772" date_update="1270111667" \r\ncount_photos="17" count_videos="0" server="112" farm="1" secret="7f29861bc4">\r\n\t<title>Cat Pictures I\'ve Sent To Kevin Collins</title>\r\n\t<description />\r\n</gallery>', u'description': u'Returns gallery info, by url.'
         }
         , u'flickr.test.echo': {
     u'errors': [{
@@ -7646,8 +7682,32 @@ u'flickr.photos.notes.delete': {
             }
             ], u'description': u'Set the meta information for a photo.', 'needslogin': True, u'name': u'flickr.photos.setMeta'
         }
-        , u'flickr.urls.lookupGallery': {
+        , u'flickr.stats.getPhotoDomains': {
     u'errors': [{
+        'text': u'The user you have requested stats has not enabled stats on their account.', u'message': u'User does not have stats', u'code': u'1'
+            }
+            , {
+        'text': u'No stats are available for the date requested. Flickr only keeps stats data for the last 28 days.', u'message': u'No stats for that date', u'code': u'2'
+            }
+            , {
+        'text': u'The date provided could not be parsed', u'message': u'Invalid date', u'code': u'3'
+            }
+            , {
+        'text': u'The photo id was either invalid or was for a photo not owned by the calling user.', u'message': u'Photo not found', u'code': u'4'
+            }
+            , {
+        'text': u'The passed signature was invalid.', u'message': u'Invalid signature', u'code': 96
+            }
+            , {
+        'text': u'The call required signing but no signature was sent.', u'message': u'Missing signature', u'code': 97
+            }
+            , {
+        'text': u'The login details or auth token passed were invalid.', u'message': u'Login failed / Invalid auth token', u'code': 98
+            }
+            , {
+        'text': u'The method requires user authentication but the user was not logged in, or the authenticated method call did not have the required permissions.', u'message': u'User not logged in / Insufficient permissions', u'code': 99
+            }
+            , {
         'text': u'The API key passed was not valid or has expired.', u'message': u'Invalid API Key', u'code': 100
             }
             , {
@@ -7668,13 +7728,22 @@ u'flickr.photos.notes.delete': {
             , {
         'text': u'One or more arguments contained a URL that has been used for abuse on Flickr.', u'message': u'Bad URL found', u'code': 116
             }
-            ], u'name': u'flickr.urls.lookupGallery', u'explanation': u'This is the same format returned by <a href="http://www.flickr.com/services/api/flickr.galleries.getInfo.html">flickr.galleries.getInfo</a>.', 'needssigning': False, u'requiredperms': 'none', u'arguments': [{
+            ], u'name': u'flickr.stats.getPhotoDomains', u'explanation': u'<p>There is one <code>&lt;domain&gt;</code> element for each referring domain, with attributes for the domain name and the number of views.</p>\r\n\r\n<p>For details on the referrers coming from each domain listed you can call <a href="/services/api/flickr.stats.getPhotoReferrers.html">flickr.stats.getPhotoReferrers</a></p>', 'needssigning': True, u'requiredperms': 'read', u'arguments': [{
         'text': u'Your API application key. <a href="/services/api/misc.api_keys.html">See here</a> for more details.', u'optional': 0, u'name': u'api_key'
             }
             , {
-        'text': u"The gallery's URL.", u'optional': u'0', u'name': u'url'
+        'text': u'Stats will be returned for this date. This should be in either be in YYYY-MM-DD or unix timestamp format.\r\n\r\nA day according to Flickr Stats starts at midnight GMT for all users, and timestamps will automatically be rounded down to the start of the day.', u'optional': u'0', u'name': u'date'
             }
-            ], 'needslogin': False, u'response': u'<gallery id="6065-72157617483228192" url="/photos/straup/galleries/72157617483228192" owner="35034348999@N01" \r\nprimary_photo_id="292882708" \r\ndate_create="1241028772" date_update="1270111667" \r\ncount_photos="17" count_videos="0" server="112" farm="1" secret="7f29861bc4">\r\n\t<title>Cat Pictures I\'ve Sent To Kevin Collins</title>\r\n\t<description />\r\n</gallery>', u'description': u'Returns gallery info, by url.'
+            , {
+        'text': u'The id of the photo to get stats for. If not provided, stats for all photos will be returned.', u'optional': u'1', u'name': u'photo_id'
+            }
+            , {
+        'text': u'Number of domains to return per page. If this argument is omitted, it defaults to 25. The maximum allowed value is 100.', u'optional': u'1', u'name': u'per_page'
+            }
+            , {
+        'text': u'The page of results to return. If this argument is omitted, it defaults to 1.', u'optional': u'1', u'name': u'page'
+            }
+            ], 'needslogin': True, u'response': u'<domains page="1" perpage="25" pages="1" total="3">\r\n\t<domain name="images.search.yahoo.com" views="127" />\r\n\t<domain name="flickr.com" views="122" />\r\n\t<domain name="images.google.com" views="70" />\r\n</domains>\r\n', u'description': u'Get a list of referring domains for a photo'
         }
         , u'flickr.groups.discuss.topics.add': {
     'needssigning': True, u'requiredperms': 'write', u'errors': [{
@@ -8241,6 +8310,15 @@ u'flickr.photos.notes.delete': {
             , {
         'text': u'The query string to use for place ID lookups', u'optional': u'0', u'name': u'query'
             }
+            , {
+        'text': u'A bounding box for limiting the area to query.', u'optional': u'1', u'name': u'bbox'
+            }
+            , {
+        'text': u'Secret sauce.', u'optional': u'1', u'name': u'extras'
+            }
+            , {
+        'text': u'Do we want sexy time words in our venue results?', u'optional': u'1', u'name': u'safe'
+            }
             ], 'needslogin': False, u'response': u'<places query="Alabama" total="3">\r\n   <place place_id="VrrjuESbApjeFS4." woeid="2347559"\r\n               latitude="32.614" longitude="-86.680"\r\n               place_url="/United+States/Alabama"\r\n               place_type="region">Alabama, Alabama, United States</place>\r\n   <place place_id="cGHuc0mbApmzEHoP" woeid="2352520"\r\n               latitude="43.096" longitude="-78.389"\r\n               place_url="/United+States/New+York/Alabama"\r\n               place_type="locality">Alabama, New York, United States</place>\r\n   <place place_id="o4yVPEqYBJvFMP8Q" woeid="1579389"\r\n               latitude="-26.866" longitude="26.583"\r\n               place_url="/South+Africa/North+West/Alabama"\r\n               place_type="locality">Alabama, North West, South Africa</place>\r\n</places>', u'description': u'Return a list of place IDs for a query string.<br /><br />\r\nThe flickr.places.find method is <b>not</b> a geocoder. It will round <q>up</q> to the nearest place type to which place IDs apply. For example, if you pass it a street level address it will return the city that contains the address rather than the street, or building, itself.'
         }
         , u'flickr.photosets.comments.editComment': {
@@ -8700,7 +8778,7 @@ u'flickr.photos.notes.delete': {
             ], u'description': u'Fetches a list of available photo licenses for Flickr.', 'needssigning': False, u'requiredperms': 'none', u'arguments': [{
         'text': u'Your API application key. <a href="/services/api/misc.api_keys.html">See here</a> for more details.', u'optional': 0, u'name': u'api_key'
             }
-            ], 'needslogin': False, u'response': u'<licenses>\r\n\t<license id="4" name="Attribution License"\r\n\t\turl="http://creativecommons.org/licenses/by/2.0/" /> \r\n\t<license id="6" name="Attribution-NoDerivs License"\r\n\t\turl="http://creativecommons.org/licenses/by-nd/2.0/" /> \r\n\t<license id="3" name="Attribution-NonCommercial-NoDerivs License"\r\n\t\turl="http://creativecommons.org/licenses/by-nc-nd/2.0/" /> \r\n\t<license id="2" name="Attribution-NonCommercial License"\r\n\t\turl="http://creativecommons.org/licenses/by-nc/2.0/" /> \r\n\t<license id="1" name="Attribution-NonCommercial-ShareAlike License"\r\n\t\turl="http://creativecommons.org/licenses/by-nc-sa/2.0/" /> \r\n\t<license id="5" name="Attribution-ShareAlike License"\r\n\t\turl="http://creativecommons.org/licenses/by-sa/2.0/" /> \r\n\t<license id="7" name="No known copyright restrictions"\r\n\t\turl="http://flickr.com/commons/usage/" />\r\n</licenses>', u'name': u'flickr.photos.licenses.getInfo'
+            ], 'needslogin': False, u'response': u'<licenses>\r\n        <license id="0" name="All Rights Reserved" url="" />\r\n\t<license id="1" name="Attribution-NonCommercial-ShareAlike License"\r\n\t\turl="http://creativecommons.org/licenses/by-nc-sa/2.0/" /> \r\n\t<license id="2" name="Attribution-NonCommercial License"\r\n\t\turl="http://creativecommons.org/licenses/by-nc/2.0/" /> \r\n\t<license id="3" name="Attribution-NonCommercial-NoDerivs License"\r\n\t\turl="http://creativecommons.org/licenses/by-nc-nd/2.0/" /> \r\n\t<license id="4" name="Attribution License"\r\n\t\turl="http://creativecommons.org/licenses/by/2.0/" /> \r\n\t<license id="5" name="Attribution-ShareAlike License"\r\n\t\turl="http://creativecommons.org/licenses/by-sa/2.0/" /> \r\n\t<license id="6" name="Attribution-NoDerivs License"\r\n\t\turl="http://creativecommons.org/licenses/by-nd/2.0/" /> \r\n\t<license id="7" name="No known copyright restrictions"\r\n\t\turl="http://flickr.com/commons/usage/" />\r\n        <license id="8" name="United States Government Work"\r\n                url="http://www.usa.gov/copyright.shtml" />\r\n</licenses>', u'name': u'flickr.photos.licenses.getInfo'
         }
         , u'flickr.groups.pools.add': {
     'needssigning': True, u'requiredperms': 'write', u'errors': [{
@@ -8867,18 +8945,21 @@ u'flickr.photos.notes.delete': {
             }
             ], u'description': u'Delete a photoset.', 'needslogin': True, u'name': u'flickr.photosets.delete'
         }
-        , u'flickr.stats.getPhotoDomains': {
-    u'errors': [{
-        'text': u'The user you have requested stats has not enabled stats on their account.', u'message': u'User does not have stats', u'code': u'1'
+        , u'flickr.push.unsubscribe': {
+    'needssigning': True, u'requiredperms': 'read', u'errors': [{
+        'text': u'One of the required arguments for the method was not provided.', u'message': u'Required parameter missing', u'code': u'1'
             }
             , {
-        'text': u'No stats are available for the date requested. Flickr only keeps stats data for the last 28 days.', u'message': u'No stats for that date', u'code': u'2'
+        'text': u'One of the arguments was specified with an illegal value.', u'message': u'Invalid parameter value', u'code': u'2'
             }
             , {
-        'text': u'The date provided could not be parsed', u'message': u'Invalid date', u'code': u'3'
+        'text': u'The verification callback failed, or failed to return the expected response to confirm the un-subscription.', u'message': u'Callback failed or invalid response', u'code': u'4'
             }
             , {
-        'text': u'The photo id was either invalid or was for a photo not owned by the calling user.', u'message': u'Photo not found', u'code': u'4'
+        'text': u'A subscription with those details exists already, but it is in a pending (non-verified) state. Please wait a bit for the verification callback to complete before attempting to update the subscription.', u'message': u'Subscription awaiting verification callback response - try again later', u'code': u'6'
+            }
+            , {
+        'text': u'No subscription matching the provided details for this user could be found.', u'message': u'Subscription not found', u'code': u'7'
             }
             , {
         'text': u'The passed signature was invalid.', u'message': u'Invalid signature', u'code': 96
@@ -8913,22 +8994,22 @@ u'flickr.photos.notes.delete': {
             , {
         'text': u'One or more arguments contained a URL that has been used for abuse on Flickr.', u'message': u'Bad URL found', u'code': 116
             }
-            ], u'name': u'flickr.stats.getPhotoDomains', u'explanation': u'<p>There is one <code>&lt;domain&gt;</code> element for each referring domain, with attributes for the domain name and the number of views.</p>\r\n\r\n<p>For details on the referrers coming from each domain listed you can call <a href="/services/api/flickr.stats.getPhotoReferrers.html">flickr.stats.getPhotoReferrers</a></p>', 'needssigning': True, u'requiredperms': 'read', u'arguments': [{
+            ], u'arguments': [{
         'text': u'Your API application key. <a href="/services/api/misc.api_keys.html">See here</a> for more details.', u'optional': 0, u'name': u'api_key'
             }
             , {
-        'text': u'Stats will be returned for this date. This should be in either be in YYYY-MM-DD or unix timestamp format.\r\n\r\nA day according to Flickr Stats starts at midnight GMT for all users, and timestamps will automatically be rounded down to the start of the day.', u'optional': u'0', u'name': u'date'
+        'text': u'The type of subscription. See <a href="http://www.flickr.com/services/api/flickr.push.getTopics.htm">flickr.push.getTopics</a>.', u'optional': u'0', u'name': u'topic'
             }
             , {
-        'text': u'The id of the photo to get stats for. If not provided, stats for all photos will be returned.', u'optional': u'1', u'name': u'photo_id'
+        'text': u'The url for the subscription endpoint (must be the same url as was used when creating the subscription).', u'optional': u'0', u'name': u'callback'
             }
             , {
-        'text': u'Number of domains to return per page. If this argument is omitted, it defaults to 25. The maximum allowed value is 100.', u'optional': u'1', u'name': u'per_page'
+        'text': u'The verification mode, either \'sync\' or \'async\'. See the <a href="http://pubsubhubbub.googlecode.com/svn/trunk/pubsubhubbub-core-0.3.html#subscribingl">Google PubSubHubbub spec</a> for details.', u'optional': u'0', u'name': u'verify'
             }
             , {
-        'text': u'The page of results to return. If this argument is omitted, it defaults to 1.', u'optional': u'1', u'name': u'page'
+        'text': u'The verification token to be echoed back to the subscriber during the verification callback, as per the <a href="http://pubsubhubbub.googlecode.com/svn/trunk/pubsubhubbub-core-0.3.html#subscribing">Google PubSubHubbub spec</a>. Limited to 200 bytes.', u'optional': u'1', u'name': u'verify_token'
             }
-            ], 'needslogin': True, u'response': u'<domains page="1" perpage="25" pages="1" total="3">\r\n\t<domain name="images.search.yahoo.com" views="127" />\r\n\t<domain name="flickr.com" views="122" />\r\n\t<domain name="images.google.com" views="70" />\r\n</domains>\r\n', u'description': u'Get a list of referring domains for a photo'
+            ], u'description': u'Why would you want to do this?\r\n<br><br>\r\n<i>(this method is experimental and may change)</i>', 'needslogin': True, u'name': u'flickr.push.unsubscribe'
         }
         , u'flickr.stats.getCollectionStats': {
     u'errors': [{
