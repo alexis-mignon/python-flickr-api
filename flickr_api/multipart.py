@@ -36,8 +36,9 @@ def post_multipart(host, selector, fields, files):
     h.request("POST", selector, headers=headers)
     h.send(body)
     r = h.getresponse()
+    data = r.read()
     h.close()
-    return r
+    return r, data
 
 
 def encode_multipart_formdata(fields, files):
