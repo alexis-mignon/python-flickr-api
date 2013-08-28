@@ -32,3 +32,4 @@ except Exception, e:
 from auth import set_auth_handler
 from method_call import enable_cache, disable_cache
 from keys import set_keys
+from _version import __version__
