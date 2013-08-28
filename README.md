@@ -23,3 +23,13 @@ Requires
 	* python-oauth (or the python module from http://code.google.com/p/oauth/)
 
 [![githalytics.com alpha](https://cruel-carlota.pagodabox.com/950bd311453e675e4a06ec3a5e99e420 "githalytics.com")](http://githalytics.com/alexis-mignon/python-flickr-api)
+
+Installation
+---------------
+
+You can install python-flickr-api with `pip`. See its [PyPi page](https://pypi.python.org/pypi/flickr_api/0.3).
+
+```
+pip install flickr_api
+```
+
