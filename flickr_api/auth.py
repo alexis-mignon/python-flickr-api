@@ -327,7 +327,7 @@ def set_auth_handler(auth_handler, set_api_keys=False):
         as a conveniency only for single user settings.
     """
     global AUTH_HANDLER
-    if isinstance(auth_handler, str):
+    if isinstance(auth_handler, basestring):
         ah = AuthHandler.load(auth_handler, set_api_keys)
         set_auth_handler(ah)
     else:
