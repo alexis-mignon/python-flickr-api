@@ -1312,7 +1312,7 @@ class Photo(FlickrObject):
         # http://stackoverflow.com/questions/6552121/how-to-download-files-over-http-via-python-urllib2-correctly
         # Why no comments?
         r = urllib2.urlopen(self.getPhotoFile(size_label))
-        if platform.system=='Windows':
+        if platform.system()=='Windows':
             with open(filename, 'wb') as f:
                 f.write(r.read())
         else:
