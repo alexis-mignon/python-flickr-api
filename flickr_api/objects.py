@@ -1309,8 +1309,10 @@ class Photo(FlickrObject):
         """
         if size_label is None:
             size_label = self._getLargestSizeLabel()
+        # http://stackoverflow.com/questions/6552121/how-to-download-files-over-http-via-python-urllib2-correctly
+        # Why no comments?
         r = urllib2.urlopen(self.getPhotoFile(size_label))
-        with open(filename, 'w+') as f:
+        with open(filename, 'wb') as f:
             f.write(r.read())
 
     def show(self, size_label=None):
