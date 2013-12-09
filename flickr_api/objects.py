@@ -739,7 +739,7 @@ class Person(FlickrObject):
         if token is None:
             token = auth.token_factory(filename=filename, token_key=token_key,
                                        token_secret=token_secret)
-        return test.login(token)
+        return test.login(token=token)
 
     @static_caller("flickr.people.findByEmail")
     def findByEmail(find_email):
