@@ -22,7 +22,7 @@
 import method_call
 from  flickrerrors import FlickrError
 from reflection import caller, static_caller, FlickrAutoDoc
-import urllib2, platform
+import urllib2
 from UserList import UserList
 import auth
 
@@ -1309,15 +1309,10 @@ class Photo(FlickrObject):
         """
         if size_label is None:
             size_label = self._getLargestSizeLabel()
-        # http://stackoverflow.com/questions/6552121/how-to-download-files-over-http-via-python-urllib2-correctly
-        # Why no comments?
         r = urllib2.urlopen(self.getPhotoFile(size_label))
-        if platform.system()=='Windows':
-            with open(filename, 'wb') as f:
-                f.write(r.read())
-        else:
-            with open(filename, 'w+') as f:
-                f.write(r.read())
+        with open(filename, 'wb') as f:
+            f.write(r.read())
+            f.close()
 
     def show(self, size_label=None):
         """
