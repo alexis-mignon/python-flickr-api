@@ -1310,8 +1310,9 @@ class Photo(FlickrObject):
         if size_label is None:
             size_label = self._getLargestSizeLabel()
         r = urllib2.urlopen(self.getPhotoFile(size_label))
-        with open(filename, 'w+') as f:
+        with open(filename, 'wb') as f:
             f.write(r.read())
+            f.close()
 
     def show(self, size_label=None):
         """
