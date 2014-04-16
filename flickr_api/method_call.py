@@ -17,7 +17,7 @@ from . import keys
 from .flickrerrors import FlickrError, FlickrAPIError
 from .cache import SimpleCache
 
-REST_URL = "http://api.flickr.com/services/rest/"
+REST_URL = "https://api.flickr.com/services/rest/"
 
 CACHE = None
 

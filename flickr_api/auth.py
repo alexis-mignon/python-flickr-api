@@ -44,9 +44,9 @@ import urlparse
 import urllib2
 from . import keys
 
-TOKEN_REQUEST_URL = "http://www.flickr.com/services/oauth/request_token"
-AUTHORIZE_URL = "http://www.flickr.com/services/oauth/authorize"
-ACCESS_TOKEN_URL = "http://www.flickr.com/services/oauth/access_token"
+TOKEN_REQUEST_URL = "https://www.flickr.com/services/oauth/request_token"
+AUTHORIZE_URL = "https://www.flickr.com/services/oauth/authorize"
+ACCESS_TOKEN_URL = "https://www.flickr.com/services/oauth/access_token"
 
 AUTH_HANDLER = None
 
@@ -67,7 +67,7 @@ class AuthHandler(object):
             raise ValueError("API keys have not been set.")
 
         if callback is None:
-            callback = ("http://api.flickr.com/services/rest/"
+            callback = ("https://api.flickr.com/services/rest/"
                         "?method=flickr.test.echo&api_key=%s" % self.key)
 
         params = {

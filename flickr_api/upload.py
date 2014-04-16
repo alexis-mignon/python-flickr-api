@@ -22,8 +22,8 @@ from . import multipart
 import os
 from xml.etree import ElementTree as ET
 
-UPLOAD_URL = "http://api.flickr.com/services/upload/"
-REPLACE_URL = "http://api.flickr.com/services/replace/"
+UPLOAD_URL = "https://api.flickr.com/services/upload/"
+REPLACE_URL = "https://api.flickr.com/services/replace/"
 
 
 def format_dict(d):
@@ -99,7 +99,7 @@ def upload(**args):
     if t.tag == 'photoid':
         return Photo(
             id=t.text,
-            editurl='http://www.flickr.com/photos/upload/edit/?ids=' + t.text
+            editurl='https://www.flickr.com/photos/upload/edit/?ids=' + t.text
         )
     elif t.tag == 'ticketid':
         return UploadTicket(id=t.text)
