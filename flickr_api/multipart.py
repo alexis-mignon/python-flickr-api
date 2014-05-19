@@ -31,7 +31,7 @@ def post_multipart(host, selector, fields, files):
     Return the server's response page.
     """
     content_type, body = encode_multipart_formdata(fields, files)
-    h = httplib.HTTPConnection(host)
+    h = httplib.HTTPSConnection(host)
     headers = {"Content-Type": content_type, 'content-length': str(len(body))}
     h.request("POST", selector, headers=headers)
     h.send(body)
