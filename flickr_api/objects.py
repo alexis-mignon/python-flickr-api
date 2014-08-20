@@ -1009,6 +1009,7 @@ class Photo(FlickrObject):
             if not isinstance(tickets, list):
                 tickets = [tickets]
             return [UploadTicket(**t) for t in tickets]
+        args["tickets"] = ','.join(tickets)
         return args, format_result
 
     @caller("flickr.photos.delete")
