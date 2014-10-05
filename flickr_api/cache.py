@@ -117,14 +117,14 @@ class SimpleCache(object):
     @locking
     def __contains__(self, key):
         '''Returns True if the key is in the cache and has not expired.'''
-        return key in self
+        return key in self.storage
 
     @locking
     def cull(self):
         '''Reduces the number of cached items'''
 
         doomed = [k for (i, k) in enumerate(self.storage)
-                if i % self.cull_frequency == 0]
+                  if i % self.cull_frequency == 0]
         for k in doomed:
             self.delete(k)
 
