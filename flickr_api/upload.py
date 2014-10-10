@@ -40,15 +40,17 @@ def format_dict(d):
     return d_
 
 
-def post(url, auth_handler, args, photo_file):
+def post(url, auth_handler, args, photo_file, photo_file_data=None):
     args = format_dict(args)
     args["api_key"] = auth_handler.key
 
     params = auth_handler.complete_parameters(url, args).parameters
 
     fields = params.items()
-
-    files = [("photo", os.path.basename(photo_file), open(photo_file).read())]
+    if photo_file_data==None:
+        files = [("photo", os.path.basename(photo_file), open(photo_file).read())]
+    else:
+        files = [("photo", os.path.basename(photo_file), photo_file_data.read())]
 
     r, data = multipart.posturl(url, fields, files)
     if r.status != 200:
@@ -93,7 +95,12 @@ def upload(**args):
         args["async"] = False
 
     photo_file = args.pop("photo_file")
-    r = post(UPLOAD_URL, auth.AUTH_HANDLER, args, photo_file)
+    if 'photo_file_data' in args:
+        photo_file_data = args.pop("photo_file_data")
+    else:
+        photo_file_data = None
+
+    r = post(UPLOAD_URL, auth.AUTH_HANDLER, args, photo_file, photo_file_data)
 
     t = r[0]
     if t.tag == 'photoid':
@@ -139,7 +146,12 @@ def replace(**args):
 
     photo_file = args.pop("photo_file")
 
-    r = post(REPLACE_URL, auth.AUTH_HANDLER, args, photo_file)
+    if 'photo_file_data' in args:
+        photo_file_data = args.pop("photo_file_data")
+    else:
+        photo_file_data = None
+
+    r = post(REPLACE_URL, auth.AUTH_HANDLER, args, photo_file, photo_file_data)
 
     t = r[0]
     if t.tag == 'photoid':
