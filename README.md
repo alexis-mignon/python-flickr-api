@@ -15,7 +15,7 @@ Main features
   *  uses OAuth for authentication
   *  context sensitive objects (depending on the query context, objects may exhibit different attributes)
   *  An interface for direct seamless calls to the Flickr API.
-  *  A (django-complient) caching mechanism
+  *  A (django-compliant) caching mechanism
 
 Requires
 --------
