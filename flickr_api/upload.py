@@ -48,7 +48,7 @@ def post(url, auth_handler, args, photo_file, photo_file_data=None):
 
     fields = params.items()
     if photo_file_data==None:
-        files = [("photo", os.path.basename(photo_file), open(photo_file).read())]
+        files = [("photo", os.path.basename(photo_file), open(photo_file, "rb").read())]
     else:
         files = [("photo", os.path.basename(photo_file), photo_file_data.read())]
 
