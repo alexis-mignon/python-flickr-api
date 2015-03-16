@@ -2,3 +2,4 @@
 /flickr_api.egg-info
 *.pyc
 *.egg
+/flickr_api/flickr_keys.py
