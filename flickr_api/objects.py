@@ -25,12 +25,19 @@ from reflection import caller, static_caller, FlickrAutoDoc
 import urllib2
 from UserList import UserList
 import auth
+import warnings
+from cStringIO import StringIO
 
 try:
-    import Image
-    import cStringIO
+    from PIL import Image    
 except ImportError:
-    pass
+    class Image(object):
+        @staticmethod
+        def open(*args, **kwargs):
+            image_module_404 = "\nThe PIL package was not found on this system. Images cannot be displayed." \
+                "\nConsider installing PIL or Pillow."
+            warnings.warn(image_module_404)
+            raise RuntimeError("Image module not found.")
 
 
 def dict_converter(keys, func):
@@ -1338,7 +1345,7 @@ class Photo(FlickrObject):
         if size_label is None:
             size_label = self._getLargestSizeLabel()
         r = urllib2.urlopen(self.getPhotoFile(size_label))
-        b = cStringIO.StringIO(r.read())
+        b = StringIO(r.read())
         Image.open(b).show()
 
     @static_caller("flickr.photos.getUntagged")
