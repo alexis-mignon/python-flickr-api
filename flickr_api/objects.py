@@ -843,7 +843,7 @@ class Person(FlickrObject):
     @caller("flickr.people.getPhotosOf")
     def getPhotosOf(self, **args):
         return (_format_id("owner", _format_extras(args)),
-               lambda r: _extract_photo_list(r, token=self.Token()))
+               lambda r: _extract_photo_list(r, token=self.getToken()))
 
     @caller("flickr.contacts.getPublicList")
     def getPublicContacts(self, **args):
