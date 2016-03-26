@@ -591,7 +591,8 @@ class Group(FlickrObject):
         return args, format_result
 
     @caller("flickr.groups.pools.getPhotos")
-    def getPhotos(self, **args):
+    def getPhotos(self, page=1, **args):
+        args["page"] = page
         return _format_extras(args), _extract_photo_list
 
     @caller("flickr.groups.pools.remove")
