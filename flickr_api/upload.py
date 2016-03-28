@@ -50,7 +50,7 @@ def post(url, auth_handler, args, photo_file, photo_file_data=None):
     if photo_file_data==None:
         files = [("photo", os.path.basename(photo_file), open(photo_file, "rb").read())]
     else:
-        files = [("photo", os.path.basename(photo_file), photo_file_data.read())]
+        files = [photo_file_data.read())]
 
     r, data = multipart.posturl(url, fields, files)
     if r.status != 200:
