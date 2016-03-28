@@ -51,5 +51,6 @@ A short tutorial is available in the [Wiki section](https://github.com/alexis-mi
 
 Sample Upload From File Object
 ------------------------------
+```bash
 filehandle = urllib.urlopen('https://lh3.googleusercontent.com/-TRV9Q-I5fKQ/Vra2--V-WfI/AAAAAAAADqE/IulOGUuTYhc/s2048/stock-photo-86399577.jpg')
-
+```
