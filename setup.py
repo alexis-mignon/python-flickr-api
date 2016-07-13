@@ -20,4 +20,8 @@ setup(
         "oauth",
     ],
     license="BSD License",
+    classifiers=[
+        'Programming Language :: Python',
+        'Programming Language :: Python :: 2',
+    ],
 )
