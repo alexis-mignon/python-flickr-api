@@ -1322,6 +1322,28 @@ class Photo(FlickrObject):
             f.write(r.read())
             f.close()
 
+    def get(self, size_label=None):
+        """
+            saves the photo corresponding to the
+            given size.
+
+        Arguments:
+            
+            size_label: The label corresponding to the photo size
+
+                'Square': 75x75
+                'Thumbnail': 100 on longest side
+                'Small': 240 on  longest side
+                'Medium': 500 on longest side
+                'Medium 640': 640 on longest side
+                'Large': 1024 on longest side
+                'Original': original photo (not always available)
+        """
+        if size_label is None:
+            size_label = self._getLargestSizeLabel()
+        return urllib2.urlopen(self.getPhotoFile(size_label))
+        
+
     def show(self, size_label=None):
         """
             Shows the photo corresponding to the
