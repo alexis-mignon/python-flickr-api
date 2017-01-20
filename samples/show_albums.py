@@ -1,3 +1,5 @@
+from __future__ import print_function
+
 import flickr_api as f
 import sys
 
@@ -12,7 +14,7 @@ try :
     ps = u.getPhotosets()
     
     for i,p in enumerate(ps) :
-        print i,p.title
+        print (i,p.title)
 except IndexError :
-    print "usage: python show_albums.py username [access_token_file]"
-    print "Displays the list of photosets belonging to a user"
+    print ("usage: python show_albums.py username [access_token_file]")
+    print ("Displays the list of photosets belonging to a user")

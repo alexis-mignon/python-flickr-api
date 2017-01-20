@@ -7,6 +7,8 @@ Description:
   This makes it easier to start playing
   with the Flickr API.
 """
+from __future__ import print_function
+
 import flickr_api
 import sys
 import warnings
@@ -44,5 +46,5 @@ if __name__ == '__main__':
     if len(sys.argv) > 1:
         main()
     else:
-        print __doc__
+        print (__doc__)
 
