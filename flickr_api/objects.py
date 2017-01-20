@@ -19,14 +19,13 @@
     email: alexis.mignon_at_gmail.com
     Date: 05/08/2011
 """
-import method_call
-from  flickrerrors import FlickrError
-from reflection import caller, static_caller, FlickrAutoDoc
-import urllib2
-from UserList import UserList
-import auth
+from . import method_call
+from .flickrerrors import FlickrError
+from .reflection import caller, static_caller, FlickrAutoDoc
+from six import text_type
+from six.moves import UserList, urllib, cStringIO
+from . import auth
 import warnings
-from cStringIO import StringIO
 
 try:
     from PIL import Image    
@@ -133,7 +132,7 @@ class FlickrObject(object):
                     pass
             if not val_found:
                 continue
-            if isinstance(value, unicode):
+            if isinstance(value, text_type):
                 value = value.encode("utf8")
             if isinstance(value, str):
                 value = "'%s'" % value
@@ -1317,7 +1316,7 @@ class Photo(FlickrObject):
         """
         if size_label is None:
             size_label = self._getLargestSizeLabel()
-        r = urllib2.urlopen(self.getPhotoFile(size_label))
+        r = urllib.request.urlopen(self.getPhotoFile(size_label))
         with open(filename, 'wb') as f:
             f.write(r.read())
             f.close()
@@ -1344,8 +1343,8 @@ class Photo(FlickrObject):
         """
         if size_label is None:
             size_label = self._getLargestSizeLabel()
-        r = urllib2.urlopen(self.getPhotoFile(size_label))
-        b = StringIO(r.read())
+        r = urllib.reuest.urlopen(self.getPhotoFile(size_label))
+        b = cStringIO(r.read())
         Image.open(b).show()
 
     @static_caller("flickr.photos.getUntagged")

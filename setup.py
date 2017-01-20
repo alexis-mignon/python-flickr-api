@@ -18,6 +18,7 @@ setup(
     packages=["flickr_api"],
     install_requires=[
         "oauth",
+        "six",
     ],
     license="BSD License",
 )

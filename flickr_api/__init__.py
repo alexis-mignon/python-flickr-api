@@ -20,16 +20,19 @@
     Date   : 05/08/2011
 
 """
-try:
-    from objects import *
-    import objects
-    import upload as Upload
-    from upload import upload, replace
-except Exception, e:
-    print "Could not load all modules"
-    print type(e), e
 
-from auth import set_auth_handler
-from method_call import enable_cache, disable_cache
-from keys import set_keys
-from _version import __version__
+from __future__ import print_function
+
+try:
+    from .objects import *
+    from . import objects
+    from .upload import upload as Upload
+    from .upload import upload, replace
+except Exception as e:
+    print ("Could not load all modules")
+    print (type(e), e)
+
+from .auth import set_auth_handler
+from .method_call import enable_cache, disable_cache
+from .keys import set_keys
+from ._version import __version__

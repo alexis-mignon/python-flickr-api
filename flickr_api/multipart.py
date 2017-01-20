@@ -11,13 +11,12 @@
 
 """
 
-import httplib
+from six.moves import http_client, urllib
 import mimetypes
-import urlparse
 
 
 def posturl(url, fields, files):
-    urlparts = urlparse.urlsplit(url)
+    urlparts = urllib.parse.urlsplit(url)
     return post_multipart(urlparts[1], urlparts[2], fields, files)
 
 
@@ -31,7 +30,7 @@ def post_multipart(host, selector, fields, files):
     Return the server's response page.
     """
     content_type, body = encode_multipart_formdata(fields, files)
-    h = httplib.HTTPSConnection(host)
+    h = http_client.HTTPSConnection(host)
     headers = {"Content-Type": content_type, 'content-length': str(len(body))}
     h.request("POST", selector, headers=headers)
     h.send(body)

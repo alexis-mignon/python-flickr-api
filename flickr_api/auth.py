@@ -40,8 +40,8 @@ except ImportError:
     import oauth
 
 import time
-import urlparse
-import urllib2
+from six import string_types
+from six.moves import urllib
 from . import keys
 
 TOKEN_REQUEST_URL = "https://www.flickr.com/services/oauth/request_token"
@@ -86,8 +86,8 @@ class AuthHandler(object):
                                      parameters=params)
             req.sign_request(oauth.OAuthSignatureMethod_HMAC_SHA1(),
                              self.consumer, None)
-            resp = urllib2.urlopen(req.to_url())
-            request_token = dict(urlparse.parse_qsl(resp.read()))
+            resp = urllib.request.urlopen(req.to_url())
+            request_token = dict(urllib.parse.parse_qsl(resp.read()))
             self.request_token = oauth.OAuthToken(
                 request_token['oauth_token'],
                 request_token['oauth_token_secret']
@@ -138,8 +138,8 @@ class AuthHandler(object):
                                  parameters=access_token_parms)
         req.sign_request(oauth.OAuthSignatureMethod_HMAC_SHA1(),
                          self.consumer, self.request_token)
-        resp = urllib2.urlopen(req.to_url())
-        access_token_resp = dict(urlparse.parse_qsl(resp.read()))
+        resp = urllib.request.urlopen(req.to_url())
+        access_token_resp = dict(urllib.parse.parse_qsl(resp.read()))
         self.access_token = oauth.OAuthToken(
             access_token_resp["oauth_token"],
             access_token_resp["oauth_token_secret"]
@@ -327,7 +327,7 @@ def set_auth_handler(auth_handler, set_api_keys=False):
         as a conveniency only for single user settings.
     """
     global AUTH_HANDLER
-    if isinstance(auth_handler, basestring):
+    if isinstance(auth_handler, string_types):
         ah = AuthHandler.load(auth_handler, set_api_keys)
         set_auth_handler(ah)
     else:
