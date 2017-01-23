@@ -12,6 +12,7 @@
 """
 
 from six.moves import http_client, urllib
+from six import text_type
 import mimetypes
 
 
@@ -48,31 +49,38 @@ def encode_multipart_formdata(fields, files):
 
     Return (content_type, body) ready for httplib.HTTP instance
     """
-    BOUNDARY = '----------ThIs_Is_tHe_bouNdaRY_$'
-    CRLF = '\r\n'
+    BOUNDARY = b'----------ThIs_Is_tHe_bouNdaRY_$'
+    CRLF = b'\r\n'
     L = []
     for (key, value) in fields:
-        L.append('--' + BOUNDARY)
-        L.append('Content-Disposition: form-data; name="%s"' % key)
-        L.append('')
+        if isinstance(key, text_type):
+            key = key.encode("utf-8")
+        if isinstance(value, text_type):
+            value = value.encode("utf-8")
+        L.append(b'--' + BOUNDARY)
+        L.append(b'Content-Disposition: form-data; name="%s"' % key)
+        L.append(b'')
         L.append(value)
     for (key, filename, value) in files:
-        filename = filename.encode("utf8")
-        L.append('--' + BOUNDARY)
+        if isinstance(key, text_type):
+            key = key.encode("utf8")
+        if isinstance(filename, text_type):
+            filename = filename.encode("utf8")
+        L.append(b'--' + BOUNDARY)
         L.append(
-            'Content-Disposition: form-data; name="%s"; filename="%s"' % (
+            b'Content-Disposition: form-data; name="%s"; filename="%s"' % (
                 key, filename
             )
         )
-        L.append('Content-Type: %s' % get_content_type(filename))
-        L.append('')
+        L.append(b'Content-Type: %s' % get_content_type(filename))
+        L.append(b'')
         L.append(value)
-    L.append('--' + BOUNDARY + '--')
-    L.append('')
+    L.append(b'--' + BOUNDARY + b'--')
+    L.append(b'')
     body = CRLF.join(L)
-    content_type = 'multipart/form-data; boundary=%s' % BOUNDARY
+    content_type = b'multipart/form-data; boundary=%s' % BOUNDARY
     return content_type, body
 
 
 def get_content_type(filename):
-    return mimetypes.guess_type(filename)[0] or 'application/octet-stream'
+    return mimetypes.guess_type(filename.decode())[0].encode("utf-8") or 'application/octet-stream'

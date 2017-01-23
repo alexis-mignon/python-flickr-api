@@ -21,7 +21,7 @@ from . import auth
 from . import multipart
 import os
 from xml.etree import ElementTree as ET
-from six import text_type, iteritems
+from six import text_type, binary_type, iteritems
 
 UPLOAD_URL = "https://api.flickr.com/services/upload/"
 REPLACE_URL = "https://api.flickr.com/services/replace/"
@@ -36,7 +36,7 @@ def format_dict(d):
             v = v.encode("utf8")
         if isinstance(k, text_type):
             k = k.encode("utf8")
-        v = str(v)
+        v = binary_type(v)
         d_[k] = v
     return d_
 
@@ -45,10 +45,10 @@ def post(url, auth_handler, args, photo_file, photo_file_data=None):
     args = format_dict(args)
     args["api_key"] = auth_handler.key
 
-    params = auth_handler.complete_parameters(url, args).parameters
+    params = auth_handler.complete_parameters(url, args)
 
     fields = params.items()
-    if photo_file_data==None:
+    if photo_file_data is None:
         files = [("photo", os.path.basename(photo_file), open(photo_file, "rb").read())]
     else:
         files = [("photo", os.path.basename(photo_file), photo_file_data.read())]
