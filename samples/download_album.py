@@ -14,10 +14,13 @@ try :
     u = f.Person.findByUserName(username)
     ps = u.getPhotosets()[photoset_idx]
 
-    if not os.path.exists(ps.title) : os.mkdir(ps.title)
+    if not os.path.exists(ps.title):
+        print("Creating directory " + ps.title)
+        os.mkdir(ps.title)
     os.chdir(ps.title)
 
     for p in ps.getPhotos() :
+        print("Saving photo " + p.title)
         p.save(p.title+".jpg")
 except IndexError :
     print ("usage: python download_album.py username album_idx [access_token_file]")

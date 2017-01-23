@@ -21,7 +21,7 @@ from . import auth
 from . import multipart
 import os
 from xml.etree import ElementTree as ET
-from six import text_type
+from six import text_type, iteritems
 
 UPLOAD_URL = "https://api.flickr.com/services/upload/"
 REPLACE_URL = "https://api.flickr.com/services/replace/"
@@ -29,7 +29,7 @@ REPLACE_URL = "https://api.flickr.com/services/replace/"
 
 def format_dict(d):
     d_ = {}
-    for k, v in d.iteritems():
+    for k, v in iteritems(d):
         if isinstance(v, bool):
             v = int(v)
         elif isinstance(v, text_type):

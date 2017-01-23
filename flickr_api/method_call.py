@@ -127,7 +127,7 @@ def call_api(api_key=None, api_secret=None, auth_handler=None,
         return resp
 
     try:
-        resp = json.loads(resp)
+        resp = json.loads(resp.decode())
     except ValueError as e:
         print (resp)
         raise e

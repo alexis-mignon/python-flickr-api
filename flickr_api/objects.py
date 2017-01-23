@@ -22,8 +22,8 @@
 from . import method_call
 from .flickrerrors import FlickrError
 from .reflection import caller, static_caller, FlickrAutoDoc
-from six import text_type
-from six.moves import UserList, urllib, cStringIO
+from six import text_type, iteritems
+from six.moves import UserList, urllib, cStringIO, range
 from . import auth
 import warnings
 
@@ -1219,7 +1219,7 @@ class Photo(FlickrObject):
         args["date"] = date
         return (
             args,
-            lambda r: dict([(k, int(v)) for k, v in r["stats"].iteritems()])
+            lambda r: dict([(k, int(v)) for k, v in iteritems(r["stats"])])
         )
 
     @caller("flickr.tags.getListPhoto")
@@ -1243,7 +1243,7 @@ class Photo(FlickrObject):
         sizes = self.getSizes()
         max_size = None
         max_area = None
-        for sl, s in sizes.iteritems():
+        for sl, s in iteritems(sizes):
             area = int(s["height"]) * int(s["width"])
             if max_area is None or area > max_area:
                 max_size = sl
@@ -1592,7 +1592,7 @@ class Photoset(FlickrObject):
         args["date"] = date
         return (
             args,
-            lambda r: dict([(k, int(v)) for k, v in r["stats"].iteritems()])
+            lambda r: dict([(k, int(v)) for k, v in iteritems(r["stats"])])
         )
 
     @static_caller("flickr.photosets.orderSets")

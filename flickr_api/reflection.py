@@ -11,6 +11,7 @@
 
 import re
 from functools import wraps
+from six import iteritems
 from . import method_call
 from . import auth
 from .flickrerrors import FlickrError
@@ -140,7 +141,7 @@ class FlickrAutoDoc(type):
     """
     def __new__(meta, classname, bases, classDict):
         self_name = classDict.get("__self_name__", None)
-        for k, v in classDict.iteritems():
+        for k, v in iteritems(classDict):
             ignore_arguments = ["api_key"]
             if hasattr(v, 'flickr_method'):
                 if v.isstatic:
