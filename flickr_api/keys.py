@@ -2,7 +2,7 @@ API_KEY = None
 API_SECRET = None
 
 try:
-    import flickr_keys
+    from . import flickr_keys
     API_KEY = flickr_keys.API_KEY
     API_SECRET = flickr_keys.API_SECRET
 except ImportError:
