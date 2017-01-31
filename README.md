@@ -19,9 +19,9 @@ Main features
 
 Requires
 --------
-	* python >= 2.6.5 
-	* [python-oauth2](https://github.com/joestump/python-oauth2)
-	* [six](https://github.com/benjaminp/six)
+  * python >= 2.7
+  * [python-oauth2](https://github.com/joestump/python-oauth2)
+  * [six](https://github.com/benjaminp/six)
 
 
 Installation

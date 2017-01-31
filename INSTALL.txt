@@ -1,6 +1,7 @@
 Requires:
- - python 2.6+
- - python-oauth package (python module from http://code.google.com/p/oauth/)
+ - python 2.7+
+ - python-oauth2 package
+ - python six package
 
 1) Extract the archive
 
