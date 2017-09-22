@@ -43,7 +43,9 @@ You can also install the last stable release using the `pip` progam:
 $ pip install flickr_api --user  # to install in the user directory (~/.local)
 $ sudo pip install flickr_api    # to install globally
 ```
-See its [Pypi page](https://pypi.python.org/pypi/flickr_api/0.4).
+See its [Pypi page](https://pypi.python.org/pypi/flickr_api).
+
+Please note that `flickrapi` on Pypi is a different distribution by a different author.
 
 Tutorial
 --------
