@@ -654,7 +654,7 @@ class MachineTag(FlickrObject):
             return FlickrList(
                 [MachineTag.Namespace(**ns)
                     for ns in _check_list(info.pop("namespace"))],
-                Info(info)
+                Info(**info)
             )
         return args, format_result
 
@@ -664,7 +664,7 @@ class MachineTag(FlickrObject):
             info = r["pairs"]
             return FlickrList(
                 [MachineTag.Pair(**p) for p in _check_list(info.pop("pair"))],
-                 Info(info)
+                 Info(**info)
             )
         return args, format_result
 
@@ -675,7 +675,7 @@ class MachineTag(FlickrObject):
             return FlickrList(
                 [MachineTag.Predicate(**p)
                     for p in _check_list(info.pop("predicate"))],
-                Info(info)
+                Info(**info)
             )
         return args, format_result
 
@@ -686,7 +686,7 @@ class MachineTag(FlickrObject):
             return FlickrList(
                 [MachineTag.Value(**v)
                     for v in _check_list(info.pop("value"))],
-                Info(info)
+                Info(**info)
             )
         return args, format_result
 
@@ -697,7 +697,7 @@ class MachineTag(FlickrObject):
             return FlickrList(
                 [MachineTag.Value(**v)
                     for v in _check_list(info.pop("value"))],
-                Info(info)
+                Info(**info)
             )
         return args, format_result
 
