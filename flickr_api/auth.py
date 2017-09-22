@@ -34,14 +34,10 @@
 
 """
 
-try:  # fixes a reported bug. Seems that oauth can be packed in different ways.
-    from oauth import oauth
-except ImportError:
-    import oauth
-
+import oauth2
 import time
-import urlparse
-import urllib2
+from six import string_types
+from six.moves import urllib
 from . import keys
 
 TOKEN_REQUEST_URL = "https://www.flickr.com/services/oauth/request_token"
@@ -75,33 +71,33 @@ class AuthHandler(object):
             'oauth_signature_method': "HMAC-SHA1",
             'oauth_version': "1.0",
             'oauth_callback': callback,
-            'oauth_nonce': oauth.generate_nonce(),
+            'oauth_nonce': oauth2.generate_nonce(),
             'oauth_consumer_key': self.key
         }
 
-        self.consumer = oauth.OAuthConsumer(key=self.key, secret=self.secret)
+        self.consumer = oauth2.Consumer(key=self.key, secret=self.secret)
         if (access_token_key is None) and (request_token_key is None):
-            req = oauth.OAuthRequest(http_method="GET",
-                                     http_url=TOKEN_REQUEST_URL,
-                                     parameters=params)
-            req.sign_request(oauth.OAuthSignatureMethod_HMAC_SHA1(),
+            req = oauth2.Request(method="GET",
+                                 url=TOKEN_REQUEST_URL,
+                                 parameters=params)
+            req.sign_request(oauth2.SignatureMethod_HMAC_SHA1(),
                              self.consumer, None)
-            resp = urllib2.urlopen(req.to_url())
-            request_token = dict(urlparse.parse_qsl(resp.read()))
-            self.request_token = oauth.OAuthToken(
+            resp = urllib.request.urlopen(req.to_url())
+            request_token = dict(urllib.parse.parse_qsl(resp.read()))
+            self.request_token = oauth2.Token(
                 request_token['oauth_token'],
                 request_token['oauth_token_secret']
             )
             self.access_token = None
         elif request_token_key is not None:
             self.access_token = None
-            self.request_token = oauth.OAuthToken(
+            self.request_token = oauth2.Token(
                 request_token_key,
                 request_token_secret
             )
         else:
             self.request_token = None
-            self.access_token = oauth.OAuthToken(
+            self.access_token = oauth2.Token(
                 access_token_key,
                 access_token_secret
             )
@@ -127,44 +123,38 @@ class AuthHandler(object):
 
         access_token_parms = {
             'oauth_consumer_key': self.key,
-            'oauth_nonce': oauth.generate_nonce(),
+            'oauth_nonce': oauth2.generate_nonce(),
             'oauth_signature_method': "HMAC-SHA1",
             'oauth_timestamp': str(int(time.time())),
             'oauth_token': self.request_token.key,
             'oauth_verifier': self.request_token.verifier
         }
 
-        req = oauth.OAuthRequest(http_method="GET", http_url=ACCESS_TOKEN_URL,
-                                 parameters=access_token_parms)
-        req.sign_request(oauth.OAuthSignatureMethod_HMAC_SHA1(),
+        req = oauth2.Request(method="GET", url=ACCESS_TOKEN_URL,
+                            parameters=access_token_parms)
+        req.sign_request(oauth2.SignatureMethod_HMAC_SHA1(),
                          self.consumer, self.request_token)
-        resp = urllib2.urlopen(req.to_url())
-        access_token_resp = dict(urlparse.parse_qsl(resp.read()))
-        self.access_token = oauth.OAuthToken(
+        resp = urllib.request.urlopen(req.to_url())
+        access_token_resp = dict(urllib.parse.parse_qsl(resp.read()))
+        self.access_token = oauth2.Token(
             access_token_resp["oauth_token"],
             access_token_resp["oauth_token_secret"]
         )
 
-    def complete_parameters(self, url, params={}, exclude_signature=[]):
+    def complete_parameters(self, url, params={}):
 
         defaults = {
             'oauth_timestamp': str(int(time.time())),
-            'oauth_nonce': oauth.generate_nonce(),
+            'oauth_nonce': oauth2.generate_nonce(),
             'signature_method': "HMAC-SHA1",
             'oauth_token': self.access_token.key,
             'oauth_consumer_key': self.consumer.key,
         }
 
-        excluded = {}
-        for e in exclude_signature:
-            excluded[e] = params.pop(e)
-
         defaults.update(params)
-        req = oauth.OAuthRequest(http_method="POST", http_url=url,
-                                 parameters=defaults)
-        req.sign_request(oauth.OAuthSignatureMethod_HMAC_SHA1(), self.consumer,
+        req = oauth2.Request(method="POST", url=url, parameters=defaults)
+        req.sign_request(oauth2.SignatureMethod_HMAC_SHA1(), self.consumer,
                          self.access_token)
-        req.parameters.update(excluded)
 
         return req
 
@@ -327,7 +317,7 @@ def set_auth_handler(auth_handler, set_api_keys=False):
         as a conveniency only for single user settings.
     """
     global AUTH_HANDLER
-    if isinstance(auth_handler, basestring):
+    if isinstance(auth_handler, string_types):
         ah = AuthHandler.load(auth_handler, set_api_keys)
         set_auth_handler(ah)
     else:

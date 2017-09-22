@@ -17,7 +17,20 @@ setup(
     url="http://code.google.com/p/python-flickr-api/",
     packages=["flickr_api"],
     install_requires=[
-        "oauth",
+        "oauth2",
+        "six",
     ],
     license="BSD License",
+    classifiers=[
+        'Intended Audience :: Developers',
+
+        'Programming Language :: Python',
+        'Programming Language :: Python :: 2',
+        'Programming Language :: Python :: 2.7',
+        'Programming Language :: Python :: 3',
+        'Programming Language :: Python :: 3.3',
+        'Programming Language :: Python :: 3.4',
+        'Programming Language :: Python :: 3.5',
+        'Programming Language :: Python :: 3.6',
+    ]
 )

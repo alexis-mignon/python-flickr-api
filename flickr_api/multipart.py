@@ -11,13 +11,13 @@
 
 """
 
-import httplib
+from six.moves import http_client, urllib
+from six import binary_type, text_type
 import mimetypes
-import urlparse
 
 
 def posturl(url, fields, files):
-    urlparts = urlparse.urlsplit(url)
+    urlparts = urllib.parse.urlsplit(url)
     return post_multipart(urlparts[1], urlparts[2], fields, files)
 
 
@@ -31,7 +31,7 @@ def post_multipart(host, selector, fields, files):
     Return the server's response page.
     """
     content_type, body = encode_multipart_formdata(fields, files)
-    h = httplib.HTTPSConnection(host)
+    h = http_client.HTTPSConnection(host)
     headers = {"Content-Type": content_type, 'content-length': str(len(body))}
     h.request("POST", selector, headers=headers)
     h.send(body)
@@ -49,29 +49,37 @@ def encode_multipart_formdata(fields, files):
 
     Return (content_type, body) ready for httplib.HTTP instance
     """
-    BOUNDARY = '----------ThIs_Is_tHe_bouNdaRY_$'
-    CRLF = '\r\n'
+    BOUNDARY = b'----------ThIs_Is_tHe_bouNdaRY_$'
+    CRLF = b'\r\n'
     L = []
     for (key, value) in fields:
-        L.append('--' + BOUNDARY)
-        L.append('Content-Disposition: form-data; name="%s"' % key)
-        L.append('')
+        if isinstance(key, binary_type):
+            key = key.decode()
+        if isinstance(value, text_type):
+            value = value.encode("utf-8")
+        L.append(b'--' + BOUNDARY)
+        L.append(('Content-Disposition: form-data; name="%s"' % key).encode("utf-8"))
+        L.append(b'')
         L.append(value)
     for (key, filename, value) in files:
-        filename = filename.encode("utf8")
-        L.append('--' + BOUNDARY)
+        if isinstance(key, binary_type):
+            key = key.decode()
+        if isinstance(filename, binary_type):
+            filename = filename.decode()
+        L.append(b'--' + BOUNDARY)
         L.append(
-            'Content-Disposition: form-data; name="%s"; filename="%s"' % (
-                key, filename
-            )
+            (
+                'Content-Disposition: form-data; name="%s"; filename="%s"' %
+                    (key, filename)
+            ).encode("utf-8")
         )
-        L.append('Content-Type: %s' % get_content_type(filename))
-        L.append('')
+        L.append(('Content-Type: %s' % get_content_type(filename)).encode("utf-8"))
+        L.append(b'')
         L.append(value)
-    L.append('--' + BOUNDARY + '--')
-    L.append('')
+    L.append(b'--' + BOUNDARY + b'--')
+    L.append(b'')
     body = CRLF.join(L)
-    content_type = 'multipart/form-data; boundary=%s' % BOUNDARY
+    content_type = b'multipart/form-data; boundary=' + BOUNDARY
     return content_type, body
 
 

@@ -11,6 +11,7 @@
 
 import re
 from functools import wraps
+from six import iteritems
 from . import method_call
 from . import auth
 from .flickrerrors import FlickrError
@@ -140,7 +141,7 @@ class FlickrAutoDoc(type):
     """
     def __new__(meta, classname, bases, classDict):
         self_name = classDict.get("__self_name__", None)
-        for k, v in classDict.iteritems():
+        for k, v in iteritems(classDict):
             ignore_arguments = ["api_key"]
             if hasattr(v, 'flickr_method'):
                 if v.isstatic:
@@ -231,13 +232,13 @@ def caller(flickr_method, static=False):
     """
         This decorator binds a method to the flickr method given
         by 'flickr_method'.
-        The wrapped method should return the argument dictionnary
+        The wrapped method should return the argument dictionary
         and a function that format the result of method_call.call_api.
 
         Some method can propagate authentication tokens. For instance a
         Person object can propagate its token to photos retrieved from
         it. In this case, it should return its token also and the
-        result formating function should take an additional argument
+        result formatting function should take an additional argument
         token.
     """
     def decorator(method):
@@ -245,7 +246,7 @@ def caller(flickr_method, static=False):
         def call(self, *args, **kwargs):
             token, kwargs = _get_token(self, **kwargs)
             method_args, format_result = method(self, *args, **kwargs)
-            method_args[call.__self_name__] = self.id
+            method_args[self.__self_name__] = self.id
             if token:
                 method_args["auth_handler"] = token
             r = method_call.call_api(method=flickr_method, **method_args)

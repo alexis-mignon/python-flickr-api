@@ -1,3 +1,5 @@
+from __future__ import print_function
+
 import flickr_api as f
 import sys
 import os
@@ -12,17 +14,20 @@ try :
     u = f.Person.findByUserName(username)
     ps = u.getPhotosets()[photoset_idx]
 
-    if not os.path.exists(ps.title) : os.mkdir(ps.title)
+    if not os.path.exists(ps.title):
+        print("Creating directory " + ps.title)
+        os.mkdir(ps.title)
     os.chdir(ps.title)
 
     for p in ps.getPhotos() :
+        print("Saving photo " + p.title)
         p.save(p.title+".jpg")
 except IndexError :
-    print "usage: python download_album.py username album_idx [access_token_file]"
-    print "Downloads the content of a user's album."
-    print "'album_idx' stands of the album index as given by the 'show_albums.py'"
-    print "script. A new directory with the album title will be created and the"
-    print "album content will be downloaded in this directory."
+    print ("usage: python download_album.py username album_idx [access_token_file]")
+    print ("Downloads the content of a user's album.")
+    print ("'album_idx' stands of the album index as given by the 'show_albums.py'")
+    print ("script. A new directory with the album title will be created and the")
+    print ("album content will be downloaded in this directory.")
 
 
 

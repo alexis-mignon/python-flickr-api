@@ -8,8 +8,10 @@
     Date: 06/08/2011
 
 """
-import urllib2
-import urllib
+from __future__ import print_function
+
+from six.moves import urllib
+from six import iteritems
 import hashlib
 import json
 
@@ -44,10 +46,10 @@ def disable_cache():
 def send_request(url, data):
     """send a http request.
     """
-    req = urllib2.Request(url, data)
+    req = urllib.request.Request(url, data.encode())
     try:
-        return urllib2.urlopen(req).read()
-    except urllib2.HTTPError, e:
+        return urllib.request.urlopen(req).read()
+    except urllib.error.HTTPError as e:
         raise FlickrError(e.read().split('&')[0])
 
 
@@ -108,7 +110,7 @@ def call_api(api_key=None, api_secret=None, auth_handler=None,
             m.update(sig)
             api_sig = m.digest()
             args["api_sig"] = api_sig
-        data = urllib.urlencode(args)
+        data = urllib.parse.urlencode(args)
     else:
         data = auth_handler.complete_parameters(
              url=request_url, params=args
@@ -125,9 +127,9 @@ def call_api(api_key=None, api_secret=None, auth_handler=None,
         return resp
 
     try:
-        resp = json.loads(resp)
-    except ValueError, e:
-        print resp
+        resp = json.loads(resp.decode())
+    except ValueError as e:
+        print (resp)
         raise e
 
     if resp["stat"] != "ok":
@@ -151,7 +153,7 @@ def clean_content(d):
         d_clean = {}
         if len(d) == 1 and "_content" in d:
             return clean_content(d["_content"])
-        for k, v in d.iteritems():
+        for k, v in iteritems(d):
             if k == "_content":
                 k = "text"
             d_clean[k] = clean_content(v)

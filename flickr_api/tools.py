@@ -1,4 +1,4 @@
-from method_call import call_api
+from .method_call import call_api
 import sys
 import os
 
