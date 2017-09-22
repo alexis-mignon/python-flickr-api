@@ -1636,7 +1636,7 @@ class Photoset(FlickrObject):
 
         photo_ids = args["photo_ids"]
         if isinstance(photo_ids, list):
-            args["photo_ids"] = u", ".join(photo_ids)
+            args["photo_ids"] = u",".join(photo_ids)
 
         return args, _none
 
