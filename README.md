@@ -2,7 +2,7 @@
 
 A Python implementation of the [Flickr API](https://www.flickr.com/services/developer/api/).
 
-The project provides an almost exhaustive access to the [Flickr API](https://www.flickr.com/services/developer/api/), through an *object oriented* Python interface.
+The project provides an almost exhaustive access to the [Flickr API](https://www.flickr.com/services/developer/api/), through an *object-oriented* Python interface.
 
 ## Quick Start
 
@@ -20,7 +20,7 @@ Here's an example of fetching a list of a specific users' public photos:
 
 ```python
 user = flickr_api.Person.findByUserName("tomquirkphoto")
-photos = user.getPhotos();
+photos = user.getPhotos()
 ```
 
 If you've authorised yourself as a user, you can do cooler things like upload photos:
