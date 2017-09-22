@@ -14,7 +14,7 @@ setup(
     description="Python wrapper for the Flickr API",
     author="Alexis Mignon",
     author_email="alexis.mignon@gmail.com",
-    url="http://code.google.com/p/python-flickr-api/",
+    url="https://github.com/alexis-mignon/python-flickr-api",
     packages=["flickr_api"],
     install_requires=[
         "oauth2",
