@@ -83,7 +83,9 @@ class AuthHandler(object):
             req.sign_request(oauth2.SignatureMethod_HMAC_SHA1(),
                              self.consumer, None)
             resp = urllib.request.urlopen(req.to_url())
-            request_token = dict(urllib.parse.parse_qsl(resp.read()))
+            request_token = {key.decode(): value.decode()
+                             for key, value in urllib.parse.parse_qsl(resp.read())}
+
             self.request_token = oauth2.Token(
                 request_token['oauth_token'],
                 request_token['oauth_token_secret']
@@ -131,7 +133,7 @@ class AuthHandler(object):
         }
 
         req = oauth2.Request(method="GET", url=ACCESS_TOKEN_URL,
-                            parameters=access_token_parms)
+                             parameters=access_token_parms)
         req.sign_request(oauth2.SignatureMethod_HMAC_SHA1(),
                          self.consumer, self.request_token)
         resp = urllib.request.urlopen(req.to_url())
@@ -176,7 +178,7 @@ class AuthHandler(object):
         with open(filename, "w") as f:
             if include_api_keys:
                 f.write("\n".join([self.key, self.secret,
-                        self.access_token.key, self.access_token.secret]))
+                                   self.access_token.key, self.access_token.secret]))
             else:
                 f.write("\n".join([self.access_token.key,
                                    self.access_token.secret]))
