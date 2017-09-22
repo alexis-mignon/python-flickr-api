@@ -19,7 +19,7 @@ Main features
 
 Requires
 --------
-	* python >= 2.6.5 
+	* python >= 2.6.5 (Python 3 is not yet supported)
 	* python-oauth (or the python module from http://code.google.com/p/oauth/)
 
 [![githalytics.com alpha](https://cruel-carlota.pagodabox.com/950bd311453e675e4a06ec3a5e99e420 "githalytics.com")](http://githalytics.com/alexis-mignon/python-flickr-api)
