@@ -56,7 +56,7 @@ Please note that `flickrapi` on Pypi is a different distribution by a different 
 
 ## API Guide
 
-A brief guide is available in the [Wiki section](https://github.com/alexis-mignon/python-flickr-api/wiki/Tutorial).
+A brief guide is available in the [Wiki section](https://github.com/alexis-mignon/python-flickr-api/wiki/).
 
 ## Notes
 
