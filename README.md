@@ -12,7 +12,7 @@ The project provides an almost exhaustive access to the [Flickr API](https://www
 pip install flickr_api
 ```
 
-2. Aquire Flickr API keys and set up authorisation as per the [Wiki](https://github.com/alexis-mignon/python-flickr-api/wiki/Tutorial)
+2. Aquire Flickr API keys and set up authorisation as per the [Wiki](https://github.com/alexis-mignon/python-flickr-api/wiki/Flickr-API-Keys-and-Authentication)
 
 3. Start using the OO interface!
 
@@ -26,16 +26,18 @@ photos = user.getPhotos()
 If you've authorised yourself as a user, you can do cooler things like upload photos:
 
 ```python
-flickr_api.upload(photo_file = "path_to_the_photo_file", title = "My title")
+flickr_api.upload(photo_file="path_to_the_photo_file", title="My title")
 ```
 
 And even create albums (a.k.a Photosets):
 
 ```python
-photoset = flickr_api.Photoset.create(title = "The title of the photoset", primary_photo = cover_photo)
+photoset = flickr_api.Photoset.create(title="The title of the photoset", primary_photo=cover_photo)
 ```
 
 ## Features
+
+Consult the [API Reference](https://github.com/alexis-mignon/python-flickr-api/wiki/API-reference) for a (semi) complete list
 
 * Object Oriented implementation
 * (Almost) comprehensive implementation
