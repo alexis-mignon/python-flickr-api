@@ -16,6 +16,7 @@ import hashlib
 import json
 
 from . import keys
+from .utils import urlopen_and_read
 from .flickrerrors import FlickrError, FlickrAPIError
 from .cache import SimpleCache
 
@@ -48,7 +49,7 @@ def send_request(url, data):
     """
     req = urllib.request.Request(url, data.encode())
     try:
-        return urllib.request.urlopen(req).read()
+        return urlopen_and_read(req)
     except urllib.error.HTTPError as e:
         raise FlickrError(e.read().split('&')[0])
 

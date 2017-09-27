@@ -1343,7 +1343,7 @@ class Photo(FlickrObject):
         """
         if size_label is None:
             size_label = self._getLargestSizeLabel()
-        r = urllib.reuest.urlopen(self.getPhotoFile(size_label))
+        r = urllib.request.urlopen(self.getPhotoFile(size_label))
         b = cStringIO(r.read())
         Image.open(b).show()
 

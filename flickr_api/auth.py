@@ -38,6 +38,7 @@ import oauth2
 import time
 from six import string_types
 from six.moves import urllib
+from .utils import urlopen_and_read
 from . import keys
 
 TOKEN_REQUEST_URL = "https://www.flickr.com/services/oauth/request_token"
@@ -82,9 +83,9 @@ class AuthHandler(object):
                                  parameters=params)
             req.sign_request(oauth2.SignatureMethod_HMAC_SHA1(),
                              self.consumer, None)
-            resp = urllib.request.urlopen(req.to_url())
-            request_token = {key.decode(): value.decode()
-                             for key, value in urllib.parse.parse_qsl(resp.read())}
+
+            resp = urlopen_and_read(req.to_url())
+            request_token = dict(urllib.parse.parse_qsl(resp))
 
             self.request_token = oauth2.Token(
                 request_token['oauth_token'],
@@ -136,8 +137,9 @@ class AuthHandler(object):
                              parameters=access_token_parms)
         req.sign_request(oauth2.SignatureMethod_HMAC_SHA1(),
                          self.consumer, self.request_token)
-        resp = urllib.request.urlopen(req.to_url())
-        access_token_resp = dict(urllib.parse.parse_qsl(resp.read()))
+        resp = urlopen_and_read(req.to_url())
+        access_token_resp = dict(urllib.parse.parse_qsl(resp))
+
         self.access_token = oauth2.Token(
             access_token_resp["oauth_token"],
             access_token_resp["oauth_token_secret"]
