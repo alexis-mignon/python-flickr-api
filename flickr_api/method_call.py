@@ -105,7 +105,7 @@ def call_api(api_key=None, api_secret=None, auth_handler=None,
             query_elements = args.items()
             query_elements.sort()
             sig = keys.API_SECRET + \
-                  ["".join(["".join(e) for e in query_elements])]
+                ["".join(["".join(e) for e in query_elements])]
             m = hashlib.md5()
             m.update(sig)
             api_sig = m.digest()
@@ -113,7 +113,7 @@ def call_api(api_key=None, api_secret=None, auth_handler=None,
         data = urllib.parse.urlencode(args)
     else:
         data = auth_handler.complete_parameters(
-             url=request_url, params=args
+            url=request_url, params=args
         ).to_postdata()
 
     if CACHE is None:
@@ -129,8 +129,11 @@ def call_api(api_key=None, api_secret=None, auth_handler=None,
     try:
         resp = json.loads(resp.decode())
     except ValueError as e:
-        print (resp)
+        print(resp)
         raise e
+    except AttributeError:
+        # exception for python 3 where `resp` is a string (doesn't need decoding)
+        resp = json.loads(resp)
 
     if resp["stat"] != "ok":
         raise FlickrAPIError(resp["code"], resp["message"])
