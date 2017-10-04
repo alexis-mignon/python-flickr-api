@@ -776,7 +776,7 @@ class Person(FlickrObject):
             info = r["photosets"]
             photosets = info.pop("photoset")
             if not isinstance(photosets, list):
-                phototsets = [photosets]
+                photosets = [photosets]
             return FlickrList(
                 [Photoset(token=token, **ps) for ps in photosets],
                  Info(**info)
