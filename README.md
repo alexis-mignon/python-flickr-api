@@ -58,6 +58,11 @@ Please note that `flickrapi` on Pypi is a different distribution by a different 
 
 A brief guide is available in the [Wiki section](https://github.com/alexis-mignon/python-flickr-api/wiki/).
 
+## Projects using this API
+> create a PR to add your project here!
+
+* [FlickrBox](https://github.com/tomquirk/FlickrBox) - A Dropbox-like backup experience for your free 1TB Flickr library!
+
 ## Notes
 
 The project is still at an early stage and requires a lot of testing.
