@@ -1302,7 +1302,7 @@ class Photo(FlickrObject):
             given size.
 
         Arguments:
-            filename: target file name
+            filename: target file name (without extension)
 
             size_label: The label corresponding to the photo size
 
@@ -1316,8 +1316,12 @@ class Photo(FlickrObject):
         """
         if size_label is None:
             size_label = self._getLargestSizeLabel()
-        r = urllib.request.urlopen(self.getPhotoFile(size_label))
-        with open(filename, 'wb') as f:
+            
+        photo_file = self.getPhotoFile(size_label)
+        file_ext = '.' + photo_file.split('.')[-1]
+        r = urllib.request.urlopen(photo_file)
+
+        with open(filename + file_ext, 'wb') as f:
             f.write(r.read())
             f.close()
 
