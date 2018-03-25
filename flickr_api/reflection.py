@@ -15,9 +15,12 @@ from six import iteritems
 from . import method_call
 from . import auth
 from .flickrerrors import FlickrError
+import logging
+
+logger = logging.getLogger(__name__)
 
 try:
-    from methods import __methods__
+    from .methods import __methods__
 
     def make_docstring(method, ignore_arguments=[], show_errors=True):
         info = __methods__[method]
@@ -139,7 +142,7 @@ class FlickrAutoDoc(type):
             decorator to know how to refer to the calling object.
 
     """
-    def __new__(meta, classname, bases, classDict):
+    def __new__(mcl, classname, bases, classDict):
         self_name = classDict.get("__self_name__", None)
         for k, v in iteritems(classDict):
             ignore_arguments = ["api_key"]
@@ -151,16 +154,16 @@ class FlickrAutoDoc(type):
                 else:
                     ignore_arguments.append(self_name)
                     v.__self_name__ = self_name  # this is used by the
-                    # decorator caller to know the arument name to use to refer
+                    # decorator caller to know the argument name to use to refer
                     # to the current object.
                     v.__doc__ = make_docstring(v.flickr_method,
                                                ignore_arguments,
                                                show_errors=False)
-                try:
-                    __bindings__[v.flickr_method].append(classname + "." + k)
-                except KeyError:
-                    __bindings__[v.flickr_method] = [classname + "." + k]
-        return type.__new__(meta, classname, bases, classDict)
+
+                class_method_name = classname + "." + k
+                method_bindings = __bindings__.setdefault(class_method_name, [])
+
+        return type.__new__(mcl, classname, bases, classDict)
 
 
 def format_block(text, width, prefix=""):
@@ -247,6 +250,7 @@ def caller(flickr_method, static=False):
             token, kwargs = _get_token(self, **kwargs)
             method_args, format_result = method(self, *args, **kwargs)
             method_args[self.__self_name__] = self.id
+            logger.debug("Calling method '%s' with arguments: %s", flickr_method, str(method_args))
             if token:
                 method_args["auth_handler"] = token
             r = method_call.call_api(method=flickr_method, **method_args)
