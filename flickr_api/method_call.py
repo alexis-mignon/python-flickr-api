@@ -8,12 +8,11 @@
     Date: 06/08/2011
 
 """
-from __future__ import print_function
-
 from six.moves import urllib
 from six import iteritems
 import hashlib
 import json
+import logging
 
 from . import keys
 from .utils import urlopen_and_read
@@ -23,6 +22,8 @@ from .cache import SimpleCache
 REST_URL = "https://api.flickr.com/services/rest/"
 
 CACHE = None
+
+logger = logging.getLogger(__name__)
 
 
 def enable_cache(cache_object=None):
@@ -128,9 +129,9 @@ def call_api(api_key=None, api_secret=None, auth_handler=None,
         return resp
 
     try:
-        resp = json.loads(resp.decode())
+        resp = json.loads(resp)
     except ValueError as e:
-        print (resp)
+        logger.error("Could not parse response: %s", str(resp))
         raise e
 
     if resp["stat"] != "ok":
