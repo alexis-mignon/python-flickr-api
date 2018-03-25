@@ -19,10 +19,12 @@
     email: alexis.mignon_at_gmail.com
     Date: 05/08/2011
 """
+# pylint: disable=method-name-lower-case
+
 from . import method_call
 from .flickrerrors import FlickrError
 from .reflection import caller, static_caller, FlickrAutoDoc
-from six import text_type, iteritems
+from six import text_type, iteritems, with_metaclass
 from six.moves import UserList, urllib, cStringIO, range
 from . import auth
 import warnings
@@ -49,7 +51,7 @@ def dict_converter(keys, func):
     return convert
 
 
-class FlickrObject(object):
+class FlickrObject(with_metaclass(FlickrAutoDoc, object)):
     """
         Base Object for Flickr API Objects.
         Flickr Objects are dynamically created from the
@@ -59,7 +61,6 @@ class FlickrObject(object):
     __converters__ = []  # some functions used to convert some result field
     __display__ = []  # The attribute to display when the object is converted
                       # to a string
-    __metaclass__ = FlickrAutoDoc
 
     def __init__(self, **params):
         params["loaded"] = False
@@ -266,7 +267,7 @@ class Collection(FlickrObject):
         return args, lambda r: int(r["stats"]["views"])
 
     @caller("flickr.collections.getTree")
-    def getTree(**args):
+    def getTree(self, **args):
         def format_result(r, token=None):
             collections = _check_list(r["collections"])
             collections_ = []
@@ -869,7 +870,7 @@ class Person(FlickrObject):
         return args, lambda r: r["user"]
 
     @caller("flickr.collections.getTree")
-    def getCollectionTree(**args):
+    def getCollectionTree(self, **args):
         def format_result(r, token=None):
             collections = _check_list(r["collections"])
             collections_ = []
