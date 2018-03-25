@@ -290,6 +290,7 @@ def static_caller(flickr_method, static=False):
             token, kwargs = _get_token(None, **kwargs)
             method_args, format_result = method(*args, **kwargs)
             method_args["auth_handler"] = token
+            logger.debug("Calling method '%s' with arguments: %s", flickr_method, str(method_args))
             r = method_call.call_api(method=flickr_method, **method_args)
             try:
                 return format_result(r, token)
