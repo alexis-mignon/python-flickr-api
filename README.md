@@ -51,6 +51,7 @@ Requires:
 * python >= 2.7
 * [python-oauth2](https://github.com/joestump/python-oauth2)
 * [six](https://github.com/benjaminp/six)
+* requests
 
 Please note that `flickrapi` on Pypi is a different distribution by a different author.
 
