@@ -19,7 +19,7 @@ setup(
     install_requires=[
         "oauth2",
         "six",
-        "requires"
+        "requests"
     ],
     license="BSD License",
     classifiers=[
