@@ -18,10 +18,10 @@
 from .flickrerrors import FlickrError, FlickrAPIError
 from .objects import Photo, UploadTicket
 from . import auth
-from . import multipart
 import os
 from xml.etree import ElementTree as ET
 from six import text_type, binary_type, iteritems
+import requests
 
 UPLOAD_URL = "https://api.flickr.com/services/upload/"
 REPLACE_URL = "https://api.flickr.com/services/replace/"
@@ -47,16 +47,19 @@ def post(url, auth_handler, args, photo_file, photo_file_data=None):
 
     params = auth_handler.complete_parameters(url, args)
 
-    fields = params.items()
     if photo_file_data is None:
-        files = [("photo", os.path.basename(photo_file), open(photo_file, "rb").read())]
-    else:
-        files = [("photo", os.path.basename(photo_file), photo_file_data.read())]
+        photo_file_data = open(photo_file, "rb")
 
-    r, data = multipart.posturl(url, fields, files)
-    if r.status != 200:
+    files = {
+        "photo": (os.path.basename(photo_file), photo_file_data.read())
+    }
+
+    resp = requests.post(url, params, files=files)
+    data = resp.content
+
+    if resp.status_code != 200:
         raise FlickrError("HTTP Error %i: %s" % (r.status, data))
-    
+
     r = ET.fromstring(data)
     if r.get("stat") != 'ok':
         err = r[0]
@@ -141,7 +144,7 @@ def replace(**args):
 
     """
     if "async" not in args:
-        args["async"] = True
+        args["async"] = False
     if "photo" in args:
         args["photo_id"] = args.pop("photo").id
 
@@ -155,9 +158,10 @@ def replace(**args):
     r = post(REPLACE_URL, auth.AUTH_HANDLER, args, photo_file, photo_file_data)
 
     t = r[0]
+
     if t.tag == 'photoid':
         return Photo(id=t.text)
     elif t.tag == 'ticketid':
-        return UploadTicket(id=t.text, secret=t.secret)
+        return UploadTicket(id=t.text)
     else:
         raise FlickrError("Unexpected tag: %s" % t.tag)

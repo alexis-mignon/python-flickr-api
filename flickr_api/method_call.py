@@ -10,6 +10,7 @@
 """
 from six.moves import urllib
 from six import iteritems
+import requests
 import hashlib
 import json
 import logging
@@ -104,7 +105,7 @@ def call_api(api_key=None, api_secret=None, auth_handler=None,
 
     if auth_handler is None:
         if needssigning:
-            query_elements = args.items()
+            query_elements = list(args.items())
             query_elements.sort()
             sig = keys.API_SECRET + \
                 ["".join(["".join(e) for e in query_elements])]
@@ -112,28 +113,28 @@ def call_api(api_key=None, api_secret=None, auth_handler=None,
             m.update(sig)
             api_sig = m.digest()
             args["api_sig"] = api_sig
+        # Used to hash the arguments for cache
         data = urllib.parse.urlencode(args)
     else:
-        data = auth_handler.complete_parameters(
+        args = auth_handler.complete_parameters(
             url=request_url, params=args
-        ).to_postdata()
+        )
+        # Used to hash the arguments for cache
+        data = args.to_postdata()
 
     if CACHE is None:
-        resp = send_request(request_url, data)
+        resp = requests.post(request_url, args)
     else:
-        resp = CACHE.get(data) or send_request(request_url, data)
+        resp = CACHE.get(data) or requests(request_url, args)
         if data not in CACHE:
             CACHE.set(data, resp)
 
+    resp = resp.content
     if raw:
         return resp
 
     try:
-        try:
-            resp = json.loads(resp.decode())
-        except AttributeError:
-            # exception for python 3 where `resp` is a string (doesn't need decoding)
-            resp = json.loads(resp)
+        resp = json.loads(resp)
     except ValueError as e:
         logger.error("Could not parse response: %s", str(resp))
 
