@@ -2138,6 +2138,9 @@ class Walker(object):
                 slice_.step)
         else:
             raise ValueError("Only slices can be used as subscript")
+            
+    def __next__(self):
+        return self.next()
 
     def next(self):
         if self._curr_index == len(self._curr_list):
