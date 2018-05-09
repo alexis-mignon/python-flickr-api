@@ -117,7 +117,7 @@ class SimpleCache(object):
     @locking
     def __contains__(self, key):
         '''Returns True if the key is in the cache and has not expired.'''
-        return key in self.storage
+        return self.has_key(key)
 
     @locking
     def cull(self):
