@@ -36,7 +36,7 @@ def enable_cache(cache_object=None):
         object is used.
     """
     global CACHE
-    CACHE = cache_object or SimpleCache()
+    CACHE = cache_object if cache_object is not None else SimpleCache()
 
 
 def disable_cache():
@@ -125,9 +125,15 @@ def call_api(api_key=None, api_secret=None, auth_handler=None,
     if CACHE is None:
         resp = requests.post(request_url, args)
     else:
-        resp = CACHE.get(data) or requests(request_url, args)
-        if data not in CACHE:
-            CACHE.set(data, resp)
+        cachekey = {k:v for k,v in args.items() if k not in ("oauth_nonce", "oauth_timestamp", "oauth_signature")} 
+        cachekey = urllib.parse.urlencode(cachekey)
+
+        resp = CACHE.get(cachekey) or requests.post(request_url, args)
+        if cachekey not in CACHE:
+            CACHE.set(cachekey, resp)
+            logger.debug("NO HIT for cache key: %s" % cachekey)
+        else:
+            logger.debug("   HIT for cache key: %s" % cachekey)
 
     resp = resp.content
     if raw:
