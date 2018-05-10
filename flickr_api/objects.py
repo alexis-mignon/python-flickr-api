@@ -889,7 +889,7 @@ class Person(FlickrObject):
 
     @caller("flickr.tags.getListUser")
     def getTags(self):
-        return {}, lambda r: [Tag(**t) for t in r["who"]["tags"]["tag"]]
+        return {}, lambda r: [Tag(text=t) for t in r["who"]["tags"]["tag"]]
 
     @caller("flickr.tags.getListUserPopular")
     def getPopularTags(**args):
