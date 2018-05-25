@@ -24,6 +24,8 @@ REST_URL = "https://api.flickr.com/services/rest/"
 
 CACHE = None
 
+IGNORED_FIELDS = set(["oauth_nonce", "oauth_timestamp", "oauth_signature"])
+
 logger = logging.getLogger(__name__)
 
 
@@ -113,19 +115,15 @@ def call_api(api_key=None, api_secret=None, auth_handler=None,
             m.update(sig)
             api_sig = m.digest()
             args["api_sig"] = api_sig
-        # Used to hash the arguments for cache
-        data = urllib.parse.urlencode(args)
     else:
         args = auth_handler.complete_parameters(
             url=request_url, params=args
         )
-        # Used to hash the arguments for cache
-        data = args.to_postdata()
 
     if CACHE is None:
         resp = requests.post(request_url, args)
     else:
-        cachekey = {k:v for k,v in args.items() if k not in ("oauth_nonce", "oauth_timestamp", "oauth_signature")} 
+        cachekey = {k:v for k,v in args.items() if k not in IGNORED_FIELDS} 
         cachekey = urllib.parse.urlencode(cachekey)
 
         resp = CACHE.get(cachekey) or requests.post(request_url, args)
