@@ -24,6 +24,8 @@ REST_URL = "https://api.flickr.com/services/rest/"
 
 CACHE = None
 
+IGNORED_FIELDS = set(["oauth_nonce", "oauth_timestamp", "oauth_signature"])
+
 logger = logging.getLogger(__name__)
 
 
@@ -36,7 +38,7 @@ def enable_cache(cache_object=None):
         object is used.
     """
     global CACHE
-    CACHE = cache_object or SimpleCache()
+    CACHE = cache_object if cache_object is not None else SimpleCache()
 
 
 def disable_cache():
@@ -113,21 +115,23 @@ def call_api(api_key=None, api_secret=None, auth_handler=None,
             m.update(sig)
             api_sig = m.digest()
             args["api_sig"] = api_sig
-        # Used to hash the arguments for cache
-        data = urllib.parse.urlencode(args)
     else:
         args = auth_handler.complete_parameters(
             url=request_url, params=args
         )
-        # Used to hash the arguments for cache
-        data = args.to_postdata()
 
     if CACHE is None:
         resp = requests.post(request_url, args)
     else:
-        resp = CACHE.get(data) or requests(request_url, args)
-        if data not in CACHE:
-            CACHE.set(data, resp)
+        cachekey = {k:v for k,v in args.items() if k not in IGNORED_FIELDS} 
+        cachekey = urllib.parse.urlencode(cachekey)
+
+        resp = CACHE.get(cachekey) or requests.post(request_url, args)
+        if cachekey not in CACHE:
+            CACHE.set(cachekey, resp)
+            logger.debug("NO HIT for cache key: %s" % cachekey)
+        else:
+            logger.debug("   HIT for cache key: %s" % cachekey)
 
     resp = resp.content
     if raw:
