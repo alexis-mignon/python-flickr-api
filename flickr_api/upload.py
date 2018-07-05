@@ -58,7 +58,7 @@ def post(url, auth_handler, args, photo_file, photo_file_data=None):
     data = resp.content
 
     if resp.status_code != 200:
-        raise FlickrError("HTTP Error %i: %s" % (r.status, data))
+        raise FlickrError("HTTP Error %i: %s" % (resp.status_code, resp.text))
 
     r = ET.fromstring(data)
     if r.get("stat") != 'ok':
