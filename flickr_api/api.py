@@ -17,7 +17,7 @@ from . import auth
 from . import reflection
 
 __methods__ = reflection.__methods__.keys()
-__methods__.sort()
+__methods__ = sorted(__methods__)
 
 __proxys__ = {}
 
