@@ -874,7 +874,7 @@ class Person(FlickrObject):
         def format_result(r, token=None):
             collections = _check_list(r["collections"])
             collections_ = []
-            for c in collections:
+            for c in collections[0]["collection"]:
                 sets = _check_list(c.pop("set"))
                 sets_ = [Photoset(token=token, **s) for s in sets]
                 collections_.append(Collection(token=token, sets=sets_, **c))
