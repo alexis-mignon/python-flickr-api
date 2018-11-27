@@ -64,6 +64,15 @@ A brief guide is available in the [Wiki section](https://github.com/alexis-migno
 
 * [FlickrBox](https://github.com/tomquirk/FlickrBox) - A Dropbox-like backup experience for your free 1TB Flickr library!
 
+## Development
+This project uses pipenv to create a virtualenv for developement and control dependencies. 
+
+To run tests you can simply run it with:
+```
+pipenv install --dev
+pipenv run nose2
+```
+
 ## Notes
 
 The project is still at an early stage and requires a lot of testing.
