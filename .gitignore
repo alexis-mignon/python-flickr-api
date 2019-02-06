@@ -4,3 +4,4 @@
 *.egg
 /flickr_api/flickr_keys.py
 .idea
+/dist

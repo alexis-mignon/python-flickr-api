@@ -1,20 +1,15 @@
 [[source]]
-
 url = "https://pypi.python.org/simple"
 verify_ssl = true
 name = "pypi"
 
-
 [packages]
-
-flickr-api = "*"
-"nose2" = "*"
-
+oauth2 = "*"
+six = "*"
+requests = "*"
 
 [dev-packages]
-
-
+"nose2" = "*"
 
 [requires]
-
 python_version = "3.7"
