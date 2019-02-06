@@ -93,8 +93,13 @@ def upload(**args):
             from public searches.
         async
             set to 1 for async mode, 0 for sync mode
+        asynchronous (optional)
+            Alias to async for Python >= 3.6 where async is a keyword
 
     """
+    if "asynchronous" in args:
+        args["async"] = args["asynchronous"]
+        del args["asynchronous"]
     if "async" not in args:
         args["async"] = False
 
@@ -141,8 +146,13 @@ def replace(**args):
             a socket connection open the whole time. Processing photos
             asynchronously is recommended. Please consult the documentation
             for details.
+        asynchronous (optional)
+            Alias to async for Python >= 3.6 where async is a keyword
 
     """
+    if "asynchronous" in args:
+        args["async"] = args["asynchronous"]
+        del args["asynchronous"]
     if "async" not in args:
         args["async"] = False
     if "photo" in args:
