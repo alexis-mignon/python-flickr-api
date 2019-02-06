@@ -32,3 +32,29 @@ class FlickrAPIError(FlickrError):
         FlickrError.__init__(self, "%i : %s" % (code, message))
         self.code = code
         self.message = message
+
+class FlickrServerError(FlickrError):
+    """ Exception for Flickr Server Errors
+
+    These are exceptions that happen on the HTTP layer with 5XX status codes.
+
+    Parameters:
+    -----------
+    status_code: int
+        HTTP Status code
+    content: str
+        error content message
+    """
+    def __init__(self, status_code, content):
+        """Constructor
+
+    Parameters:
+    -----------
+    status_code: int
+        HTTP Status code
+    content: str
+        error content message
+    """
+        FlickrError.__init__(self, "HTTP Server Error %i: %s" % (status_code, content))
+        self.status_code = status_code
+        self.content = content

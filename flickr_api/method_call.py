@@ -17,7 +17,7 @@ import logging
 
 from . import keys
 from .utils import urlopen_and_read
-from .flickrerrors import FlickrError, FlickrAPIError
+from .flickrerrors import FlickrError, FlickrAPIError, FlickrServerError
 from .cache import SimpleCache
 
 REST_URL = "https://api.flickr.com/services/rest/"
@@ -133,14 +133,17 @@ def call_api(api_key=None, api_secret=None, auth_handler=None,
         else:
             logger.debug("   HIT for cache key: %s" % cachekey)
 
-    resp = resp.content
     if raw:
-        return resp
+        return resp.content
+
+    # catch for all 5xx errors
+    if 500 <= resp.status_code < 600:
+        raise FlickrServerError(resp.status_code, resp.content.decode('utf8'))
 
     try:
-        resp = json.loads(resp)
+        resp = json.loads(resp.content)
     except ValueError as e:
-        logger.error("Could not parse response: %s", str(resp))
+        logger.error("Could not parse response: %s", str(resp.content))
 
     if resp["stat"] != "ok":
         raise FlickrAPIError(resp["code"], resp["message"])
