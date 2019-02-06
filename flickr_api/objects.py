@@ -28,6 +28,7 @@ from six import text_type, iteritems, with_metaclass
 from six.moves import UserList, urllib, cStringIO, range
 from . import auth
 import warnings
+from itertools import groupby
 
 try:
     from PIL import Image    
@@ -40,6 +41,22 @@ except ImportError:
             warnings.warn(image_module_404)
             raise RuntimeError("Image module not found.")
 
+
+
+_SIZES_LABEL = {
+    'sq': 'Square',
+    'q': 'Large Square',
+    't': 'Thumbnail',
+    's': 'Small',
+    'n': 'Small 320',
+    'm': 'Medium',
+    'z': 'Medium 640',
+    'c': 'Medium 800',
+    'l': 'Large',
+    'h': 'Large 1600',
+    'k': 'Large 2048',
+    'o': 'Original'
+}
 
 def dict_converter(keys, func):
     def convert(dict_):
@@ -1407,6 +1424,12 @@ class Photo(FlickrObject):
 
     @static_caller("flickr.photos.search")
     def search(**args):
+        if "extras" not in args:
+            args["extras"] = []
+        if not isinstance(args["extras"], list):
+            args["extras"] = [args["extras"]]
+        args["extras"] += "media,url_sq, url_t, url_s, url_q, url_m, url_n, url_z, url_c, url_l, url_o".split(", ")
+
         args = _format_id("user", args)
         args = _format_extras(args)
         return args, _extract_photo_list
@@ -2065,8 +2088,30 @@ def _extract_photo_list(r, token=None):
         owner = Person(id=p["owner"], token=token)
         p["owner"] = owner
         p["token"] = token
+
+        sizes = _parse_inline_sizes(p)
+        if sizes:
+            p["sizes"] = sizes
+
         photos.append(Photo(**p))
     return FlickrList(photos, Info(**infos))
+
+def _parse_inline_sizes(p):
+    keys = [k for k in p.keys() if k.startswith("url_")]
+    size_keys = set(k.split("_")[-1] for k in keys)
+
+    sizes = {}
+    for s in size_keys:
+        w = p["width_"+s]
+        h = p["height_"+s]
+        url = "https://www.flickr.com/photos/%s/%s/sizes/%s/" % (p["owner"].id, p["id"], s)
+        source = p["url_"+s]
+        label = _SIZES_LABEL[s]
+        media = p["media"]
+
+        sizes[label] = dict(width=w, height=h, url=url, source=source, label=label, media=media)
+    
+    return sizes
 
 
 def _check_list(obj):

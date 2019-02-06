@@ -13,17 +13,18 @@ from io import BytesIO
 
 import inspect
 
+
 class Test5XXHandler(unittest.TestCase):
     def test_call_5XX(self):
         from flickr_api import set_auth_handler
-        auth_handler = AuthHandler(key="test", secret="test", 
+        auth_handler = AuthHandler(
+            key="test",
+            secret="test",
             access_token_key="test",
             access_token_secret="test")
         set_auth_handler(auth_handler)
         args = dict(
-            photo_file = '/tmp/test_file',
-            photo_file_data = StringIO("000000")
-        )
+            photo_file='/tmp/test_file', photo_file_data=StringIO("000000"))
 
         module = inspect.getmodule(method_call)
         resp = Response()
@@ -33,6 +34,7 @@ class Test5XXHandler(unittest.TestCase):
 
         with self.assertRaises(FlickrServerError) as context:
             f.Person.findByUserName("tomquirkphoto")
-        
+
         print(context.exception)
-        self.assertEquals("HTTP Server Error 502: Bad Gateway", str(context.exception))
+        self.assertEquals("HTTP Server Error 502: Bad Gateway",
+                          str(context.exception))

@@ -12,17 +12,18 @@ from io import BytesIO
 
 import inspect
 
+
 class TestUpload(unittest.TestCase):
     def test_upload_not_200(self):
         from flickr_api import set_auth_handler
-        auth_handler = AuthHandler(key="test", secret="test", 
+        auth_handler = AuthHandler(
+            key="test",
+            secret="test",
             access_token_key="test",
             access_token_secret="test")
         set_auth_handler(auth_handler)
         args = dict(
-            photo_file = '/tmp/test_file',
-            photo_file_data = StringIO("000000")
-        )
+            photo_file='/tmp/test_file', photo_file_data=StringIO("000000"))
 
         module = inspect.getmodule(upload)
         resp = Response()
@@ -32,6 +33,6 @@ class TestUpload(unittest.TestCase):
 
         with self.assertRaises(FlickrError) as context:
             upload(**args)
-        
+
         print(context.exception)
         self.assertEquals("HTTP Error 404: Not Found", str(context.exception))
