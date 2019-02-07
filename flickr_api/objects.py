@@ -1258,7 +1258,7 @@ class Photo(FlickrObject):
         """
             returns the largest size for the current photo.
         """
-        sizes = self.getSizes()
+        sizes = {k:v for k,v in self.getSizes().items() if v["media"] == self.media}
         max_size = None
         max_area = None
         for sl, s in iteritems(sizes):
@@ -1336,7 +1336,7 @@ class Photo(FlickrObject):
             size_label = self._getLargestSizeLabel()
             
         photo_file = self.getPhotoFile(size_label)
-        file_ext = '.' + photo_file.split('.')[-1]
+        file_ext = ('.' + photo_file.split('.')[-1]) if self.media == "photo" else ".mp4"
         r = urllib.request.urlopen(photo_file)
 
         with open(filename + file_ext, 'wb') as f:
@@ -2089,9 +2089,11 @@ def _extract_photo_list(r, token=None):
         p["owner"] = owner
         p["token"] = token
 
-        sizes = _parse_inline_sizes(p)
-        if sizes:
-            p["sizes"] = sizes
+        # only check sizes for photo as there's no way to ask for video url on extras
+        if "media" in p and p["media"] == "photo":
+            sizes = _parse_inline_sizes(p)
+            if sizes:
+                p["sizes"] = sizes
 
         photos.append(Photo(**p))
     return FlickrList(photos, Info(**infos))

@@ -2,7 +2,53 @@ import flickr_api as f
 import unittest
 
 
-class TestUpload(unittest.TestCase):
+class TestPhotoSizes(unittest.TestCase):
+    def test_video_largest_size(self):
+        p = f.objects.Photo(
+            id=1234,
+            sizes={
+                "HD MP4":
+                dict(
+                    media="video",
+                    url="v@url",
+                    source="v@source",
+                    width=100,
+                    height=100,
+                ),
+                "Large":
+                dict(
+                    media="photo",
+                    url="p@url",
+                    source="p@source",
+                    width=2000,
+                    height=2000)
+            },
+            media="video")
+        self.assertEqual("HD MP4", p._getLargestSizeLabel())
+
+    def test_photo_largest_size(self):
+        p = f.objects.Photo(
+            id=1234,
+            sizes={
+                "HD MP4":
+                dict(
+                    media="video",
+                    url="v@url",
+                    source="v@source",
+                    width=100,
+                    height=100,
+                ),
+                "Large":
+                dict(
+                    media="photo",
+                    url="p@url",
+                    source="p@source",
+                    width=2000,
+                    height=2000)
+            },
+            media="photo")
+        self.assertEqual("Large", p._getLargestSizeLabel())
+
     def test_parse_inline_sizes(self):
         self.maxDiff = None
         sizes = f.objects._parse_inline_sizes({
