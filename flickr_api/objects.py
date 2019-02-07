@@ -1227,8 +1227,8 @@ class Photo(FlickrObject):
             return dict([(s["label"], s) for s in r["sizes"]["size"]])
         return args, format_result
 
-    def getSizes(self, **args):
-        if "sizes" not in self.__dict__:
+    def getSizes(self, force=False, **args):
+        if force or "sizes" not in self.__dict__:
             self.__dict__["sizes"] = self._getSizes(**args)
         return self.sizes
 
