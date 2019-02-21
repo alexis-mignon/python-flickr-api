@@ -29,6 +29,7 @@ from six.moves import UserList, urllib, cStringIO, range
 from . import auth
 import warnings
 from itertools import groupby
+import os.path
 
 try:
     from PIL import Image    
@@ -1314,6 +1315,17 @@ class Photo(FlickrObject):
         except KeyError:
             raise FlickrError("The requested size is not available")
 
+    def _getOutputFilename(self, filename, size_label):
+        photo_file = self.getPhotoFile(size_label)
+        file_ext = ('.' + photo_file.split('.')[-1]) if self.media == "photo" else ".mp4"
+
+        output_filename = filename
+        if os.path.splitext(filename)[1] == '':
+            output_filename = filename + file_ext
+
+        return output_filename
+
+
     def save(self, filename, size_label=None):
         """
             saves the photo corresponding to the
@@ -1334,14 +1346,14 @@ class Photo(FlickrObject):
         """
         if size_label is None:
             size_label = self._getLargestSizeLabel()
-            
-        photo_file = self.getPhotoFile(size_label)
-        file_ext = ('.' + photo_file.split('.')[-1]) if self.media == "photo" else ".mp4"
-        r = urllib.request.urlopen(photo_file)
+        output_filename = self._getOutputFilename(filename, size_label)
 
-        with open(filename + file_ext, 'wb') as f:
+        r = urllib.request.urlopen(photo_file)
+        with open(output_filename, 'wb') as f:
             f.write(r.read())
             f.close()
+        
+        return output_filename
 
     def show(self, size_label=None):
         """

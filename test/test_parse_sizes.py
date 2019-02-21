@@ -26,6 +26,42 @@ class TestPhotoSizes(unittest.TestCase):
             media="video")
         self.assertEqual("HD MP4", p._getLargestSizeLabel())
 
+    def test_video_output_filename(self):
+        p = f.objects.Photo(
+            id=1234,
+            sizes={
+                "HD MP4":
+                dict(
+                    media="video",
+                    url="v@url",
+                    source="v@source",
+                    width=100,
+                    height=100,
+                )
+            },
+            media="video")
+        self.assertEqual("source.mp4", p._getOutputFilename("source", "HD MP4"))
+        self.assertEqual("source.mp4", p._getOutputFilename("source.mp4", "HD MP4"))
+        self.assertEqual("source.jpeg", p._getOutputFilename("source.jpeg", "HD MP4"))
+
+    def test_photo_output_filename(self):
+        p = f.objects.Photo(
+            id=1234,
+            sizes={
+                "Large":
+                dict(
+                    media="photo",
+                    url="p@url",
+                    source="p/source.jpg",
+                    width=2000,
+                    height=2000)
+            },
+            media="photo")
+        self.assertEqual("source.jpg", p._getOutputFilename("source", "Large"))
+        self.assertEqual("source.jpg", p._getOutputFilename("source.jpg", "Large"))
+        self.assertEqual("source.jpeg", p._getOutputFilename("source.jpeg", "Large"))
+
+
     def test_photo_largest_size(self):
         p = f.objects.Photo(
             id=1234,
