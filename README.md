@@ -63,6 +63,7 @@ A brief guide is available in the [Wiki section](https://github.com/alexis-migno
 > create a PR to add your project here!
 
 * [FlickrBox](https://github.com/tomquirk/FlickrBox) - A Dropbox-like backup experience for your free 1TB Flickr library!
+* [Album Sorter](https://github.com/Scraft/flickr-album-sorter) - Sort flickr albums into date taken order
 
 ## Development
 This project uses pipenv to create a virtualenv for developement and control dependencies. 
