@@ -1,4 +1,4 @@
-# -*- encoding: utf8 -*-
+# -*- encoding: utf-8 -*-
 """
     Object Oriented implementation of Flickr API.
 
