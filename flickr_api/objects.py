@@ -1348,6 +1348,7 @@ class Photo(FlickrObject):
             size_label = self._getLargestSizeLabel()
         output_filename = self._getOutputFilename(filename, size_label)
 
+        photo_file = self.getPhotoFile(size_label)
         r = urllib.request.urlopen(photo_file)
         with open(output_filename, 'wb') as f:
             f.write(r.read())
