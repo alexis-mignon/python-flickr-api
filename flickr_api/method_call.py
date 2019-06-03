@@ -141,10 +141,8 @@ def call_api(api_key=None, api_secret=None, auth_handler=None,
         raise FlickrServerError(resp.status_code, resp.content.decode('utf8'))
 
     try:
-        if isinstance(resp.content, bytes):
-            resp = json.loads(resp.content.decode('utf8'))
-        else:
-            resp = json.loads(resp.content)
+        resp = resp.json()
+
     except ValueError as e:
         logger.error("Could not parse response: %s", str(resp.content))
 
