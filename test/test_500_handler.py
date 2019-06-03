@@ -36,5 +36,5 @@ class Test5XXHandler(unittest.TestCase):
             f.Person.findByUserName("tomquirkphoto")
 
         print(context.exception)
-        self.assertEquals("HTTP Server Error 502: Bad Gateway",
+        self.assertEqual("HTTP Server Error 502: Bad Gateway",
                           str(context.exception))
