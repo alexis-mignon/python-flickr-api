@@ -35,4 +35,4 @@ class TestUpload(unittest.TestCase):
             upload(**args)
 
         print(context.exception)
-        self.assertEquals("HTTP Error 404: Not Found", str(context.exception))
+        self.assertEqual("HTTP Error 404: Not Found", str(context.exception))

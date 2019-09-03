@@ -66,12 +66,18 @@ A brief guide is available in the [Wiki section](https://github.com/alexis-migno
 * [Album Sorter](https://github.com/Scraft/flickr-album-sorter) - Sort flickr albums into date taken order
 
 ## Development
-This project uses pipenv to create a virtualenv for developement and control dependencies. 
+This project uses pipenv to create a virtualenv for developement and control dependencies.
 
 To run tests you can simply run it with:
 ```
 pipenv install --dev
 pipenv run nose2
+```
+
+To evoke the unittest module directly, one can run from the root directory (the directory with this file):
+
+```
+python -m unittest discover test
 ```
 
 ## Notes

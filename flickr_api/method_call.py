@@ -123,7 +123,7 @@ def call_api(api_key=None, api_secret=None, auth_handler=None,
     if CACHE is None:
         resp = requests.post(request_url, args)
     else:
-        cachekey = {k:v for k,v in args.items() if k not in IGNORED_FIELDS} 
+        cachekey = {k:v for k,v in args.items() if k not in IGNORED_FIELDS}
         cachekey = urllib.parse.urlencode(cachekey)
 
         resp = CACHE.get(cachekey) or requests.post(request_url, args)
@@ -141,7 +141,8 @@ def call_api(api_key=None, api_secret=None, auth_handler=None,
         raise FlickrServerError(resp.status_code, resp.content.decode('utf8'))
 
     try:
-        resp = json.loads(resp.content)
+        resp = resp.json()
+
     except ValueError as e:
         logger.error("Could not parse response: %s", str(resp.content))
 
