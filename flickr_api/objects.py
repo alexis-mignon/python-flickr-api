@@ -364,7 +364,7 @@ class Gallery(FlickrObject):
 
     @static_caller("flickr.galleries.create")
     def create(**args):
-        return _format_id("primary_photo"), lambda r: Gallery(**r["gallery"])
+        return _format_id("primary_photo", args), lambda r: Gallery(**r["gallery"])
 
     @caller("flickr.galleries.editMeta")
     def editMedia(self, **args):
@@ -395,14 +395,17 @@ class Gallery(FlickrObject):
     def getInfo(self):
         def format_result(r, token=None):
             gallery = r["gallery"]
-            gallery["owner"] = Person(gallery["owner"])
-            pp_id = gallery.pop("primary_photo_id")
-            pp_secret = gallery.pop("primary_photo_secret")
-            pp_farm = gallery.pop("primary_photo_farm")
-            pp_server = gallery.pop("primary_photo_server")
-            gallery["primary_photo"] = Photo(id=pp_id, secret=pp_secret,
-                                             server=pp_server, farm=pp_farm,
-                                             token=token)
+            gallery["owner"] = Person(id=gallery["owner"])
+            try:
+                pp_id = gallery.pop("primary_photo_id")
+                pp_secret = gallery.pop("primary_photo_secret")
+                pp_farm = gallery.pop("primary_photo_farm")
+                pp_server = gallery.pop("primary_photo_server")
+                gallery["primary_photo"] = Photo(id=pp_id, secret=pp_secret,
+                                                 server=pp_server, farm=pp_farm,
+                                                 token=token)
+            except KeyError:
+                pass
             return gallery
         return {}, format_result
 
@@ -821,15 +824,8 @@ class Person(FlickrObject):
             galleries = _check_list(info.pop("gallery"))
             galleries_ = []
 
-            for g in galleries_:
-                g["owner"] = Person(g["owner"])
-                pp_id = g.pop("primary_photo_id")
-                pp_secret = g.pop("primary_photo_secret")
-                pp_farm = g.pop("primary_photo_farm")
-                pp_server = g.pop("primary_photo_server")
-                g["primary_photo"] = Gallery(id=pp_id, secret=pp_secret,
-                                            server=pp_server,
-                                            farm=pp_farm, token=token)
+            for g in galleries:
+                g["owner"] = Person(id=g["owner"])
                 galleries_.append(g)
             return FlickrList(galleries_, Info(**info))
         return args, format_result
