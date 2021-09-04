@@ -167,7 +167,7 @@ class FlickrObject(with_metaclass(FlickrAutoDoc, object)):
 
     def getInfo(self):
         """
-            Returns object information as a dictionnary.
+            Returns object information as a dictionary.
             Should be overriden.
         """
         return {}

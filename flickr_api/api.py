@@ -25,7 +25,7 @@ __proxys__ = {}
 def _get_proxy(name):
     """
         return the FlickrMethodProxy object with called 'name' from 
-        the __proxys__ global dictionnary. Creates the objects if needed.
+        the __proxys__ global dictionary. Creates the objects if needed.
     """
     if name in __proxys__ :
         return __proxys__[name]
