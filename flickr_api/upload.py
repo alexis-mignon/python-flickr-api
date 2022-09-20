@@ -81,7 +81,7 @@ def upload(**args):
         description (optional)
             A description of the photo. May contain some limited HTML.
         tags (optional)
-            A space-seperated list of tags to apply to the photo.
+            A space-separated list of tags to apply to the photo.
         is_public, is_friend, is_family (optional)
             Set to 0 for no, 1 for yes. Specifies who can view the photo.
         safety_level (optional)

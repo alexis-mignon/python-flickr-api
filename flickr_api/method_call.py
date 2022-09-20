@@ -79,7 +79,7 @@ def call_api(api_key=None, api_secret=None, auth_handler=None,
             is used.
         raw:
             if True the default xml response from the server is returned. If
-            False (default) a dictionnary built from the JSON answer is
+            False (default) a dictionary built from the JSON answer is
             returned.
         args:
             the arguments to pass to the method.
@@ -156,11 +156,11 @@ def call_api(api_key=None, api_secret=None, auth_handler=None,
 
 def clean_content(d):
     """
-    Cleans out recursively the keys comming from the JSON
-    dictionnary.
+    Cleans out recursively the keys coming from the JSON
+    dictionary.
 
     Namely: "_content" keys are replaces with their associated
-        values if they are the only key of the dictionnary. Other
+        values if they are the only key of the dictionary. Other
         wise they are replaces by a "text" key with the same value.
     """
     if isinstance(d, dict):
