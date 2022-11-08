@@ -32,7 +32,7 @@ from itertools import groupby
 import os.path
 
 try:
-    from PIL import Image    
+    from PIL import Image
 except ImportError:
     class Image(object):
         @staticmethod
@@ -1259,7 +1259,11 @@ class Photo(FlickrObject):
         max_size = None
         max_area = None
         for sl, s in iteritems(sizes):
-            area = int(s["height"]) * int(s["width"])
+            try:
+                area = int(s["height"]) * int(s["width"])
+            except TypeError:
+                # Video entries have None width and/or height entries sometimes
+                continue
             if max_area is None or area > max_area:
                 max_size = sl
                 max_area = area
@@ -1349,7 +1353,7 @@ class Photo(FlickrObject):
         with open(output_filename, 'wb') as f:
             f.write(r.read())
             f.close()
-        
+
         return output_filename
 
     def show(self, size_label=None):
@@ -2121,7 +2125,7 @@ def _parse_inline_sizes(p):
         media = p["media"]
 
         sizes[label] = dict(width=w, height=h, url=url, source=source, label=label, media=media)
-    
+
     return sizes
 
 
@@ -2194,7 +2198,7 @@ class Walker(object):
                 slice_.step)
         else:
             raise ValueError("Only slices can be used as subscript")
-            
+
     def __next__(self):
         return self.next()
 
