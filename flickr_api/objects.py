@@ -1326,7 +1326,7 @@ class Photo(FlickrObject):
         return output_filename
 
 
-    def save(self, filename, size_label=None):
+    def save(self, filename, size_label=None, timeout=10):
         """
             saves the photo corresponding to the
             given size.
@@ -1349,7 +1349,7 @@ class Photo(FlickrObject):
         output_filename = self._getOutputFilename(filename, size_label)
 
         photo_file = self.getPhotoFile(size_label)
-        r = urllib.request.urlopen(photo_file)
+        r = urllib.request.urlopen(photo_file, timeout=timeout)
         with open(output_filename, 'wb') as f:
             f.write(r.read())
             f.close()
