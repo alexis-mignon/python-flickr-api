@@ -5,3 +5,4 @@
 /flickr_api/flickr_keys.py
 .idea
 /dist
+.pytest_cache

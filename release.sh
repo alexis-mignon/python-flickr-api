@@ -1,13 +1,25 @@
-#! /bin/bash
-set -ex
+#!/bin/bash
 
-rm -fr ./dist
-CURV=`pipenv run python -c "from flickr_api._version import __version__ as v; print(v)"`
-NEXTV=`semver -i "$CURV"`
-gsed -e "s/$CURV/$NEXTV/g" -i flickr_api/_version.py
-git add .
-git commit -m"releasing version v$NEXTV"
-git tag "v$NEXTV"
+VERSION=$(poetry version -s)
+echo Getting ready to release version ${VERSION}
+
+if [[ $(git tag -l | grep ${VERSION}) ]]; then
+    echo ERROR: ${VERSION} tag already exists, bailing...
+    exit 1
+fi
+
+if [[ -n $(git status -s) ]]; then
+  echo ERROR: Repo is modified or has untracked files, bailing...
+  exit 1
+fi
+
+git tag v`poetry version -s`
 git push --tags
-python3 setup.py sdist bdist_wheel
-twine upload dist/*
+poetry build
+poetry publish
+poetry version patch
+git add pyproject.toml
+git commit -m "Bumps to version `poetry version -s`"
+git push
+
+echo Remember to edit the relase notes on https://github.com/alexis-mignon/python-flickr-api
