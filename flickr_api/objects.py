@@ -2240,6 +2240,9 @@ class SlicedWalker(object):
     def __iter__(self):
         return self
 
+    def __next__(self):
+        return self.next()
+
     def next(self):
         if self._begin:
             for i in range(self.start):
