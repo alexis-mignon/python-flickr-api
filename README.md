@@ -6,13 +6,13 @@ The project provides an almost exhaustive access to the [Flickr API](https://www
 
 ## Quick Start
 
-1. Install the package via PyPi (or manually cloning the repo):
+1. Install the package via PyPI (or manually cloning the repo):
 
 ```bash
 pip install flickr_api
 ```
 
-2. Aquire Flickr API keys and set up authorisation as per the [Wiki](https://github.com/alexis-mignon/python-flickr-api/wiki/Flickr-API-Keys-and-Authentication)
+2. Acquire Flickr API keys and set up authorisation as per the [Wiki](https://github.com/alexis-mignon/python-flickr-api/wiki/Flickr-API-Keys-and-Authentication)
 
 3. Start using the OO interface!
 
@@ -51,36 +51,39 @@ Requires:
 * python >= 2.7
 * [python-oauth2](https://github.com/joestump/python-oauth2)
 * [six](https://github.com/benjaminp/six)
-* requests
+* [requests](https://requests.readthedocs.io/)
 
-Please note that `flickrapi` on Pypi is a different distribution by a different author.
+Please note that `flickrapi` on [PyPI](https://pypi.org/) is a different distribution by a different author.
 
 ## API Guide
 
 A brief guide is available in the [Wiki section](https://github.com/alexis-mignon/python-flickr-api/wiki/).
 
 ## Projects using this API
+
 > create a PR to add your project here!
 
 * [FlickrBox](https://github.com/tomquirk/FlickrBox) - A Dropbox-like backup experience for your free 1TB Flickr library!
 * [Album Sorter](https://github.com/Scraft/flickr-album-sorter) - Sort flickr albums into date taken order
+* [Flickr Download](https://github.com/beaufour/flickr-download) - Download photos, sets, etc from Flickr
 
 ## Development
+
 This project uses pipenv to create a virtualenv for development and control dependencies.
 
 To run tests you can simply run it with:
-```
+
+```bash
 pipenv install --dev
 pipenv run nose2
 ```
 
 To evoke the unittest module directly, one can run from the root directory (the directory with this file):
 
-```
+```bash
 python -m unittest discover test
 ```
 
 ## Notes
 
-The project is still at an early stage and requires a lot of testing.
 Any help, including bug reports, is appreciated!

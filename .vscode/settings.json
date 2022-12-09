@@ -1,7 +1,14 @@
 {
     "cSpell.words": [
+        "authorisation",
+        "authorised",
         "flickr",
-        "flickrerrors"
+        "flickrapi",
+        "flickrerrors",
+        "photoset",
+        "Photosets",
+        "pipenv",
+        "virtualenv"
     ],
     "python.linting.flake8Enabled": true,
     "python.linting.enabled": true,
