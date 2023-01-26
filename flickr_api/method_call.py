@@ -48,6 +48,16 @@ def disable_cache():
     CACHE = None
 
 
+TIMEOUT = None
+def set_timeout(t):
+    """Set timeout for requests calls
+    """
+    global TIMEOUT
+    TIMEOUT = t
+
+def get_timeout():
+    return TIMEOUT
+
 def send_request(url, data):
     """send a http request.
     """
@@ -121,12 +131,13 @@ def call_api(api_key=None, api_secret=None, auth_handler=None,
         )
 
     if CACHE is None:
-        resp = requests.post(request_url, args)
+        resp = requests.post(request_url, args, timeout=get_timeout())
     else:
         cachekey = {k:v for k,v in args.items() if k not in IGNORED_FIELDS}
         cachekey = urllib.parse.urlencode(cachekey)
 
-        resp = CACHE.get(cachekey) or requests.post(request_url, args)
+        resp = CACHE.get(cachekey) or requests.post(request_url, args,
+            timeout=get_timeout())
         if cachekey not in CACHE:
             CACHE.set(cachekey, resp)
             logger.debug("NO HIT for cache key: %s" % cachekey)
