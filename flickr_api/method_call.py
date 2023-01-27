@@ -48,12 +48,14 @@ def disable_cache():
     CACHE = None
 
 
-TIMEOUT = None
-def set_timeout(t):
-    """Set timeout for requests calls
+TIMEOUT = 10
+def set_timeout(seconds):
+    """Set timeout in seconds for requests calls
+
+    See requests package documentation for timeout usage details.
     """
     global TIMEOUT
-    TIMEOUT = t
+    TIMEOUT = seconds
 
 def get_timeout():
     return TIMEOUT
