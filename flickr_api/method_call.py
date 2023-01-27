@@ -48,11 +48,11 @@ def disable_cache():
     CACHE = None
 
 
+# See requests package documentation for timeout usage details.
+# https://requests.readthedocs.io/en/latest/user/quickstart/#timeouts
 TIMEOUT = 10
 def set_timeout(seconds):
     """Set timeout in seconds for requests calls
-
-    See requests package documentation for timeout usage details.
     """
     global TIMEOUT
     TIMEOUT = seconds
