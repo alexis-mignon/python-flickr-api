@@ -17,6 +17,7 @@
 
 from .flickrerrors import FlickrError, FlickrAPIError
 from .objects import Photo, UploadTicket
+from .method_call import get_timeout
 from . import auth
 import os
 from xml.etree import ElementTree as ET
@@ -54,7 +55,7 @@ def post(url, auth_handler, args, photo_file, photo_file_data=None):
         "photo": (os.path.basename(photo_file), photo_file_data.read())
     }
 
-    resp = requests.post(url, params, files=files)
+    resp = requests.post(url, params, files=files, timeout=get_timeout())
     data = resp.content
 
     if resp.status_code != 200:

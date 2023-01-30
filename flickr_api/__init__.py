@@ -33,6 +33,6 @@ except Exception as e:
     print (type(e), e)
 
 from .auth import set_auth_handler
-from .method_call import enable_cache, disable_cache
+from .method_call import enable_cache, disable_cache, set_timeout, get_timeout
 from .keys import set_keys
 from ._version import __version__
