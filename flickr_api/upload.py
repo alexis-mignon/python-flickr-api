@@ -84,13 +84,13 @@ def upload(**args):
         tags (optional)
             A space-separated list of tags to apply to the photo.
         is_public, is_friend, is_family (optional)
-            Set to 0 for no, 1 for yes. Specifies who can view the photo.
+            Set to "0" for no, "1" for yes. Specifies who can view the photo.
         safety_level (optional)
-            Set to 1 for Safe, 2 for Moderate, or 3 for Restricted.
+            Set to "1" for Safe, "2" for Moderate, or "3" for Restricted.
         content_type (optional)
-            Set to 1 for Photo, 2 for Screenshot, or 3 for Other.
+            Set to "1" for Photo, "2" for Screenshot, or "3" for Other.
         hidden (optional)
-            Set to 1 to keep the photo in global search results, 2 to hide
+            Set to "1" to keep the photo in global search results, "2" to hide
             from public searches.
         async
             set to 1 for async mode, 0 for sync mode
