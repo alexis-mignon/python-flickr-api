@@ -108,6 +108,29 @@ class TestPhotoSizes(unittest.TestCase):
             media="photo")
         self.assertEqual("Large", p._getLargestSizeLabel())
 
+    def test_photo_largest_size_original(self):
+        """Test that the original size is returned if it is as big as the largest size"""
+        p = f.objects.Photo(
+            id=1234,
+            sizes={
+                "Large":
+                dict(
+                    media="photo",
+                    url="p@url",
+                    source="p@source",
+                    width=2000,
+                    height=2000),
+                "Original":
+                dict(
+                    media="photo",
+                    url="p@url",
+                    source="p@source",
+                    width=2000,
+                    height=2000)
+            },
+            media="photo")
+        self.assertEqual("Original", p._getLargestSizeLabel())
+
     def test_parse_inline_sizes(self):
         self.maxDiff = None
         sizes = f.objects._parse_inline_sizes({

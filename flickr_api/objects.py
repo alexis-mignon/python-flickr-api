@@ -1264,7 +1264,7 @@ class Photo(FlickrObject):
             except TypeError:
                 # Video entries have None width and/or height entries sometimes
                 continue
-            if max_area is None or area > max_area:
+            if max_area is None or area > max_area or (area == max_area and sl == "Original"):
                 max_size = sl
                 max_area = area
         return max_size
