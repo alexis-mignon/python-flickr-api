@@ -323,7 +323,7 @@ class CommonInstitutionUrl(FlickrObject):
 
 class Contact(FlickrObject):
     @static_caller("flickr.contacts.getList")
-    def getList(self, **args):
+    def getList(**args):
         def format_result(r):
             info = r["contacts"]
             contacts = [Person(id=c["nsid"], **c)
@@ -332,7 +332,7 @@ class Contact(FlickrObject):
         return args, format_result
 
     @static_caller("flickr.contacts.getListRecentlyUploaded")
-    def getListRecentlyUploaded(self, **args):
+    def getListRecentlyUploaded(**args):
         def format_result(r):
             info = r["contacts"]
             contacts = [Person(id=c["nsid"], **c)
@@ -341,7 +341,7 @@ class Contact(FlickrObject):
         return args, format_result
 
     @static_caller("flickr.contacts.getTaggingSuggestions")
-    def getTaggingSuggestions(self, **args):
+    def getTaggingSuggestions(**args):
         def format_result(r):
             info = r["contacts"]
             contacts = [Person(id=c["nsid"], **c)
