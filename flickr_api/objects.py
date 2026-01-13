@@ -1981,19 +1981,19 @@ class Tag(FlickrObject):
 
     @static_caller("flickr.tags.getHotList")
     def getHotList(**args):
-        return args, lambda r: [Tag(**t) for t in r["hottags"]["tag"]]
+        return args, lambda r: [Tag(text=t) for t in r["hottags"]["tag"]]
 
     @static_caller("flickr.tags.getListUser")
     def getListUser(**args):
         return (
             _format_id("user", args),
-            lambda r: [Tag(**t) for t in r["who"]["tags"]["tag"]]
+            lambda r: [Tag(text=t) for t in r["who"]["tags"]["tag"]]
         )
 
     @static_caller("flickr.tags.getListUserPopular")
     def getListUserPopular(**args):
         return (_format_id("user", args),
-                lambda r: [Tag(**t) for t in r["who"]["tags"]["tag"]])
+                lambda r: [Tag(text=t) for t in r["who"]["tags"]["tag"]])
 
     @static_caller("flickr.tags.getListUserRaw")
     def getListUserRaw(**args):
