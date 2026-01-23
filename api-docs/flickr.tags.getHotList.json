@@ -1,0 +1,70 @@
+{
+  "name": "flickr.tags.getHotList",
+  "description": "Returns a list of hot tags for the given period.",
+  "authentication": " This method does not require authentication. ",
+  "arguments": [
+    {
+      "name": "api_key",
+      "required": true,
+      "description": "Your API application key.See herefor more details."
+    },
+    {
+      "name": "period",
+      "required": false,
+      "description": "The period for which to fetch hot tags. Valid values aredayandweek(defaults today)."
+    },
+    {
+      "name": "count",
+      "required": false,
+      "description": "The number of tags to return. Defaults to 20. Maximum allowed value is 200."
+    }
+  ],
+  "response": "\n<hottags period=\"day\" count=\"6\">\n  <tag score=\"20\">northerncalifornia</tag>\n  <tag score=\"18\">top20</tag>\n  <tag score=\"15\">keychain</tag>\n  <tag score=\"10\">zb</tag>\n  <tag score=\"9\">selfportraittuesday</tag>\n  <tag score=\"4\">jan06</tag>\n</hottags>",
+  "errors": [
+    {
+      "code": 1,
+      "title": "Invalid periodThe specified period was not understood.",
+      "description": ""
+    },
+    {
+      "code": 100,
+      "title": "Invalid API KeyThe API key passed was not valid or has expired.",
+      "description": ""
+    },
+    {
+      "code": 105,
+      "title": "Service currently unavailableThe requested service is temporarily unavailable.",
+      "description": ""
+    },
+    {
+      "code": 106,
+      "title": "Write operation failedThe requested operation failed due to a temporary issue.",
+      "description": ""
+    },
+    {
+      "code": 111,
+      "title": "Format \"xxx\" not foundThe requested response format was not found.",
+      "description": ""
+    },
+    {
+      "code": 112,
+      "title": "Method \"xxx\" not foundThe requested method was not found.",
+      "description": ""
+    },
+    {
+      "code": 114,
+      "title": "Invalid SOAP envelopeThe SOAP envelope send in the request could not be parsed.",
+      "description": ""
+    },
+    {
+      "code": 115,
+      "title": "Invalid XML-RPC Method CallThe XML-RPC request document could not be parsed.",
+      "description": ""
+    },
+    {
+      "code": 116,
+      "title": "Bad URL foundOne or more arguments contained a URL that has been used for abuse on Flickr.",
+      "description": ""
+    }
+  ]
+}
