@@ -1954,6 +1954,9 @@ class stats(FlickrObject):
 class Tag(FlickrObject):
     __display__ = ["id", "text"]
     __self_name__ = "tag_id"
+    __converters__ = [
+        dict_converter(["count"], int),
+    ]
 
     class Cluster(FlickrObject):
         __display__ = ["total"]
@@ -1985,9 +1988,11 @@ class Tag(FlickrObject):
 
     @static_caller("flickr.tags.getListUser")
     def getListUser(**args):
+        # Tags from getListUser have no attributes, so after clean_content()
+        # they become strings (not dicts). Use Tag(text=t) like Person.getTags.
         return (
             _format_id("user", args),
-            lambda r: [Tag(**t) for t in r["who"]["tags"]["tag"]]
+            lambda r: [Tag(text=t) for t in r["who"]["tags"]["tag"]]
         )
 
     @static_caller("flickr.tags.getListUserPopular")
