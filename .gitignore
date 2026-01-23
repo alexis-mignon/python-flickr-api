@@ -6,4 +6,8 @@
 .idea
 /dist
 .pytest_cache
-api-docs/
+# Ignore api-docs except specific files needed for tests
+api-docs/*
+!api-docs/flickr.tags.getHotList.json
+!api-docs/flickr.tags.getListUser.json
+!api-docs/flickr.tags.getListUserPopular.json
