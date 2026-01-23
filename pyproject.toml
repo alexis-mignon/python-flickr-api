@@ -1,6 +1,6 @@
 [project]
 name = "flickr_api"
-version = "0.7.8"
+version = "0.8.0"
 description = "Python wrapper for the Flickr API"
 readme = "README.md"
 license = "BSD-3-Clause"
