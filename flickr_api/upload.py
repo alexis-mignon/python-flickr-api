@@ -21,7 +21,6 @@ from .method_call import get_timeout
 from . import auth
 import os
 from xml.etree import ElementTree as ET
-from six import text_type, binary_type, iteritems
 import requests
 
 UPLOAD_URL = "https://api.flickr.com/services/upload/"
@@ -30,14 +29,14 @@ REPLACE_URL = "https://api.flickr.com/services/replace/"
 
 def format_dict(d):
     d_ = {}
-    for k, v in iteritems(d):
+    for k, v in d.items():
         if isinstance(v, bool):
             v = int(v)
-        elif isinstance(v, text_type):
+        elif isinstance(v, str):
             v = v.encode("utf8")
-        if isinstance(k, text_type):
+        if isinstance(k, str):
             k = k.encode("utf8")
-        v = binary_type(v)
+        v = bytes(v) if not isinstance(v, bytes) else v
         d_[k] = v
     return d_
 

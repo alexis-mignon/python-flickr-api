@@ -36,8 +36,7 @@
 
 import oauth2
 import time
-from six import string_types
-from six.moves import urllib
+import urllib.parse
 from .utils import urlopen_and_read
 from . import keys
 
@@ -321,7 +320,7 @@ def set_auth_handler(auth_handler, set_api_keys=False):
         as a conveniency only for single user settings.
     """
     global AUTH_HANDLER
-    if isinstance(auth_handler, string_types):
+    if isinstance(auth_handler, str):
         ah = AuthHandler.load(auth_handler, set_api_keys)
         set_auth_handler(ah)
     else:

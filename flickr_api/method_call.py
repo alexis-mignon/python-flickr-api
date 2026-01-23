@@ -8,8 +8,9 @@
     Date: 06/08/2011
 
 """
-from six.moves import urllib
-from six import iteritems
+import urllib.parse
+import urllib.request
+import urllib.error
 import requests
 import hashlib
 import json
@@ -180,7 +181,7 @@ def clean_content(d):
         d_clean = {}
         if len(d) == 1 and "_content" in d:
             return clean_content(d["_content"])
-        for k, v in iteritems(d):
+        for k, v in d.items():
             if k == "_content":
                 k = "text"
             d_clean[k] = clean_content(v)

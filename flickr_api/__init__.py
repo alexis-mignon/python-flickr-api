@@ -21,8 +21,6 @@
 
 """
 
-from __future__ import print_function
-
 try:
     from .objects import *
     from . import objects

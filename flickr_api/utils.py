@@ -4,7 +4,7 @@ module utils
 some utility functions
 """
 
-from six.moves import urllib
+import urllib.request
 
 
 def urlopen_and_read(url):
