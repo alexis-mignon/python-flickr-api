@@ -18,8 +18,8 @@ classifiers = [
     "Programming Language :: Python :: 3.13",
 ]
 dependencies = [
-    "oauth2",
     "requests",
+    "requests-oauthlib",
 ]
 
 [project.urls]

@@ -45,7 +45,9 @@ def post(url, auth_handler, args, photo_file, photo_file_data=None):
     args = format_dict(args)
     args["api_key"] = auth_handler.key
 
-    params = auth_handler.complete_parameters(url, args)
+    oauth_request = auth_handler.complete_parameters(url, args)
+    oauth_auth = oauth_request.oauth
+    params = dict(oauth_request.items())
 
     if photo_file_data is None:
         photo_file_data = open(photo_file, "rb")
@@ -54,7 +56,7 @@ def post(url, auth_handler, args, photo_file, photo_file_data=None):
         "photo": (os.path.basename(photo_file), photo_file_data.read())
     }
 
-    resp = requests.post(url, params, files=files, timeout=get_timeout())
+    resp = requests.post(url, params, files=files, auth=oauth_auth, timeout=get_timeout())
     data = resp.content
 
     if resp.status_code != 200:
