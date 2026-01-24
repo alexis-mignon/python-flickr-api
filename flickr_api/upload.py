@@ -14,6 +14,7 @@
 
 """
 
+from typing import Any
 
 from .flickrerrors import FlickrError, FlickrAPIError
 from .objects import Photo, UploadTicket
@@ -22,6 +23,7 @@ from . import auth
 import os
 from xml.etree import ElementTree as ET
 import requests
+
 
 UPLOAD_URL = "https://api.flickr.com/services/upload/"
 REPLACE_URL = "https://api.flickr.com/services/replace/"
@@ -139,7 +141,7 @@ def post(url, auth_handler, args, photo_file, photo_file_data=None):
     return r
 
 
-def upload(**args):
+def upload(**args: Any) -> Photo | UploadTicket:
     """
     Authentication:
 
@@ -195,7 +197,7 @@ def upload(**args):
         raise FlickrError("Unexpected tag: %s" % t.tag)
 
 
-def replace(**args):
+def replace(**args: Any) -> Photo | UploadTicket:
     """
      Authentication:
 

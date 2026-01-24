@@ -19,7 +19,10 @@ class FlickrAPIError(FlickrError):
     message: str
         Error message
     """
-    def __init__(self, code, message):
+    code: int
+    message: str
+
+    def __init__(self, code: int, message: str) -> None:
         """Constructor
 
     Parameters:
@@ -45,7 +48,10 @@ class FlickrServerError(FlickrError):
     content: str
         error content message
     """
-    def __init__(self, status_code, content):
+    status_code: int
+    content: str
+
+    def __init__(self, status_code: int, content: str) -> None:
         """Constructor
 
     Parameters:

@@ -99,7 +99,7 @@ except ImportError:
 LIST_REG = re.compile(r'<ul>(.*?)</ul>', re.DOTALL | re.UNICODE | re.MULTILINE)
 LIST_ITEM_REG = re.compile(r'<li>(.*?)</li>', re.DOTALL | re.UNICODE)
 
-__bindings__ = {}
+__bindings__: dict[str, list[str]] = {}
 
 
 def bindings_to(flickr_method):

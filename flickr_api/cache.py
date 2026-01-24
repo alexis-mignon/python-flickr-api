@@ -41,6 +41,9 @@ thanks to those guys for designing a simple and effective cache!
 
 import threading
 import time
+from typing import Any, Callable, TypeVar
+
+F = TypeVar('F', bound=Callable[..., Any])
 
 
 class SimpleCache(object):
@@ -58,17 +61,17 @@ class SimpleCache(object):
         self.max_entries = max_entries
         self.cull_frequency = 3
 
-    def locking(method):
+    def locking(method: F) -> F:  # type: ignore[misc]
         '''Method decorator, ensures the method call is locked'''
 
-        def locked(self, *args, **kwargs):
+        def locked(self: "SimpleCache", *args: Any, **kwargs: Any) -> Any:
             self.lock.acquire()
             try:
                 return method(self, *args, **kwargs)
             finally:
                 self.lock.release()
 
-        return locked
+        return locked  # type: ignore[return-value]
 
     @locking
     def get(self, key, default=None):

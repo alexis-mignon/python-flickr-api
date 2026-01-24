@@ -34,6 +34,9 @@
 
 """
 
+from typing import Any
+from collections.abc import Iterator, ItemsView
+
 from requests_oauthlib import OAuth1
 import requests
 from . import keys
@@ -50,15 +53,36 @@ class AuthHandlerError(Exception):
 
 
 class AuthHandler(object):
-    def __init__(self, key=None, secret=None, callback=None,
-                 access_token_key=None, access_token_secret=None,
-                 request_token_key=None, request_token_secret=None):
+    key: str
+    secret: str
+    callback: str
+    request_token_key: str | None
+    request_token_secret: str | None
+    access_token_key: str | None
+    access_token_secret: str | None
 
-        self.key = key or keys.API_KEY
-        self.secret = secret or keys.API_SECRET
+    def __init__(
+        self,
+        key: str | None = None,
+        secret: str | None = None,
+        callback: str | None = None,
+        access_token_key: str | None = None,
+        access_token_secret: str | None = None,
+        request_token_key: str | None = None,
+        request_token_secret: str | None = None,
+    ) -> None:
 
-        if self.key is None or self.secret is None:
+        resolved_key = key or keys.API_KEY
+        resolved_secret = secret or keys.API_SECRET
+
+        if resolved_key is None or resolved_secret is None:
             raise ValueError("API keys have not been set.")
+
+        # Type narrowing: after the check above, these are guaranteed to be str
+        assert resolved_key is not None
+        assert resolved_secret is not None
+        self.key = resolved_key
+        self.secret = resolved_secret
 
         if callback is None:
             callback = ("https://api.flickr.com/services/rest/"
@@ -90,7 +114,7 @@ class AuthHandler(object):
             self.access_token_key = access_token_key
             self.access_token_secret = access_token_secret
 
-    def get_authorization_url(self, perms='read'):
+    def get_authorization_url(self, perms: str = 'read') -> str:
         if self.request_token_key is None:
             raise AuthHandlerError(
                 ("Request token is not defined. This ususally means that the"
@@ -100,7 +124,7 @@ class AuthHandler(object):
             AUTHORIZE_URL, self.request_token_key, perms
         )
 
-    def set_verifier(self, oauth_verifier):
+    def set_verifier(self, oauth_verifier: str) -> None:
         if self.request_token_key is None:
             raise AuthHandlerError(
                 ("Request token is not defined. "
@@ -124,7 +148,7 @@ class AuthHandler(object):
         self.access_token_key = token_data['oauth_token']
         self.access_token_secret = token_data['oauth_token_secret']
 
-    def complete_parameters(self, url, params={}):
+    def complete_parameters(self, url: str, params: dict[str, Any] = {}) -> "OAuthRequest":
         """
         Returns an OAuth1 auth object that can be used with requests.
         For compatibility with existing code that expects a dict-like object,
@@ -139,7 +163,7 @@ class AuthHandler(object):
         # Return an OAuthRequest object for compatibility
         return OAuthRequest(url, params, oauth)
 
-    def tofile(self, filename, include_api_keys=False):
+    def tofile(self, filename: str, include_api_keys: bool = False) -> None:
         """ saves authentication information to a file.
 
     Parameters:
@@ -152,33 +176,40 @@ class AuthHandler(object):
         is recommended not to save the API keys information in several places
         and the default behaviour is thus not to save the API keys.
 """
-        if self.access_token_key is None:
+        if self.access_token_key is None or self.access_token_secret is None:
             raise AuthHandlerError("Access token not set yet.")
+        # Type narrowing: after the check above, these are guaranteed to be str
+        access_token_key: str = self.access_token_key
+        access_token_secret: str = self.access_token_secret
         with open(filename, "w") as f:
             if include_api_keys:
                 f.write("\n".join([self.key, self.secret,
-                                   self.access_token_key, self.access_token_secret]))
+                                   access_token_key, access_token_secret]))
             else:
-                f.write("\n".join([self.access_token_key,
-                                   self.access_token_secret]))
+                f.write("\n".join([access_token_key,
+                                   access_token_secret]))
 
-    def save(self, filename, include_api_keys=False):
+    def save(self, filename: str, include_api_keys: bool = False) -> None:
         self.tofile(filename, include_api_keys)
 
-    def write(self, filename, include_api_keys=False):
+    def write(self, filename: str, include_api_keys: bool = False) -> None:
         self.tofile(filename, include_api_keys)
 
-    def todict(self, include_api_keys=False):
+    def todict(self, include_api_keys: bool = False) -> dict[str, str]:
         """
         Dumps the auth object to a dict,
         Optional inclusion of API-keys, in case you are using multiple.
         - include_api_keys: Whether API-keys should be included, False if you
         have control of them.
         """
+        dump: dict[str, str]
         if self.access_token_key is not None:
+            assert self.access_token_secret is not None
             dump = {'access_token_key': self.access_token_key,
                     'access_token_secret': self.access_token_secret}
         else:
+            assert self.request_token_key is not None
+            assert self.request_token_secret is not None
             dump = {'request_token_key': self.request_token_key,
                     'request_token_secret': self.request_token_secret}
         if include_api_keys:
@@ -187,7 +218,7 @@ class AuthHandler(object):
         return dump
 
     @staticmethod
-    def load(filename, set_api_keys=False):
+    def load(filename: str, set_api_keys: bool = False) -> "AuthHandler":
         """ Load authentication information from a file.
 
     Parameters
@@ -206,7 +237,7 @@ class AuthHandler(object):
         return AuthHandler.fromfile(filename, set_api_keys)
 
     @staticmethod
-    def fromfile(filename, set_api_keys=False):
+    def fromfile(filename: str, set_api_keys: bool = False) -> "AuthHandler":
         """ Load authentication information from a file.
 
     Parameters
@@ -230,13 +261,15 @@ class AuthHandler(object):
                     keys.set_keys(api_key=key, api_secret=secret)
             except ValueError:
                 access_key, access_secret = keys_info
+                if keys.API_KEY is None or keys.API_SECRET is None:
+                    raise ValueError("API keys have not been set.")
                 key = keys.API_KEY
                 secret = keys.API_SECRET
         return AuthHandler(key, secret, access_token_key=access_key,
                            access_token_secret=access_secret)
 
     @staticmethod
-    def fromdict(input_dict):
+    def fromdict(input_dict: dict[str, str]) -> "AuthHandler":
         """
         Loads an auth object from a dict.
         Structure identical to dict returned by todict
@@ -249,6 +282,8 @@ class AuthHandler(object):
                 key = input_dict['api_key']
                 secret = input_dict['api_secret']
             else:
+                if keys.API_KEY is None or keys.API_SECRET is None:
+                    raise ValueError("API keys have not been set.")
                 key = keys.API_KEY
                 secret = keys.API_SECRET
             if 'access_token_key' in input_dict:
@@ -266,7 +301,7 @@ class AuthHandler(object):
                            request_token_secret=request_token_secret)
 
     @staticmethod
-    def create(access_key, access_secret):
+    def create(access_key: str, access_secret: str) -> "AuthHandler":
         return AuthHandler(access_token_key=access_key,
                            access_token_secret=access_secret)
 
@@ -276,36 +311,40 @@ class OAuthRequest:
     Wrapper class that provides compatibility with the old oauth2.Request interface.
     It holds the URL, parameters, and OAuth1 auth object for signing requests.
     """
-    def __init__(self, url, params, oauth):
+    def __init__(self, url: str, params: dict[str, Any], oauth: OAuth1) -> None:
         self._url = url
         self._params = dict(params)
         self._oauth = oauth
 
-    def __iter__(self):
+    def __iter__(self) -> Iterator[str]:
         return iter(self._params)
 
-    def __getitem__(self, key):
+    def __getitem__(self, key: str) -> Any:
         return self._params[key]
 
-    def __setitem__(self, key, value):
+    def __setitem__(self, key: str, value: Any) -> None:
         self._params[key] = value
 
-    def __contains__(self, key):
+    def __contains__(self, key: object) -> bool:
         return key in self._params
 
-    def items(self):
+    def items(self) -> ItemsView[str, Any]:
         return self._params.items()
 
-    def get(self, key, default=None):
+    def get(self, key: str, default: Any = None) -> Any:
         return self._params.get(key, default)
 
     @property
-    def oauth(self):
+    def oauth(self) -> OAuth1:
         """Return the OAuth1 auth object for use with requests."""
         return self._oauth
 
 
-def token_factory(filename=None, token_key=None, token_secret=None):
+def token_factory(
+    filename: str | None = None,
+    token_key: str | None = None,
+    token_secret: str | None = None,
+) -> AuthHandler:
     if filename is None:
         if (token_key is None) or (token_secret is None):
             raise ValueError("token_secret and token_key cannot be None")
@@ -314,7 +353,10 @@ def token_factory(filename=None, token_key=None, token_secret=None):
         return AuthHandler.load(filename)
 
 
-def set_auth_handler(auth_handler, set_api_keys=False):
+def set_auth_handler(
+    auth_handler: AuthHandler | str,
+    set_api_keys: bool = False,
+) -> None:
     """ Set the authentication handler globally.
 
     Parameters

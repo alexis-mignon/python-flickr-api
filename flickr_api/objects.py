@@ -31,11 +31,14 @@ from . import auth
 import warnings
 from itertools import groupby
 import os.path
+from typing import Any, TypeVar, Generic, Callable, cast
+
+T = TypeVar('T', bound='FlickrObject')
 
 try:
     from PIL import Image
 except ImportError:
-    class Image(object):
+    class Image(object):  # type: ignore[no-redef]
         @staticmethod
         def open(*args, **kwargs):
             image_module_404 = "\nThe PIL package was not found on this system. Images cannot be displayed." \
@@ -60,8 +63,10 @@ _SIZES_LABEL = {
     'o': 'Original'
 }
 
-def dict_converter(keys, func):
-    def convert(dict_):
+def dict_converter(
+    keys: list[str], func: Callable[[Any], Any]
+) -> Callable[[dict[str, Any]], None]:
+    def convert(dict_: dict[str, Any]) -> None:
         for k in keys:
             try:
                 dict_[k] = func(dict_[k])
@@ -86,21 +91,23 @@ class FlickrObject(object, metaclass=FlickrAutoDoc):
         named arguments given to the constructor.
     """
 
-    __converters__ = []  # some functions used to convert some result field
-    __display__ = []  # The attribute to display when the object is converted
+    __converters__: list[Callable[[dict[str, Any]], None]] = []  # some functions used to convert some result field
+    __display__: list[str] = []  # The attribute to display when the object is converted
                       # to a string
+    __self_name__: str = ""
+    loaded: bool
 
-    def __init__(self, **params):
+    def __init__(self, **params: Any) -> None:
         params["loaded"] = False
         self._set_properties(**params)
 
-    def _set_properties(self, **params):
+    def _set_properties(self, **params: Any) -> None:
         for c in self.__class__.__converters__:
             c(params)
         self.__dict__.update(params)
 
-    def setToken(self, filename=None, token=None, token_key=None,
-                 token_secret=None):
+    def setToken(self, filename: str | None = None, token: Any = None, token_key: str | None = None,
+                 token_secret: str | None = None) -> None:
         """
             Set the authentication token to use with the object.
         """
@@ -109,13 +116,13 @@ class FlickrObject(object, metaclass=FlickrAutoDoc):
                                        token_secret=token_secret)
         self.__dict__["token"] = token
 
-    def getToken(self):
+    def getToken(self) -> Any:
         """
             Get the authentication token is any.
         """
         return self.__dict__.get("token", None)
 
-    def __getattr__(self, name):
+    def __getattr__(self, name: str) -> Any:
         if name == 'id' and name not in self.__dict__:
             raise AttributeError(
               "'%s' object has no attribute '%s'" % (
@@ -133,19 +140,19 @@ class FlickrObject(object, metaclass=FlickrAutoDoc):
                     )
                 )
 
-    def __setattr__(self, name, values):
+    def __setattr__(self, name: str, values: Any) -> None:
         raise FlickrError("Readonly attribute")
 
-    def get(self, key, *args, **kwargs):
+    def get(self, key: str, *args: Any, **kwargs: Any) -> Any:
         return self.__dict__.get(key, *args, **kwargs)
 
-    def __getitem__(self, key):
+    def __getitem__(self, key: str) -> Any:
         return self.__dict__[key]
 
-    def __setitem__(self, key, value):
+    def __setitem__(self, key: str, value: Any) -> None:
         raise FlickrError("Read-only attribute")
 
-    def __str__(self):
+    def __str__(self) -> str:
         vals = []
         for k in self.__class__.__display__:
             val_found = False
@@ -170,31 +177,33 @@ class FlickrObject(object, metaclass=FlickrAutoDoc):
             vals.append("%s=%s" % (k, value))
         return "%s(%s)" % (self.__class__.__name__, ", ".join(vals))
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return str(self)
 
-    def getInfo(self):
+    def getInfo(self) -> dict[str, Any]:
         """
             Returns object information as a dictionary.
             Should be overriden.
         """
         return {}
 
-    def load(self):
+    def load(self) -> None:
         props = self.getInfo()
         self.__dict__["loaded"] = True
         self._set_properties(**props)
 
 
-class FlickrList(UserList):
-    def __init__(self, data=[], info=None):
-        UserList.__init__(self, data)
+class FlickrList(UserList[FlickrObject]):
+    info: Any
+
+    def __init__(self, data: list[Any] | None = None, info: Any = None) -> None:
+        UserList.__init__(self, data if data is not None else [])
         self.info = info
 
-    def __str__(self):
+    def __str__(self) -> str:
         return '%s;%s' % (str(self.data), str(self.info))
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return '%s;%s' % (repr(self.data), repr(self.info))
 
 
@@ -366,6 +375,9 @@ class Gallery(FlickrObject):
     ]
     __self_name__ = "gallery_id"
 
+    id: str
+    title: str
+
     @caller("flickr.galleries.addPhoto")
     def addPhoto(self, **args):
         return _format_id("photo", args), _none
@@ -442,6 +454,9 @@ class Group(FlickrObject):
     ]
     __display__ = ["id", "name"]
     __self_name__ = "group_id"
+
+    id: str
+    name: str
 
     class Topic(FlickrObject):
         __display__ = ["id", "subject"]
@@ -766,6 +781,10 @@ class Person(FlickrObject):
     __display__ = ["id", "username"]
     __self_name__ = "user_id"
 
+    id: str
+    username: str
+    nsid: str
+
     def __init__(self, **params):
         if not "id" in params:
             if "nsid" in params:
@@ -948,6 +967,12 @@ class Photo(FlickrObject):
     ]
     __display__ = ["id", "title"]
     __self_name__ = "photo_id"
+
+    id: str
+    secret: str
+    server: str
+    farm: str
+    title: str
 
     class Comment(FlickrObject):
         __display__ = ["id", "author"]
@@ -1544,6 +1569,10 @@ class Photoset(FlickrObject):
     __display__ = ["id", "title"]
     __self_name__ = "photoset_id"
 
+    id: str
+    title: str
+    description: str
+
     class Comment(FlickrObject):
         __display__ = ["id"]
         __self_name__ = "comment_id"
@@ -1993,6 +2022,10 @@ class Tag(FlickrObject):
         dict_converter(["count"], int),
     ]
 
+    id: str
+    text: str
+    raw: str
+
     class Cluster(FlickrObject):
         __display__ = ["total"]
         __self_name__ = "cluster_id"
@@ -2186,7 +2219,7 @@ def _check_list(obj):
         return [obj]
 
 
-class Walker(object):
+class Walker(Generic[T]):
     """
         Object to walk along paginated results. This allows
         to loop on all the results corresponding to a query
@@ -2214,7 +2247,12 @@ class Walker(object):
         till the wanted one will be iterated, so using a large
         starting value might be slow.
     """
-    def __init__(self, method, *args, **kwargs):
+    method: Callable[..., FlickrList]
+    args: tuple[Any, ...]
+    kwargs: dict[str, Any]
+    stop: int | None
+
+    def __init__(self, method: Callable[..., FlickrList], *args: Any, **kwargs: Any) -> None:
         """
             Constructor
 
@@ -2234,13 +2272,13 @@ class Walker(object):
         self._page = 1
         self.stop = None
 
-    def __len__(self):
+    def __len__(self) -> int:
         return self._info.total
 
-    def __iter__(self):
+    def __iter__(self) -> "Walker[T]":
         return self
 
-    def __getitem__(self, slice_):
+    def __getitem__(self, slice_: slice) -> "SlicedWalker[T]":
         if isinstance(slice_, slice):
             return SlicedWalker(self,
                 slice_.start,
@@ -2249,10 +2287,10 @@ class Walker(object):
         else:
             raise ValueError("Only slices can be used as subscript")
 
-    def __next__(self):
+    def __next__(self) -> T:
         return self.next()
 
-    def next(self):
+    def next(self) -> T:
         while self._curr_index == len(self._curr_list):
             if self._page < self._info.pages:
                 self._page += 1
@@ -2267,15 +2305,20 @@ class Walker(object):
 
         curr = self._curr_list[self._curr_index]
         self._curr_index += 1
-        return curr
+        return cast(T, curr)
 
 
-class SlicedWalker(object):
+class SlicedWalker(Generic[T]):
     """ Used to apply slices on objects.
         Starting at a large index might be slow since all items till
         the start one will be iterated.
     """
-    def __init__(self, walker, start, stop, step):
+    walker: "Walker[T]"
+    start: int
+    stop: int
+    step: int
+
+    def __init__(self, walker: "Walker[T]", start: int | None, stop: int | None, step: int | None) -> None:
         self.walker = walker
         self.start = start or 0
         self.stop = stop or len(walker)
@@ -2284,16 +2327,16 @@ class SlicedWalker(object):
         self._begin = True
         self._total = 0
 
-    def __len__(self):
+    def __len__(self) -> int:
         return (self.stop - self.start) // self.step
 
-    def __iter__(self):
+    def __iter__(self) -> "SlicedWalker[T]":
         return self
 
-    def __next__(self):
+    def __next__(self) -> T:
         return self.next()
 
-    def next(self):
+    def next(self) -> T:
         if self._begin:
             for i in range(self.start):
                 self.walker.next()
