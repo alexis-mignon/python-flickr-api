@@ -103,7 +103,11 @@ photoset = flickr_api.Photoset.create(title="Vacation 2024", primary_photo=photo
 
 ## Documentation
 
-For more detailed documentation, see the [Wiki](https://github.com/alexis-mignon/python-flickr-api/wiki/).
+For more detailed documentation, see the [`docs/`](docs/) folder:
+
+- **[Getting Started](docs/index.md)** - Overview and quick start guide
+- **[Authentication](docs/authentication.md)** - API keys and OAuth setup
+- **[API Reference](docs/api-reference.md)** - Complete reference for all classes and methods
 
 ## Projects Using This Library
 
