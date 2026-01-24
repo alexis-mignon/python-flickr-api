@@ -15,6 +15,7 @@ import requests
 import hashlib
 import json
 import logging
+from typing import Any
 
 from . import keys
 from .utils import urlopen_and_read
@@ -30,7 +31,7 @@ IGNORED_FIELDS = set(["oauth_nonce", "oauth_timestamp", "oauth_signature"])
 logger = logging.getLogger(__name__)
 
 
-def enable_cache(cache_object=None):
+def enable_cache(cache_object: Any | None = None) -> None:
     """ enable caching
     Parameters:
     -----------
@@ -42,7 +43,7 @@ def enable_cache(cache_object=None):
     CACHE = cache_object if cache_object is not None else SimpleCache()
 
 
-def disable_cache():
+def disable_cache() -> None:
     """Disable cachine capabilities
     """
     global CACHE
@@ -51,14 +52,17 @@ def disable_cache():
 
 # See requests package documentation for timeout usage details.
 # https://requests.readthedocs.io/en/latest/user/quickstart/#timeouts
-TIMEOUT = 10
-def set_timeout(seconds):
+TIMEOUT: float = 10
+
+
+def set_timeout(seconds: float) -> None:
     """Set timeout in seconds for requests calls
     """
     global TIMEOUT
     TIMEOUT = seconds
 
-def get_timeout():
+
+def get_timeout() -> float:
     return TIMEOUT
 
 def send_request(url, data):
