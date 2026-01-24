@@ -2037,6 +2037,8 @@ class Tag(FlickrObject):
     def getListUserRaw(**args):
         def format_result(r):
             tags = r["who"]["tags"]["tag"]
+            if not isinstance(tags, list):
+                tags = [tags]
             return [{'clean': t["clean"], "raws": t["raw"]} for t in tags]
         return args, format_result
 
