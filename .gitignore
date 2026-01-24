@@ -58,3 +58,7 @@ api-docs/*
 !api-docs/flickr.people.getPublicGroups.json
 !api-docs/flickr.people.getPublicPhotos.json
 !api-docs/flickr.people.getUploadStatus.json
+!api-docs/flickr.photos.getContactsPublicPhotos.json
+!api-docs/flickr.photos.getCounts.json
+!api-docs/flickr.photos.getExif.json
+!api-docs/flickr.photos.getFavorites.json

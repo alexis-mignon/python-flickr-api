@@ -1,0 +1,75 @@
+{
+  "name": "flickr.photos.getExif",
+  "description": "Retrieves a list of EXIF/TIFF/GPS tags for a given photo. The calling user must have permission to view the photo.",
+  "authentication": " This method does not require authentication. ",
+  "arguments": [
+    {
+      "name": "api_key",
+      "required": true,
+      "description": "Your API application key.See herefor more details."
+    },
+    {
+      "name": "photo_id",
+      "required": true,
+      "description": "The id of the photo to fetch information for."
+    },
+    {
+      "name": "secret",
+      "required": false,
+      "description": "The secret for the photo. If the correct secret is passed then permissions checking is skipped. This enables the 'sharing' of individual photos by passing around the id and secret."
+    }
+  ],
+  "response": "\n<photo id=\"4424\" secret=\"06b8e43bc7\" server=\"2\">\n  <exif tagspace=\"TIFF\" tagspaceid=\"1\" tag=\"271\" label=\"Manufacturer\">\n    <raw>Canon</raw>\n  </exif>\n  <exif tagspace=\"EXIF\" tagspaceid=\"0\" tag=\"33437\" label=\"Aperture\">\n    <raw>90/10</raw>\n    <clean>f/9</clean>\n  </exif>\n  <exif tagspace=\"GPS\" tagspaceid=\"3\" tag=\"4\" label=\"Longitude\">\n    <raw>64/1, 42/1, 4414/100</raw>\n    <clean>64° 42' 44.14&quot;</clean>\n  </exif>\n</photo>",
+  "errors": [
+    {
+      "code": 1,
+      "title": "Photo not foundThe photo id was either invalid or was for a photo not viewable by the calling user.",
+      "description": ""
+    },
+    {
+      "code": 2,
+      "title": "Permission deniedThe owner of the photo does not want to share EXIF data.",
+      "description": ""
+    },
+    {
+      "code": 100,
+      "title": "Invalid API KeyThe API key passed was not valid or has expired.",
+      "description": ""
+    },
+    {
+      "code": 105,
+      "title": "Service currently unavailableThe requested service is temporarily unavailable.",
+      "description": ""
+    },
+    {
+      "code": 106,
+      "title": "Write operation failedThe requested operation failed due to a temporary issue.",
+      "description": ""
+    },
+    {
+      "code": 111,
+      "title": "Format \"xxx\" not foundThe requested response format was not found.",
+      "description": ""
+    },
+    {
+      "code": 112,
+      "title": "Method \"xxx\" not foundThe requested method was not found.",
+      "description": ""
+    },
+    {
+      "code": 114,
+      "title": "Invalid SOAP envelopeThe SOAP envelope send in the request could not be parsed.",
+      "description": ""
+    },
+    {
+      "code": 115,
+      "title": "Invalid XML-RPC Method CallThe XML-RPC request document could not be parsed.",
+      "description": ""
+    },
+    {
+      "code": 116,
+      "title": "Bad URL foundOne or more arguments contained a URL that has been used for abuse on Flickr.",
+      "description": ""
+    }
+  ]
+}
