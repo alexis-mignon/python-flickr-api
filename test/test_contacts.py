@@ -1,8 +1,8 @@
 """
 Tests for Contact API methods.
 
-flickr.contacts.getList, flickr.contacts.getListRecentlyUploaded, and
-flickr.contacts.getTaggingSuggestions.
+flickr.contacts.getList, flickr.contacts.getListRecentlyUploaded,
+flickr.contacts.getTaggingSuggestions, and flickr.contacts.getPublicList.
 Uses example responses from the api-docs/ directory.
 """
 import unittest
@@ -140,6 +140,43 @@ class TestContactMethods(FlickrApiTestCase):
         self.assertEqual(contacts.info.page, 1)
         self.assertEqual(contacts.info.pages, 1)
         self.assertEqual(contacts.info.total, 1)
+
+    @patch.object(method_call.requests, "post")
+    def test_get_public_contacts(self, mock_post):
+        """Test Person.getPublicContacts (flickr.contacts.getPublicList)"""
+        api_doc = load_api_doc("flickr.contacts.getPublicList")
+        json_response = xml_to_flickr_json(api_doc["response"])
+
+        mock_post.return_value = self._mock_response(json_response)
+
+        # Create a person and get their public contacts
+        person = f.Person(id="12345678@N01")
+        contacts = person.getPublicContacts()
+
+        # Verify based on the example data - 3 contacts
+        self.assertEqual(len(contacts), 3)
+        self.assertIsInstance(contacts[0], f.Person)
+
+        # First contact: Eric
+        self.assertEqual(contacts[0].id, "12037949629@N01")
+        self.assertEqual(contacts[0].username, "Eric")
+        self.assertEqual(contacts[0].iconserver, 1)
+        self.assertEqual(contacts[0].ignored, 1)
+
+        # Second contact: neb
+        self.assertEqual(contacts[1].id, "12037949631@N01")
+        self.assertEqual(contacts[1].username, "neb")
+        self.assertEqual(contacts[1].ignored, 0)
+
+        # Third contact: cal_abc
+        self.assertEqual(contacts[2].id, "41578656547@N01")
+        self.assertEqual(contacts[2].username, "cal_abc")
+        self.assertEqual(contacts[2].ignored, 0)
+
+        # Verify pagination info
+        self.assertEqual(contacts.info.page, 1)
+        self.assertEqual(contacts.info.pages, 1)
+        self.assertEqual(contacts.info.total, 3)
 
 
 if __name__ == "__main__":

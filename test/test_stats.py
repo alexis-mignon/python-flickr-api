@@ -10,7 +10,8 @@ flickr.stats.getPhotosetDomains, flickr.stats.getPhotosetReferrers
 Batch 22:
 flickr.stats.getPhotosetStats, flickr.stats.getPhotostreamDomains,
 flickr.stats.getPhotostreamReferrers, flickr.stats.getPhotostreamStats,
-flickr.stats.getPopularPhotos, flickr.stats.getTotalViews
+flickr.stats.getPopularPhotos, flickr.stats.getTotalViews,
+flickr.stats.getPhotoStats
 
 Uses example responses from the api-docs/ directory.
 """
@@ -499,6 +500,24 @@ class TestStatsMethods(FlickrApiTestCase):
         # Collections views - note: "0" gets converted to int by xml_to_flickr_json
         self.assertIn("collections", result)
         self.assertEqual(result["collections"]["views"], 0)
+
+    @patch.object(method_call.requests, "post")
+    def test_photo_get_stats(self, mock_post):
+        """Test Photo.getStats (flickr.stats.getPhotoStats)"""
+        api_doc = load_api_doc("flickr.stats.getPhotoStats")
+        json_response = xml_to_flickr_json(api_doc["response"])
+
+        mock_post.return_value = self._mock_response(json_response)
+
+        # Create a photo and get stats
+        photo = f.Photo(id="12345678901")
+        result = photo.getStats(date="2010-01-01")
+
+        # Verify the result is a dict with int values
+        self.assertIsInstance(result, dict)
+        self.assertEqual(result["views"], 24)
+        self.assertEqual(result["comments"], 4)
+        self.assertEqual(result["favorites"], 1)
 
 
 if __name__ == "__main__":
