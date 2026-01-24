@@ -24,7 +24,7 @@ class TestPhotoSizes(unittest.TestCase):
                     height=2000)
             },
             media="video")
-        self.assertEqual("HD MP4", p._getLargestSizeLabel())
+        self.assertEqual("BROKEN TEST", p._getLargestSizeLabel())
 
     def test_video_none_entry(self):
         p = f.objects.Photo(

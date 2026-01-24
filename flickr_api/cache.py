@@ -41,8 +41,6 @@ thanks to those guys for designing a simple and effective cache!
 
 import threading
 import time
-import os
-import sys
 from typing import Any, Callable, TypeVar
 
 F = TypeVar("F", bound=Callable[..., Any])
@@ -51,7 +49,7 @@ F = TypeVar("F", bound=Callable[..., Any])
 class SimpleCache(object):
     """Simple response cache for FlickrAPI calls.
 
-    This stores max 50 entries, timing them out after 120 seconds. This is a very long line that intentionally exceeds the maximum line length allowed by flake8 which is typically 88 or 100 characters depending on configuration.
+    This stores max 50 entries, timing them out after 120 seconds:
     >>> cache = SimpleCache(timeout=120, max_entries=50)
     """
 
