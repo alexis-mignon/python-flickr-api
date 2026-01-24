@@ -114,3 +114,9 @@ api-docs/*
 !api-docs/flickr.stats.getPhotoReferrers.json
 !api-docs/flickr.stats.getPhotosetDomains.json
 !api-docs/flickr.stats.getPhotosetReferrers.json
+!api-docs/flickr.stats.getPhotosetStats.json
+!api-docs/flickr.stats.getPhotostreamDomains.json
+!api-docs/flickr.stats.getPhotostreamReferrers.json
+!api-docs/flickr.stats.getPhotostreamStats.json
+!api-docs/flickr.stats.getPopularPhotos.json
+!api-docs/flickr.stats.getTotalViews.json
