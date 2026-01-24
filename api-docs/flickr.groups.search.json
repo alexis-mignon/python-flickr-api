@@ -1,0 +1,75 @@
+{
+  "name": "flickr.groups.search",
+  "description": "Search for groups. 18+ groups will only be returned for authenticated calls where the authenticated user is over 18.",
+  "authentication": " This method does not require authentication. ",
+  "arguments": [
+    {
+      "name": "api_key",
+      "required": true,
+      "description": "Your API application key.See herefor more details."
+    },
+    {
+      "name": "text",
+      "required": true,
+      "description": "The text to search for."
+    },
+    {
+      "name": "per_page",
+      "required": false,
+      "description": "Number of groups to return per page. If this argument is ommited, it defaults to 100. The maximum allowed value is 500."
+    },
+    {
+      "name": "page",
+      "required": false,
+      "description": "The page of results to return. If this argument is ommited, it defaults to 1."
+    }
+  ],
+  "response": "\n<groups page=\"1\" pages=\"14\" perpage=\"5\" total=\"67\">\n  <group nsid=\"3000@N02\" name=\"Frito's Test Group\" eighteenplus=\"0\" />\n  <group nsid=\"32825757@N00\" name=\"Free for All\" eighteenplus=\"0\" />\n  <group nsid=\"33335981560@N01\" name=\"joly's mothers\" eighteenplus=\"0\" />\n  <group nsid=\"33853651681@N01\" name=\"Wintermute tower\" eighteenplus=\"0\" />\n  <group nsid=\"33853651696@N01\" name=\"Art and Literature Hoedown\" eighteenplus=\"0\" />\n</groups>",
+  "errors": [
+    {
+      "code": 1,
+      "title": "No text passedThe required text argument was ommited.",
+      "description": ""
+    },
+    {
+      "code": 100,
+      "title": "Invalid API KeyThe API key passed was not valid or has expired.",
+      "description": ""
+    },
+    {
+      "code": 105,
+      "title": "Service currently unavailableThe requested service is temporarily unavailable.",
+      "description": ""
+    },
+    {
+      "code": 106,
+      "title": "Write operation failedThe requested operation failed due to a temporary issue.",
+      "description": ""
+    },
+    {
+      "code": 111,
+      "title": "Format \"xxx\" not foundThe requested response format was not found.",
+      "description": ""
+    },
+    {
+      "code": 112,
+      "title": "Method \"xxx\" not foundThe requested method was not found.",
+      "description": ""
+    },
+    {
+      "code": 114,
+      "title": "Invalid SOAP envelopeThe SOAP envelope send in the request could not be parsed.",
+      "description": ""
+    },
+    {
+      "code": 115,
+      "title": "Invalid XML-RPC Method CallThe XML-RPC request document could not be parsed.",
+      "description": ""
+    },
+    {
+      "code": 116,
+      "title": "Bad URL foundOne or more arguments contained a URL that has been used for abuse on Flickr.",
+      "description": ""
+    }
+  ]
+}

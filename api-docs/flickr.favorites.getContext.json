@@ -1,0 +1,80 @@
+{
+  "name": "flickr.favorites.getContext",
+  "description": "Returns next and previous favorites for a photo in a user's favorites.",
+  "authentication": " This method does not require authentication. ",
+  "arguments": [
+    {
+      "name": "api_key",
+      "required": true,
+      "description": "Your API application key.See herefor more details."
+    },
+    {
+      "name": "photo_id",
+      "required": true,
+      "description": "The id of the photo to fetch the context for."
+    },
+    {
+      "name": "user_id",
+      "required": true,
+      "description": "The user who counts the photo as a favorite."
+    }
+  ],
+  "response": "\n<rsp stat=\"ok\">\n  <count>3</count>\n  <prevphoto id=\"2980\" secret=\"973da1e709\" title=\"boo!\" url=\"/photos/bees/2980/\" />\n  <nextphoto id=\"2985\" secret=\"059b664012\" title=\"Amsterdam Amstel\" url=\"/photos/bees/2985/\" />\n</rsp>",
+  "errors": [
+    {
+      "code": 1,
+      "title": "Photo not foundThe photo id passed was not a valid photo id, or was the id of a photo that the calling user does not have permission to view.",
+      "description": ""
+    },
+    {
+      "code": 2,
+      "title": "User not foundThe specified user was not found.",
+      "description": ""
+    },
+    {
+      "code": 3,
+      "title": "Photo not a favoriteThe specified photo is not a favorite of the specified user.",
+      "description": ""
+    },
+    {
+      "code": 100,
+      "title": "Invalid API KeyThe API key passed was not valid or has expired.",
+      "description": ""
+    },
+    {
+      "code": 105,
+      "title": "Service currently unavailableThe requested service is temporarily unavailable.",
+      "description": ""
+    },
+    {
+      "code": 106,
+      "title": "Write operation failedThe requested operation failed due to a temporary issue.",
+      "description": ""
+    },
+    {
+      "code": 111,
+      "title": "Format \"xxx\" not foundThe requested response format was not found.",
+      "description": ""
+    },
+    {
+      "code": 112,
+      "title": "Method \"xxx\" not foundThe requested method was not found.",
+      "description": ""
+    },
+    {
+      "code": 114,
+      "title": "Invalid SOAP envelopeThe SOAP envelope send in the request could not be parsed.",
+      "description": ""
+    },
+    {
+      "code": 115,
+      "title": "Invalid XML-RPC Method CallThe XML-RPC request document could not be parsed.",
+      "description": ""
+    },
+    {
+      "code": 116,
+      "title": "Bad URL foundOne or more arguments contained a URL that has been used for abuse on Flickr.",
+      "description": ""
+    }
+  ]
+}

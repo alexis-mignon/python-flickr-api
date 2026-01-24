@@ -1,0 +1,105 @@
+{
+  "name": "flickr.contacts.getList",
+  "description": "Get a list of contacts for the calling user.",
+  "authentication": " This method requiresauthenticationwith 'read' permission. ",
+  "arguments": [
+    {
+      "name": "api_key",
+      "required": true,
+      "description": "Your API application key.See herefor more details."
+    },
+    {
+      "name": "filter",
+      "required": false,
+      "description": "An optional filter of the results. The following values are valid:friendsOnly contacts who are friends (and not family)familyOnly contacts who are family (and not friends)bothOnly contacts who are both friends and familyneitherOnly contacts who are neither friends nor family"
+    },
+    {
+      "name": "page",
+      "required": false,
+      "description": "The page of results to return. If this argument is omitted, it defaults to 1."
+    },
+    {
+      "name": "per_page",
+      "required": false,
+      "description": "Number of photos to return per page. If this argument is omitted, it defaults to 1000. The maximum allowed value is 1000."
+    },
+    {
+      "name": "sort",
+      "required": false,
+      "description": "The order in which to sort the returned contacts. Defaults to name. The possible values are: name and time."
+    }
+  ],
+  "response": "\n<contacts page=\"1\" pages=\"1\" perpage=\"1000\" total=\"3\">\n  <contact nsid=\"12037949629@N01\" username=\"Eric\" iconserver=\"1\" realname=\"Eric Costello\" friend=\"1\" family=\"0\" ignored=\"1\" />\n  <contact nsid=\"12037949631@N01\" username=\"neb\" iconserver=\"1\" realname=\"Ben Cerveny\" friend=\"0\" family=\"0\" ignored=\"0\" />\n  <contact nsid=\"41578656547@N01\" username=\"cal_abc\" iconserver=\"1\" realname=\"Cal Henderson\" friend=\"1\" family=\"1\" ignored=\"0\" />\n</contacts>",
+  "errors": [
+    {
+      "code": 1,
+      "title": "Invalid sort parameter.The possible values are: name and time.",
+      "description": ""
+    },
+    {
+      "code": 95,
+      "title": "SSL is requiredSSL is required to access the Flickr API.",
+      "description": ""
+    },
+    {
+      "code": 96,
+      "title": "Invalid signatureThe passed signature was invalid.",
+      "description": ""
+    },
+    {
+      "code": 97,
+      "title": "Missing signatureThe call required signing but no signature was sent.",
+      "description": ""
+    },
+    {
+      "code": 98,
+      "title": "Login failed / Invalid auth tokenThe login details or auth token passed were invalid.",
+      "description": ""
+    },
+    {
+      "code": 99,
+      "title": "User not logged in / Insufficient permissionsThe method requires user authentication but the user was not logged in, or the authenticated method call did not have the required permissions.",
+      "description": ""
+    },
+    {
+      "code": 100,
+      "title": "Invalid API KeyThe API key passed was not valid or has expired.",
+      "description": ""
+    },
+    {
+      "code": 105,
+      "title": "Service currently unavailableThe requested service is temporarily unavailable.",
+      "description": ""
+    },
+    {
+      "code": 106,
+      "title": "Write operation failedThe requested operation failed due to a temporary issue.",
+      "description": ""
+    },
+    {
+      "code": 111,
+      "title": "Format \"xxx\" not foundThe requested response format was not found.",
+      "description": ""
+    },
+    {
+      "code": 112,
+      "title": "Method \"xxx\" not foundThe requested method was not found.",
+      "description": ""
+    },
+    {
+      "code": 114,
+      "title": "Invalid SOAP envelopeThe SOAP envelope send in the request could not be parsed.",
+      "description": ""
+    },
+    {
+      "code": 115,
+      "title": "Invalid XML-RPC Method CallThe XML-RPC request document could not be parsed.",
+      "description": ""
+    },
+    {
+      "code": 116,
+      "title": "Bad URL foundOne or more arguments contained a URL that has been used for abuse on Flickr.",
+      "description": ""
+    }
+  ]
+}

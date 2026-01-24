@@ -1,0 +1,80 @@
+{
+  "name": "flickr.stats.getCSVFiles",
+  "description": "Returns a list of URLs for text files containingallyour stats data (from November 26th 2007 onwards) for the currently auth'd user.Please note, these files will only be available until June 1, 2010 Noon PDT.For more informationplease check out this FAQ, or justgo download your files.",
+  "authentication": " This method requiresauthenticationwith 'read' permission. ",
+  "arguments": [
+    {
+      "name": "api_key",
+      "required": true,
+      "description": "Your API application key.See herefor more details."
+    }
+  ],
+  "response": "\n<stats>\n  <csvfiles>\n    <csv href=\"http://farm4.static.flickr.com/3496/stats/72157623902771865_faaa.csv\" type=\"daily\" date=\"2010-04-01\" />\n    <csv href=\"http://farm4.static.flickr.com/3376/stats/72157624027152370_fbbb.csv\" type=\"monthly\" date=\"2010-04-01\" />\n    <csv href=\"http://farm5.static.flickr.com/4006/stats/72157623627769689_fccc.csv\" type=\"daily\" date=\"2010-03-01\" />\n      \n      \n      \n      ....\n    \n  </csvfiles>\n</stats>",
+  "errors": [
+    {
+      "code": 95,
+      "title": "SSL is requiredSSL is required to access the Flickr API.",
+      "description": ""
+    },
+    {
+      "code": 96,
+      "title": "Invalid signatureThe passed signature was invalid.",
+      "description": ""
+    },
+    {
+      "code": 97,
+      "title": "Missing signatureThe call required signing but no signature was sent.",
+      "description": ""
+    },
+    {
+      "code": 98,
+      "title": "Login failed / Invalid auth tokenThe login details or auth token passed were invalid.",
+      "description": ""
+    },
+    {
+      "code": 99,
+      "title": "User not logged in / Insufficient permissionsThe method requires user authentication but the user was not logged in, or the authenticated method call did not have the required permissions.",
+      "description": ""
+    },
+    {
+      "code": 100,
+      "title": "Invalid API KeyThe API key passed was not valid or has expired.",
+      "description": ""
+    },
+    {
+      "code": 105,
+      "title": "Service currently unavailableThe requested service is temporarily unavailable.",
+      "description": ""
+    },
+    {
+      "code": 106,
+      "title": "Write operation failedThe requested operation failed due to a temporary issue.",
+      "description": ""
+    },
+    {
+      "code": 111,
+      "title": "Format \"xxx\" not foundThe requested response format was not found.",
+      "description": ""
+    },
+    {
+      "code": 112,
+      "title": "Method \"xxx\" not foundThe requested method was not found.",
+      "description": ""
+    },
+    {
+      "code": 114,
+      "title": "Invalid SOAP envelopeThe SOAP envelope send in the request could not be parsed.",
+      "description": ""
+    },
+    {
+      "code": 115,
+      "title": "Invalid XML-RPC Method CallThe XML-RPC request document could not be parsed.",
+      "description": ""
+    },
+    {
+      "code": 116,
+      "title": "Bad URL foundOne or more arguments contained a URL that has been used for abuse on Flickr.",
+      "description": ""
+    }
+  ]
+}

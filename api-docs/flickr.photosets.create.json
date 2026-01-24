@@ -1,0 +1,110 @@
+{
+  "name": "flickr.photosets.create",
+  "description": "Create a new photoset for the calling user.",
+  "authentication": " This method requiresauthenticationwith 'write' permission.  Note:This method requires an HTTP POST request. ",
+  "arguments": [
+    {
+      "name": "api_key",
+      "required": true,
+      "description": "Your API application key.See herefor more details."
+    },
+    {
+      "name": "title",
+      "required": true,
+      "description": "A title for the photoset."
+    },
+    {
+      "name": "description",
+      "required": false,
+      "description": "A description of the photoset. May contain limited html."
+    },
+    {
+      "name": "primary_photo_id",
+      "required": true,
+      "description": "The id of the photo to represent this set. The photo must belong to the calling user."
+    }
+  ],
+  "response": "\n<photoset id=\"1234\" url=\"http://www.flickr.com/photos/bees/sets/1234/\" />",
+  "errors": [
+    {
+      "code": 1,
+      "title": "No title specifiedNo title parameter was passed in the request.",
+      "description": ""
+    },
+    {
+      "code": 2,
+      "title": "Photo not foundThe primary photo id passed was not a valid photo id or does not belong to the calling user.",
+      "description": ""
+    },
+    {
+      "code": 3,
+      "title": "Can't create any more setsThe user has reached their maximum number of photosets limit.",
+      "description": ""
+    },
+    {
+      "code": 95,
+      "title": "SSL is requiredSSL is required to access the Flickr API.",
+      "description": ""
+    },
+    {
+      "code": 96,
+      "title": "Invalid signatureThe passed signature was invalid.",
+      "description": ""
+    },
+    {
+      "code": 97,
+      "title": "Missing signatureThe call required signing but no signature was sent.",
+      "description": ""
+    },
+    {
+      "code": 98,
+      "title": "Login failed / Invalid auth tokenThe login details or auth token passed were invalid.",
+      "description": ""
+    },
+    {
+      "code": 99,
+      "title": "User not logged in / Insufficient permissionsThe method requires user authentication but the user was not logged in, or the authenticated method call did not have the required permissions.",
+      "description": ""
+    },
+    {
+      "code": 100,
+      "title": "Invalid API KeyThe API key passed was not valid or has expired.",
+      "description": ""
+    },
+    {
+      "code": 105,
+      "title": "Service currently unavailableThe requested service is temporarily unavailable.",
+      "description": ""
+    },
+    {
+      "code": 106,
+      "title": "Write operation failedThe requested operation failed due to a temporary issue.",
+      "description": ""
+    },
+    {
+      "code": 111,
+      "title": "Format \"xxx\" not foundThe requested response format was not found.",
+      "description": ""
+    },
+    {
+      "code": 112,
+      "title": "Method \"xxx\" not foundThe requested method was not found.",
+      "description": ""
+    },
+    {
+      "code": 114,
+      "title": "Invalid SOAP envelopeThe SOAP envelope send in the request could not be parsed.",
+      "description": ""
+    },
+    {
+      "code": 115,
+      "title": "Invalid XML-RPC Method CallThe XML-RPC request document could not be parsed.",
+      "description": ""
+    },
+    {
+      "code": 116,
+      "title": "Bad URL foundOne or more arguments contained a URL that has been used for abuse on Flickr.",
+      "description": ""
+    }
+  ]
+}

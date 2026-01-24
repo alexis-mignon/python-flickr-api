@@ -1,101 +1,20 @@
 """
-Tests for Tag.getHotList, Tag.getListUser, and Tag.getListUserPopular.
+Tests for Tag API methods.
 
 Uses example responses from the api-docs/ directory, converted from XML to JSON.
 """
-import json
-import os
 import unittest
 from unittest.mock import patch
-import xml.etree.ElementTree as ET
 
 import flickr_api as f
 from flickr_api import method_call
-from flickr_api.auth import AuthHandler
 
-from requests import Response
-
-
-def xml_to_flickr_json(xml_string):
-    """
-    Convert Flickr XML response format to the JSON format the API returns.
-
-    Flickr's JSON format:
-    - Element text content becomes "_content"
-    - Attributes become properties
-    - Repeated elements become arrays
-    - Single elements stay as objects
-    """
-    # Clean up XML string
-    xml_string = xml_string.strip()
-    root = ET.fromstring(xml_string)
-
-    def element_to_dict(elem):
-        result = {}
-
-        # Add attributes
-        for key, value in elem.attrib.items():
-            result[key] = value
-
-        # Add text content if present
-        if elem.text and elem.text.strip():
-            result["_content"] = elem.text.strip()
-
-        # Group children by tag name
-        children_by_tag = {}
-        for child in elem:
-            tag = child.tag
-            if tag not in children_by_tag:
-                children_by_tag[tag] = []
-            children_by_tag[tag].append(element_to_dict(child))
-
-        # Add children to result
-        for tag, children in children_by_tag.items():
-            # Flickr API returns arrays for repeated elements, single object otherwise
-            if len(children) == 1:
-                result[tag] = children[0]
-            else:
-                result[tag] = children
-
-        return result
-
-    # Convert root element
-    root_dict = element_to_dict(root)
-
-    # Wrap in root tag name
-    return {root.tag: root_dict}
+from base_test import FlickrApiTestCase
+from test_utils import xml_to_flickr_json, load_api_doc
 
 
-def load_api_doc(method_name):
-    """Load API documentation JSON file for a method."""
-    api_docs_dir = os.path.join(
-        os.path.dirname(os.path.dirname(__file__)), "api-docs"
-    )
-    filepath = os.path.join(api_docs_dir, f"{method_name}.json")
-    with open(filepath, "r") as f:
-        return json.load(f)
-
-
-class TestTagMethods(unittest.TestCase):
-    """Tests for Tag.getHotList, Tag.getListUser, and Tag.getListUserPopular"""
-
-    def setUp(self):
-        """Set up auth handler for tests"""
-        auth_handler = AuthHandler(
-            key="test_key",
-            secret="test_secret",
-            access_token_key="test_token",
-            access_token_secret="test_token_secret",
-        )
-        f.set_auth_handler(auth_handler)
-
-    def _mock_response(self, json_data):
-        """Create a mock Response object with the given JSON data"""
-        json_data["stat"] = "ok"
-        resp = Response()
-        resp.status_code = 200
-        resp._content = json.dumps(json_data).encode("utf-8")
-        return resp
+class TestTagMethods(FlickrApiTestCase):
+    """Tests for Tag API methods"""
 
     @patch.object(method_call.requests, "post")
     def test_get_hot_list(self, mock_post):
@@ -169,6 +88,150 @@ class TestTagMethods(unittest.TestCase):
         # Third tag: count="147", gull (highest count)
         self.assertEqual(tags[2].text, "gull")
         self.assertEqual(tags[2].count, 147)
+
+    @patch.object(method_call.requests, "post")
+    def test_get_clusters(self, mock_post):
+        """Test Tag.getClusters parses the API response correctly"""
+        api_doc = load_api_doc("flickr.tags.getClusters")
+        json_response = xml_to_flickr_json(api_doc["response"])
+
+        mock_post.return_value = self._mock_response(json_response)
+
+        clusters = f.Tag.getClusters(tag="cows")
+
+        # Verify based on the example data
+        # Two clusters: farm/animals/cattle and green/landscape/countryside
+        self.assertEqual(len(clusters), 2)
+        self.assertIsInstance(clusters[0], f.Tag.Cluster)
+
+        # First cluster has total="3" (string) and tags: farm, animals, cattle
+        self.assertEqual(clusters[0].total, "3")
+        self.assertEqual(len(clusters[0].tags), 3)
+        self.assertIsInstance(clusters[0].tags[0], f.Tag)
+        self.assertEqual(clusters[0].tags[0].text, "farm")
+        self.assertEqual(clusters[0].tags[1].text, "animals")
+        self.assertEqual(clusters[0].tags[2].text, "cattle")
+
+        # Second cluster has total="3" (string) and tags: green, landscape, countryside
+        self.assertEqual(clusters[1].total, "3")
+        self.assertEqual(clusters[1].tags[0].text, "green")
+        self.assertEqual(clusters[1].tags[1].text, "landscape")
+        self.assertEqual(clusters[1].tags[2].text, "countryside")
+
+    @patch.object(method_call.requests, "post")
+    def test_cluster_get_photos(self, mock_post):
+        """Test Tag.Cluster.getPhotos parses the API response correctly"""
+        # The api-doc has empty response, so create a mock response
+        json_response = {
+            "photos": {
+                "page": 1,
+                "pages": 1,
+                "perpage": 24,
+                "total": 2,
+                "photo": [
+                    {
+                        "id": "12345",
+                        "owner": "12037949754@N01",
+                        "secret": "abc123",
+                        "server": "1234",
+                        "farm": 1,
+                        "title": "Cow Photo 1",
+                    },
+                    {
+                        "id": "67890",
+                        "owner": "98765432100@N01",
+                        "secret": "def456",
+                        "server": "5678",
+                        "farm": 2,
+                        "title": "Cow Photo 2",
+                    },
+                ],
+            }
+        }
+
+        mock_post.return_value = self._mock_response(json_response)
+
+        cluster = f.Tag.Cluster(tag="cows", id="farm-animals-cattle")
+        photos = cluster.getPhotos()
+
+        # Verify photos are returned
+        self.assertEqual(len(photos), 2)
+        self.assertIsInstance(photos[0], f.Photo)
+        self.assertEqual(photos[0].id, "12345")
+        self.assertEqual(photos[0].title, "Cow Photo 1")
+        self.assertIsInstance(photos[0].owner, f.Person)
+        self.assertEqual(photos[0].owner.id, "12037949754@N01")
+
+        self.assertEqual(photos[1].id, "67890")
+        self.assertEqual(photos[1].title, "Cow Photo 2")
+
+    @patch.object(method_call.requests, "post")
+    def test_get_list_photo(self, mock_post):
+        """Test Photo.getTags parses the API response correctly"""
+        api_doc = load_api_doc("flickr.tags.getListPhoto")
+        json_response = xml_to_flickr_json(api_doc["response"])
+
+        mock_post.return_value = self._mock_response(json_response)
+
+        photo = f.Photo(id="2619")
+        tags = photo.getTags()
+
+        # Verify based on example data
+        # Two tags: tag1 (id=156) and tag2 (id=157)
+        self.assertEqual(len(tags), 2)
+        self.assertIsInstance(tags[0], f.Tag)
+
+        self.assertEqual(tags[0].id, "156")
+        self.assertEqual(tags[0].author, "12037949754@N01")
+        self.assertEqual(tags[0].authorname, "Bees")
+        self.assertEqual(tags[0].raw, "tag 1")
+        self.assertEqual(tags[0].text, "tag1")
+
+        self.assertEqual(tags[1].id, "157")
+        self.assertEqual(tags[1].author, "12037949754@N01")
+        self.assertEqual(tags[1].authorname, "Bees")
+        self.assertEqual(tags[1].raw, "tag 2")
+        self.assertEqual(tags[1].text, "tag2")
+
+    @patch.object(method_call.requests, "post")
+    def test_get_list_user_raw(self, mock_post):
+        """Test Tag.getListUserRaw parses the API response correctly"""
+        api_doc = load_api_doc("flickr.tags.getListUserRaw")
+        json_response = xml_to_flickr_json(api_doc["response"])
+
+        mock_post.return_value = self._mock_response(json_response)
+
+        result = f.Tag.getListUserRaw()
+
+        # Verify based on example data
+        # One tag with clean="foo" and raws: ["foo", "Foo", "f:oo"]
+        self.assertEqual(len(result), 1)
+        self.assertIsInstance(result[0], dict)
+        self.assertEqual(result[0]["clean"], "foo")
+        self.assertEqual(len(result[0]["raws"]), 3)
+        self.assertEqual(result[0]["raws"][0], "foo")
+        self.assertEqual(result[0]["raws"][1], "Foo")
+        self.assertEqual(result[0]["raws"][2], "f:oo")
+
+    @patch.object(method_call.requests, "post")
+    def test_get_related(self, mock_post):
+        """Test Tag.getRelated parses the API response correctly"""
+        api_doc = load_api_doc("flickr.tags.getRelated")
+        json_response = xml_to_flickr_json(api_doc["response"])
+
+        mock_post.return_value = self._mock_response(json_response)
+
+        related = f.Tag.getRelated(tag="london")
+
+        # Verify based on example data
+        # Related tags: england, thames, tube, bigben, uk
+        self.assertEqual(len(related), 5)
+        # getRelated returns raw strings (not Tag objects)
+        self.assertEqual(related[0], "england")
+        self.assertEqual(related[1], "thames")
+        self.assertEqual(related[2], "tube")
+        self.assertEqual(related[3], "bigben")
+        self.assertEqual(related[4], "uk")
 
 
 if __name__ == "__main__":

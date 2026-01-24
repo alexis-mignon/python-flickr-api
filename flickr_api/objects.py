@@ -70,6 +70,15 @@ def dict_converter(keys, func):
     return convert
 
 
+def str_to_bool(value):
+    """Convert Flickr API string boolean values to Python bool.
+
+    Flickr API returns "0" for False and "1" for True.
+    Using bool() directly doesn't work because bool("0") is True.
+    """
+    return value not in ("0", "false", "False", False, 0)
+
+
 class FlickrObject(object, metaclass=FlickrAutoDoc):
     """
         Base Object for Flickr API Objects.
@@ -202,7 +211,7 @@ class Activity(FlickrObject):
 class Blog(FlickrObject):
     __display__ = ["id", "name"]
     __converters__ = [
-        dict_converter(["needspassword"], bool),
+        dict_converter(["needspassword"], str_to_bool),
     ]
     __self_name__ = "blog_id"
 
@@ -230,7 +239,7 @@ class BlogService(FlickrObject):
 
     @caller("flickr.blogs.postPhoto")
     def postPhoto(self, **args):
-        return _format_id(args), _none
+        return _format_id("photo", args), _none
 
     @static_caller("flickr.blogs.getServices")
     def getServices():
@@ -257,7 +266,7 @@ class Camera(FlickrObject):
         @caller("flickr.cameras.getBrandModels")
         def getModels(self):
             return ({},
-                   lambda r: [Camera(**m) for m in r["cameras"]["camera"]]
+                   lambda r: [Camera(**m) for m in _check_list(r["cameras"]["camera"])]
             )
 
 
@@ -267,12 +276,12 @@ class Collection(FlickrObject):
 
     @caller("flickr.collections.getInfo")
     def getInfo(self, **args):
-        def format_result(r):
+        def format_result(r, token=None):
             collection = r["collection"]
             icon_photos = _check_list(collection["iconphotos"]["photo"])
             photos = []
-            for p in photos:
-                p["owner"] = Person(p["owner"])
+            for p in icon_photos:
+                p["owner"] = Person(id=p["owner"])
                 photos.append(Photo(**p))
             collection["iconphotos"] = photos
             return collection
@@ -286,10 +295,10 @@ class Collection(FlickrObject):
     @caller("flickr.collections.getTree")
     def getTree(self, **args):
         def format_result(r, token=None):
-            collections = _check_list(r["collections"])
+            collections = _check_list(r["collections"]["collection"])
             collections_ = []
             for c in collections:
-                sets = _check_list(c.pop("set"))
+                sets = _check_list(c.pop("set", []))
                 sets_ = [Photoset(token=token, **s) for s in sets]
                 collections_.append(Collection(token=token, sets=sets_, **c))
             return collections_
@@ -450,7 +459,7 @@ class Group(FlickrObject):
                 author = {
                     'id': reply.pop("author"),
                     'role': reply.pop("role"),
-                    'is_pro': bool(reply.pop("is_pro")),
+                    'is_pro': bool(reply.pop("is_pro", 0)),
                 }
                 reply["author"] = Person(**author)
                 return reply
@@ -462,6 +471,12 @@ class Group(FlickrObject):
             @caller("flickr.groups.discuss.replies.delete")
             def delete(self, **args):
                 args["topic_id"] = self.topic.id
+                return args, _none
+
+            @caller("flickr.groups.discuss.replies.edit")
+            def edit(self, **args):
+                args["topic_id"] = self.topic.id
+                return args, _none
 
         def getToken(self):
             return self.group.getToken()
@@ -477,7 +492,7 @@ class Group(FlickrObject):
 
             author = {
                 'id': topic.pop("author"),
-                'is_pro': bool(topic.pop('is_pro')),
+                'is_pro': bool(topic.pop('is_pro', 0)),
                 'role': topic.pop("role"),
             }
             topic["author"] = Person(**author)
@@ -493,26 +508,31 @@ class Group(FlickrObject):
         def getReplies(self, **args):
             def format_result(r):
                 info = r["replies"]
+                # Pagination info is in the topic element, not at replies level
+                topic_info = info.pop("topic", {})
+                pagination = {
+                    k: topic_info.get(k)
+                    for k in ("total", "page", "pages", "per_page")
+                    if topic_info.get(k) is not None
+                }
                 return FlickrList(
                     [Group.Topic.Reply(topic=self,
                                        **Group.Topic.Reply._format_reply(rep))
                             for rep in info.pop("reply", [])],
-                     Info(**info)
+                     Info(**pagination)
                 )
             return args, format_result
 
         @caller("flickr.groups.discuss.replies.delete")
-        def delete(self, **args):
-            args["topic_id"] = self.topic.id
-            return args, _none
+        def deleteReply(self, **args):
+            return _format_id("reply", args), _none
 
         @caller("flickr.groups.discuss.replies.edit")
-        def edit(self, **args):
-            args["topic_id"] = self.topic.id
-            return args, _none
+        def editReply(self, **args):
+            return _format_id("reply", args), _none
 
     @caller("flickr.groups.discuss.topics.add")
-    def addDiscussTopic(**args):
+    def addDiscussTopic(self, **args):
         return args, _none
 
     @static_caller("flickr.groups.browse")
@@ -576,7 +596,7 @@ class Group(FlickrObject):
     @caller("flickr.groups.pools.getContext")
     def getPoolContext(self, **args):
         return (_format_id("photo", args),
-                lambda r: (Photo(**r["prevphoto"]), Photo(r["nextphoto"]))
+                lambda r: (Photo(**r["prevphoto"]), Photo(**r["nextphoto"]))
         )
 
     @caller("flickr.groups.discuss.topics.getList")
@@ -885,10 +905,10 @@ class Person(FlickrObject):
     @caller("flickr.collections.getTree")
     def getCollectionTree(self, **args):
         def format_result(r, token=None):
-            collections = _check_list(r["collections"])
+            collections = _check_list(r["collections"]["collection"])
             collections_ = []
-            for c in collections[0]["collection"]:
-                sets = _check_list(c.pop("set"))
+            for c in collections:
+                sets = _check_list(c.pop("set", []))
                 sets_ = [Photoset(token=token, **s) for s in sets]
                 collections_.append(Collection(token=token, sets=sets_, **c))
             return collections_
@@ -1160,14 +1180,14 @@ class Photo(FlickrObject):
             galleries = _check_list(info.pop("gallery"))
             galleries_ = []
 
-            for g in galleries_:
-                g["owner"] = Person(g["owner"])
+            for g in galleries:
+                g["owner"] = Person(id=g["owner"])
                 pp_id = g.pop("primary_photo_id")
                 pp_secret = g.pop("primary_photo_secret")
                 pp_farm = g.pop("primary_photo_farm")
                 pp_server = g.pop("primary_photo_server")
 
-                g["primary_photo"] = Gallery(
+                g["primary_photo"] = Photo(
                     id=pp_id, secret=pp_secret,
                     server=pp_server, farm=pp_farm
                 )
@@ -1210,7 +1230,7 @@ class Photo(FlickrObject):
             suggestions = []
             for s in suggestions_:
                 if "photo_id" in s:
-                    s["photo"] = s.pop(Photo(id=s.pop("photo_id")))
+                    s["photo"] = Photo(id=s.pop("photo_id"))
                 if "suggested_by" in s:
                     s["suggested_by"] = Person(id=s["suggested_by"])
                 suggestions.append(Photo.Suggestion(**s))
@@ -1395,12 +1415,10 @@ class Photo(FlickrObject):
 
     @caller("flickr.photos.people.getList")
     def getPeople(self, **args):
-        def format_result(r, token):
+        def format_result(r, token=None):
             info = r["people"]
-            people = info.pop("person")
+            people = _check_list(info.pop("person"))
             people_ = []
-            if isinstance(people, Person):
-                people = [people]
             for p in people:
                 p["id"] = p["nsid"]
                 p["photo"] = self
@@ -1429,7 +1447,7 @@ class Photo(FlickrObject):
         args["degrees"] = degrees
 
         def format_result(r, token):
-            photo_id = r["photo_id"]["_content"]
+            photo_id = r["photo_id"]["text"]
             photo_secret = r["photo_id"]["secret"]
             return Photo(token=token, id=photo_id, secret=photo_secret)
         return args, format_result
@@ -1464,8 +1482,12 @@ class Photo(FlickrObject):
         return args, _none
 
     @caller("flickr.photos.licenses.setLicense")
-    def setLicence(self, license, **args):
-        return _format_id("licence", args), _none
+    def setLicence(self, licence, **args):
+        if hasattr(licence, "id"):
+            args["licence_id"] = licence.id
+        else:
+            args["licence_id"] = licence
+        return args, _none
 
     @caller("flickr.photos.geo.setLocation")
     def setLocation(self, **args):
@@ -1541,7 +1563,9 @@ class Photoset(FlickrObject):
     def addComment(self, **args):
         return (
             args,
-            lambda r, token: Photoset.Comment(token=token, photoset=self, **r)
+            lambda r, token: Photoset.Comment(
+                token=token, photoset=self, **r["comment"]
+            )
         )
 
     @static_caller("flickr.photosets.create")
@@ -1587,7 +1611,7 @@ class Photoset(FlickrObject):
     @caller("flickr.photosets.comments.getList")
     def getComments(self, **args):
         def format_result(r, token):
-            comments = r["comments"]["comment"]
+            comments = r["comments"].get("comment", [])
             comments_ = []
             if not isinstance(comments, list):
                 comments = [comments]
@@ -1596,7 +1620,7 @@ class Photoset(FlickrObject):
                 authorname = c.pop("authorname")
                 c["author"] = Person(id=author, username=authorname)
                 comments_.append(
-                    Photoset.Comment(token=token, photo=self, **c)
+                    Photoset.Comment(token=token, photoset=self, **c)
                 )
             return comments_
         return args, format_result
@@ -1725,9 +1749,13 @@ class Place(FlickrObject):
     @staticmethod
     def parse_shapedata(shape_data_dict):
         shapedata = shape_data_dict.copy()
+        polyline_data = shapedata["polylines"]["polyline"]
+        # Handle single polyline (string) vs multiple polylines (list)
+        if isinstance(polyline_data, str):
+            polyline_data = [polyline_data]
         shapedata["polylines"] = [
             Place.ShapeData.Polyline(coords=p.split(" "))
-                for p in shapedata["polylines"]["polyline"]
+            for p in polyline_data
         ]
         if "url" in shapedata:
             shapedata["shapefile"] = shapedata.pop("urls")["shapefile"].text
@@ -1786,18 +1814,24 @@ class Place(FlickrObject):
     def placesForBoundingBox(**args):
         def format_result(r):
             info = r["places"]
+            places_data = info.pop("place")
+            if not isinstance(places_data, list):
+                places_data = [places_data]
             return [
-                Place(Place.parse_place(place))
-                    for place in info.pop("place")]
+                Place(**Place.parse_place(place))
+                for place in places_data]
         return args, format_result
 
     @static_caller("flickr.places.placesForContacts")
     def placesForContacts(**args):
         def format_result(r):
             info = r["places"]
+            places_data = info.pop("place")
+            if not isinstance(places_data, list):
+                places_data = [places_data]
             return [
-                Place(Place.parse_place(place))
-                    for place in info.pop("place")]
+                Place(**Place.parse_place(place))
+                for place in places_data]
         return args, format_result
 
     @static_caller("flickr.places.placesForTags")
@@ -2003,6 +2037,8 @@ class Tag(FlickrObject):
     def getListUserRaw(**args):
         def format_result(r):
             tags = r["who"]["tags"]["tag"]
+            if not isinstance(tags, list):
+                tags = [tags]
             return [{'clean': t["clean"], "raws": t["raw"]} for t in tags]
         return args, format_result
 
@@ -2035,7 +2071,7 @@ def _extract_activity_list(r):
     activities = []
     for item in items:
         activity = item.pop("activity")
-        item_type = item.pop(["type"])
+        item_type = item.pop("type")
         if item_type == "photo":
             item = Photo(**item)
         elif item_type == "photoset":
@@ -2054,7 +2090,7 @@ def _extract_activity_list(r):
                     events_.append(Photoset.Comment(photoset=item, **e))
             elif e_type == 'note':
                 events_.append(Photo.Note(photo=item, **e))
-        activities.append(Activity(item=item, events=events))
+        activities.append(Activity(item=item, events=events_))
     return activities
 
 
@@ -2088,11 +2124,17 @@ def _none(r):
 
 def _extract_place_list(r):
     info = r["places"]
-    return FlickrList(
-        [Place(id=place.pop("place_id"), **place)
-            for place in info.pop("place")],
-        Info(**info)
-    )
+    places_data = info.pop("place")
+    if not isinstance(places_data, list):
+        places_data = [places_data]
+    places = []
+    for place in places_data:
+        # Convert text to name if name not present (clean_content converts
+        # _content to text)
+        if "text" in place and "name" not in place:
+            place["name"] = place.pop("text")
+        places.append(Place(id=place.pop("place_id"), **place))
+    return FlickrList(places, Info(**info))
 
 
 def _extract_photo_list(r, token=None):

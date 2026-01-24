@@ -1,0 +1,150 @@
+{
+  "name": "flickr.places.placesForUser",
+  "description": "Return a list of the top 100 unique places clustered by a given placetype for a user.",
+  "authentication": " This method requiresauthenticationwith 'read' permission. ",
+  "arguments": [
+    {
+      "name": "api_key",
+      "required": true,
+      "description": "Your API application key.See herefor more details."
+    },
+    {
+      "name": "place_type_id",
+      "required": false,
+      "description": "The numeric ID for a specific place type to cluster photos by.Valid place type IDs are :22: neighbourhood7: locality8: region12: country29: continentThe \"place_type\" argument has been deprecated in favor of the \"place_type_id\" argument. It won't go away but it will not be added to new methods. A complete list of place type IDs is available using theflickr.places.getPlaceTypesmethod. (While optional, you must pass either a valid place type or place type ID.)"
+    },
+    {
+      "name": "place_type",
+      "required": false,
+      "description": "A specific place type to cluster photos by.Valid place types are :neighbourhood(and neighborhood)localityregioncountrycontinent(While optional, you must pass either a valid place type or place type ID.)"
+    },
+    {
+      "name": "woe_id",
+      "required": false,
+      "description": "A Where on Earth identifier to use to filter photo clusters. For example all the photos clustered bylocalityin the United States (WOE ID23424977).(While optional, you must pass either a valid Places ID or a WOE ID.)"
+    },
+    {
+      "name": "place_id",
+      "required": false,
+      "description": "A Flickr Places identifier to use to filter photo clusters. For example all the photos clustered bylocalityin the United States (Place ID4KO02SibApitvSBieQ).(While optional, you must pass either a valid Places ID or a WOE ID.)"
+    },
+    {
+      "name": "threshold",
+      "required": false,
+      "description": "The minimum number of photos that a place type must have to be included. If the number of photos is lowered then the parent place type for that place will be used.For example if you only have3photos taken in the locality of Montreal(WOE ID 3534) but your threshold is set to5then those photos will be \"rolled up\" and included instead with a place record for the region of Quebec (WOE ID 2344924)."
+    },
+    {
+      "name": "min_upload_date",
+      "required": false,
+      "description": "Minimum upload date. Photos with an upload date greater than or equal to this value will be returned. The date should be in the form of a unix timestamp."
+    },
+    {
+      "name": "max_upload_date",
+      "required": false,
+      "description": "Maximum upload date. Photos with an upload date less than or equal to this value will be returned. The date should be in the form of a unix timestamp."
+    },
+    {
+      "name": "min_taken_date",
+      "required": false,
+      "description": "Minimum taken date. Photos with an taken date greater than or equal to this value will be returned. The date should be in the form of a mysql datetime."
+    },
+    {
+      "name": "max_taken_date",
+      "required": false,
+      "description": "Maximum taken date. Photos with an taken date less than or equal to this value will be returned. The date should be in the form of a mysql datetime."
+    }
+  ],
+  "response": "\n<places total=\"1\">\n  <place place_id=\"kH8dLOubBZRvX_YZ\" woeid=\"2487956\" latitude=\"37.779\" longitude=\"-122.420\" place_url=\"/United+States/California/San+Francisco\" place_type=\"locality\" photo_count=\"156\">San Francisco, California</place>\n</places>",
+  "errors": [
+    {
+      "code": 1,
+      "title": "Places for user are not available at this timePlaces for user have been disabled or are otherwise not available.",
+      "description": ""
+    },
+    {
+      "code": 2,
+      "title": "Required parameter missingOne or more of the required parameters was not included with your request.",
+      "description": ""
+    },
+    {
+      "code": 3,
+      "title": "Not a valid place typeAn invalid place type was included with your request.",
+      "description": ""
+    },
+    {
+      "code": 4,
+      "title": "Not a valid Place IDAn invalid Places (or WOE) identifier was included with your request.",
+      "description": ""
+    },
+    {
+      "code": 5,
+      "title": "Not a valid thresholdThe threshold passed was invalid.",
+      "description": ""
+    },
+    {
+      "code": 95,
+      "title": "SSL is requiredSSL is required to access the Flickr API.",
+      "description": ""
+    },
+    {
+      "code": 96,
+      "title": "Invalid signatureThe passed signature was invalid.",
+      "description": ""
+    },
+    {
+      "code": 97,
+      "title": "Missing signatureThe call required signing but no signature was sent.",
+      "description": ""
+    },
+    {
+      "code": 98,
+      "title": "Login failed / Invalid auth tokenThe login details or auth token passed were invalid.",
+      "description": ""
+    },
+    {
+      "code": 99,
+      "title": "User not logged in / Insufficient permissionsThe method requires user authentication but the user was not logged in, or the authenticated method call did not have the required permissions.",
+      "description": ""
+    },
+    {
+      "code": 100,
+      "title": "Invalid API KeyThe API key passed was not valid or has expired.",
+      "description": ""
+    },
+    {
+      "code": 105,
+      "title": "Service currently unavailableThe requested service is temporarily unavailable.",
+      "description": ""
+    },
+    {
+      "code": 106,
+      "title": "Write operation failedThe requested operation failed due to a temporary issue.",
+      "description": ""
+    },
+    {
+      "code": 111,
+      "title": "Format \"xxx\" not foundThe requested response format was not found.",
+      "description": ""
+    },
+    {
+      "code": 112,
+      "title": "Method \"xxx\" not foundThe requested method was not found.",
+      "description": ""
+    },
+    {
+      "code": 114,
+      "title": "Invalid SOAP envelopeThe SOAP envelope send in the request could not be parsed.",
+      "description": ""
+    },
+    {
+      "code": 115,
+      "title": "Invalid XML-RPC Method CallThe XML-RPC request document could not be parsed.",
+      "description": ""
+    },
+    {
+      "code": 116,
+      "title": "Bad URL foundOne or more arguments contained a URL that has been used for abuse on Flickr.",
+      "description": ""
+    }
+  ]
+}

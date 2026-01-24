@@ -1,0 +1,115 @@
+{
+  "name": "flickr.galleries.getList",
+  "description": "Return the list of galleries created by a user.  Sorted from newest to oldest.",
+  "authentication": " This method does not require authentication. ",
+  "arguments": [
+    {
+      "name": "api_key",
+      "required": true,
+      "description": "Your API application key.See herefor more details."
+    },
+    {
+      "name": "user_id",
+      "required": true,
+      "description": "The NSID of the user to get a galleries list for. If none is specified, the calling user is assumed."
+    },
+    {
+      "name": "per_page",
+      "required": false,
+      "description": "Number of galleries to return per page. If this argument is omitted, it defaults to 100. The maximum allowed value is 500."
+    },
+    {
+      "name": "page",
+      "required": false,
+      "description": "The page of results to return. If this argument is omitted, it defaults to 1."
+    },
+    {
+      "name": "primary_photo_extras",
+      "required": false,
+      "description": "A comma-delimited list of extra information to fetch for the primary photo. Currently supported fields are: license, date_upload, date_taken, owner_name, icon_server, original_format, last_update, geo, tags, machine_tags, o_dims, views, media, path_alias, url_sq, url_t, url_s, url_m, url_o"
+    },
+    {
+      "name": "continuation",
+      "required": true,
+      "description": "The first request must pass the \"continuation\" parameter with the value of \"0\". The server responds back with a response that includes the \"continuation\" field along with \"pages\" and \"total\" fields in the response. For the subsequent requests, the client must relay the value of the \"continuation\" response field as the value of the \"continuation\" request parameter. On the last page of results, the server will respond with a continuation value of \"-1\"."
+    },
+    {
+      "name": "sort_groups",
+      "required": false,
+      "description": "A comma-separated list of groups used to sort the output sets. If has_photo is present, any of the calling user's galleries containing photos referred to in photo_ids will be returned before other galleries. If suggested is present, a number of suggested galleries will be returned before other sets. The order of the sort_groups will dictate the order that the groups are returned in. Only available if continuation is used. The resulting output will include a \"sort_group\" parameter indicating the sort_group that each set is part of, or null if not applicable"
+    },
+    {
+      "name": "photo_ids",
+      "required": false,
+      "description": "A comma-separated list of photo ids. If specified along with has_photo in sort_groups, each returned gallery will include a list of these photo ids that are present in the gallery as \"has_requested_photos\""
+    },
+    {
+      "name": "cover_photos",
+      "required": false,
+      "description": "set to 1 if cover photos for galleries should be returned. If primary photo exists, 1 primary photo and 2 other photos will be returned (in order). If not, 6 photos in order will be returned"
+    },
+    {
+      "name": "primary_photo_cover_size",
+      "required": false,
+      "description": "size of primary photo on the cover (if primary photo exists in gallery). will default to 'q' if not set"
+    },
+    {
+      "name": "cover_photos_size",
+      "required": false,
+      "description": "size of cover photos (will default to 'q' if not set)"
+    },
+    {
+      "name": "limit",
+      "required": false,
+      "description": "number of cover photos to fetch for galleries without a primary photo. Default is 6"
+    },
+    {
+      "name": "short_limit",
+      "required": true,
+      "description": "number of cover photos to fetch (excluding primary photo) for galleries with a primary photo. Default is 2."
+    }
+  ],
+  "response": "\n<galleries total=\"9\" page=\"1\" pages=\"1\" per_page=\"100\" user_id=\"34427469121@N01\">\n  <gallery id=\"5704-72157622637971865\" url=\"http://www.flickr.com/photos/george/galleries/72157622637971865\" owner=\"34427469121@N01\" date_create=\"1257711422\" date_update=\"1260360756\" primary_photo_id=\"107391222\" primary_photo_server=\"39\" primary_photo_farm=\"1\" primary_photo_secret=\"ffa\" count_photos=\"16\" count_videos=\"2\">\n    <title>I like me some black &amp; white</title>\n    <description>black and whites</description>\n  </gallery>\n  <gallery id=\"5704-72157622566655097\" url=\"http://www.flickr.com/photos/george/galleries/72157622566655097\" owner=\"34427469121@N01\" date_create=\"1256852229\" date_update=\"1260462343\" primary_photo_id=\"497374910\" primary_photo_server=\"231\" primary_photo_farm=\"1\" primary_photo_secret=\"9ae0f\" count_photos=\"18\" count_videos=\"0\">\n    <title>People Sleeping in Libraries</title>\n    <description />\n  </gallery>\n</galleries>",
+  "errors": [
+    {
+      "code": 100,
+      "title": "Invalid API KeyThe API key passed was not valid or has expired.",
+      "description": ""
+    },
+    {
+      "code": 105,
+      "title": "Service currently unavailableThe requested service is temporarily unavailable.",
+      "description": ""
+    },
+    {
+      "code": 106,
+      "title": "Write operation failedThe requested operation failed due to a temporary issue.",
+      "description": ""
+    },
+    {
+      "code": 111,
+      "title": "Format \"xxx\" not foundThe requested response format was not found.",
+      "description": ""
+    },
+    {
+      "code": 112,
+      "title": "Method \"xxx\" not foundThe requested method was not found.",
+      "description": ""
+    },
+    {
+      "code": 114,
+      "title": "Invalid SOAP envelopeThe SOAP envelope send in the request could not be parsed.",
+      "description": ""
+    },
+    {
+      "code": 115,
+      "title": "Invalid XML-RPC Method CallThe XML-RPC request document could not be parsed.",
+      "description": ""
+    },
+    {
+      "code": 116,
+      "title": "Bad URL foundOne or more arguments contained a URL that has been used for abuse on Flickr.",
+      "description": ""
+    }
+  ]
+}

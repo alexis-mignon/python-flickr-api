@@ -1,0 +1,115 @@
+{
+  "name": "flickr.stats.getPopularPhotos",
+  "description": "List the photos with the most views, comments or favorites",
+  "authentication": " This method requiresauthenticationwith 'read' permission. ",
+  "arguments": [
+    {
+      "name": "api_key",
+      "required": true,
+      "description": "Your API application key.See herefor more details."
+    },
+    {
+      "name": "date",
+      "required": false,
+      "description": "Stats will be returned for this date. This should be in either be in YYYY-MM-DD or unix timestamp format.\n\nA day according to Flickr Stats starts at midnight GMT for all users, and timestamps will automatically be rounded down to the start of the day.\n\nIf no date is provided, all time view counts will be returned."
+    },
+    {
+      "name": "sort",
+      "required": false,
+      "description": "The order in which to sort returned photos. Defaults to views. The possible values are views, comments and favorites.\n\nOther sort options are available throughflickr.photos.search."
+    },
+    {
+      "name": "per_page",
+      "required": false,
+      "description": "Number of referrers to return per page. If this argument is omitted, it defaults to 25. The maximum allowed value is 100."
+    },
+    {
+      "name": "page",
+      "required": false,
+      "description": "The page of results to return. If this argument is omitted, it defaults to 1."
+    }
+  ],
+  "response": "\n<photos page=\"2\" pages=\"89\" perpage=\"10\" total=\"881\">\n  <photo id=\"2636\" owner=\"47058503995@N01\" secret=\"a123456\" server=\"2\" title=\"test_04\" ispublic=\"1\" isfriend=\"0\" isfamily=\"0\">\n    <stats views=\"941\" comments=\"18\" favorites=\"2\" />\n  </photo>\n  <photo id=\"2635\" owner=\"47058503995@N01\" secret=\"b123456\" server=\"2\" title=\"test_03\" ispublic=\"0\" isfriend=\"1\" isfamily=\"1\">\n    <stats views=\"141\" comments=\"1\" favorites=\"2\" />\n  </photo>\n</photos>",
+  "errors": [
+    {
+      "code": 1,
+      "title": "User does not have statsThe user you have requested stats has not enabled stats on their account.",
+      "description": ""
+    },
+    {
+      "code": 3,
+      "title": "Invalid dateThe date provided could not be parsed",
+      "description": ""
+    },
+    {
+      "code": 5,
+      "title": "Invalid sortThe sort provided is not valid",
+      "description": ""
+    },
+    {
+      "code": 95,
+      "title": "SSL is requiredSSL is required to access the Flickr API.",
+      "description": ""
+    },
+    {
+      "code": 96,
+      "title": "Invalid signatureThe passed signature was invalid.",
+      "description": ""
+    },
+    {
+      "code": 97,
+      "title": "Missing signatureThe call required signing but no signature was sent.",
+      "description": ""
+    },
+    {
+      "code": 98,
+      "title": "Login failed / Invalid auth tokenThe login details or auth token passed were invalid.",
+      "description": ""
+    },
+    {
+      "code": 99,
+      "title": "User not logged in / Insufficient permissionsThe method requires user authentication but the user was not logged in, or the authenticated method call did not have the required permissions.",
+      "description": ""
+    },
+    {
+      "code": 100,
+      "title": "Invalid API KeyThe API key passed was not valid or has expired.",
+      "description": ""
+    },
+    {
+      "code": 105,
+      "title": "Service currently unavailableThe requested service is temporarily unavailable.",
+      "description": ""
+    },
+    {
+      "code": 106,
+      "title": "Write operation failedThe requested operation failed due to a temporary issue.",
+      "description": ""
+    },
+    {
+      "code": 111,
+      "title": "Format \"xxx\" not foundThe requested response format was not found.",
+      "description": ""
+    },
+    {
+      "code": 112,
+      "title": "Method \"xxx\" not foundThe requested method was not found.",
+      "description": ""
+    },
+    {
+      "code": 114,
+      "title": "Invalid SOAP envelopeThe SOAP envelope send in the request could not be parsed.",
+      "description": ""
+    },
+    {
+      "code": 115,
+      "title": "Invalid XML-RPC Method CallThe XML-RPC request document could not be parsed.",
+      "description": ""
+    },
+    {
+      "code": 116,
+      "title": "Bad URL foundOne or more arguments contained a URL that has been used for abuse on Flickr.",
+      "description": ""
+    }
+  ]
+}

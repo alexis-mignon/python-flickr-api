@@ -1,0 +1,85 @@
+{
+  "name": "flickr.people.getPhotosOf",
+  "description": "Returns a list of photos containing a particular Flickr member.",
+  "authentication": " This method does not require authentication. ",
+  "arguments": [
+    {
+      "name": "api_key",
+      "required": true,
+      "description": "Your API application key.See herefor more details."
+    },
+    {
+      "name": "user_id",
+      "required": true,
+      "description": "The NSID of the user you want to find photos of. A value of \"me\" will search against photos of the calling user, for authenticated calls."
+    },
+    {
+      "name": "owner_id",
+      "required": false,
+      "description": "An NSID of a Flickr member. This will restrict the list of photos to those taken by that member."
+    },
+    {
+      "name": "extras",
+      "required": false,
+      "description": "A comma-delimited list of extra information to fetch for each returned record. Currently supported fields are:description,license,date_upload,date_taken,date_person_added,owner_name,icon_server,original_format,last_update,geo,tags,machine_tags,o_dims,views,media,path_alias,url_sq,url_t,url_s,url_q,url_m,url_n,url_z,url_c,url_l,url_o"
+    },
+    {
+      "name": "per_page",
+      "required": false,
+      "description": "Number of photos to return per page. If this argument is omitted, it defaults to 100. The maximum allowed value is 500."
+    },
+    {
+      "name": "page",
+      "required": false,
+      "description": "The page of results to return. If this argument is omitted, it defaults to 1."
+    }
+  ],
+  "response": "\n<photos page=\"2\" has_next_page=\"1\" perpage=\"10\">\n  <photo id=\"2636\" owner=\"47058503995@N01\" secret=\"a123456\" server=\"2\" title=\"test_04\" ispublic=\"1\" isfriend=\"0\" isfamily=\"0\" />\n  <photo id=\"2635\" owner=\"47058503995@N01\" secret=\"b123456\" server=\"2\" title=\"test_03\" ispublic=\"0\" isfriend=\"1\" isfamily=\"1\" />\n  <photo id=\"2633\" owner=\"47058503995@N01\" secret=\"c123456\" server=\"2\" title=\"test_01\" ispublic=\"1\" isfriend=\"0\" isfamily=\"0\" />\n  <photo id=\"2610\" owner=\"12037949754@N01\" secret=\"d123456\" server=\"2\" title=\"00_tall\" ispublic=\"1\" isfriend=\"0\" isfamily=\"0\" />\n</photos>",
+  "errors": [
+    {
+      "code": 1,
+      "title": "User not found.A user_id was passed which did not match a valid flickr user.",
+      "description": ""
+    },
+    {
+      "code": 100,
+      "title": "Invalid API KeyThe API key passed was not valid or has expired.",
+      "description": ""
+    },
+    {
+      "code": 105,
+      "title": "Service currently unavailableThe requested service is temporarily unavailable.",
+      "description": ""
+    },
+    {
+      "code": 106,
+      "title": "Write operation failedThe requested operation failed due to a temporary issue.",
+      "description": ""
+    },
+    {
+      "code": 111,
+      "title": "Format \"xxx\" not foundThe requested response format was not found.",
+      "description": ""
+    },
+    {
+      "code": 112,
+      "title": "Method \"xxx\" not foundThe requested method was not found.",
+      "description": ""
+    },
+    {
+      "code": 114,
+      "title": "Invalid SOAP envelopeThe SOAP envelope send in the request could not be parsed.",
+      "description": ""
+    },
+    {
+      "code": 115,
+      "title": "Invalid XML-RPC Method CallThe XML-RPC request document could not be parsed.",
+      "description": ""
+    },
+    {
+      "code": 116,
+      "title": "Bad URL foundOne or more arguments contained a URL that has been used for abuse on Flickr.",
+      "description": ""
+    }
+  ]
+}

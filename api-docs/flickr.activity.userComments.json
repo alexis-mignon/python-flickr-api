@@ -1,0 +1,90 @@
+{
+  "name": "flickr.activity.userComments",
+  "description": "Returns a list of recent activity on photos commented on by the calling user.Do not poll this method more than once an hour.",
+  "authentication": " This method requiresauthenticationwith 'read' permission. ",
+  "arguments": [
+    {
+      "name": "api_key",
+      "required": true,
+      "description": "Your API application key.See herefor more details."
+    },
+    {
+      "name": "per_page",
+      "required": false,
+      "description": "Number of items to return per page. If this argument is omitted, it defaults to 10. The maximum allowed value is 50."
+    },
+    {
+      "name": "page",
+      "required": false,
+      "description": "The page of results to return. If this argument is omitted, it defaults to 1."
+    }
+  ],
+  "response": "\n<items>\n  <item type=\"photoset\" id=\"395\" owner=\"12037949754@N01\" primary=\"6521\" secret=\"5a3cc65d72\" server=\"2\" comments=\"1\" views=\"33\" photos=\"7\" more=\"0\">\n    <title>A set of photos</title>\n    <activity>\n      <event type=\"comment\" user=\"12037949754@N01\" username=\"Bees\" dateadded=\"1144086424\">yay</event>\n    </activity>\n  </item>\n  <item type=\"photo\" id=\"10289\" owner=\"12037949754@N01\" secret=\"34da0d3891\" server=\"2\" comments=\"1\" notes=\"0\" views=\"47\" faves=\"0\" more=\"0\">\n    <title>A photo</title>\n    <activity>\n      <event type=\"comment\" user=\"12037949754@N01\" username=\"Bees\" dateadded=\"1133806604\">test</event>\n      <event type=\"note\" user=\"12037949754@N01\" username=\"Bees\" dateadded=\"1118785229\">nice</event>\n    </activity>\n  </item>\n</items>",
+  "errors": [
+    {
+      "code": 95,
+      "title": "SSL is requiredSSL is required to access the Flickr API.",
+      "description": ""
+    },
+    {
+      "code": 96,
+      "title": "Invalid signatureThe passed signature was invalid.",
+      "description": ""
+    },
+    {
+      "code": 97,
+      "title": "Missing signatureThe call required signing but no signature was sent.",
+      "description": ""
+    },
+    {
+      "code": 98,
+      "title": "Login failed / Invalid auth tokenThe login details or auth token passed were invalid.",
+      "description": ""
+    },
+    {
+      "code": 99,
+      "title": "User not logged in / Insufficient permissionsThe method requires user authentication but the user was not logged in, or the authenticated method call did not have the required permissions.",
+      "description": ""
+    },
+    {
+      "code": 100,
+      "title": "Invalid API KeyThe API key passed was not valid or has expired.",
+      "description": ""
+    },
+    {
+      "code": 105,
+      "title": "Service currently unavailableThe requested service is temporarily unavailable.",
+      "description": ""
+    },
+    {
+      "code": 106,
+      "title": "Write operation failedThe requested operation failed due to a temporary issue.",
+      "description": ""
+    },
+    {
+      "code": 111,
+      "title": "Format \"xxx\" not foundThe requested response format was not found.",
+      "description": ""
+    },
+    {
+      "code": 112,
+      "title": "Method \"xxx\" not foundThe requested method was not found.",
+      "description": ""
+    },
+    {
+      "code": 114,
+      "title": "Invalid SOAP envelopeThe SOAP envelope send in the request could not be parsed.",
+      "description": ""
+    },
+    {
+      "code": 115,
+      "title": "Invalid XML-RPC Method CallThe XML-RPC request document could not be parsed.",
+      "description": ""
+    },
+    {
+      "code": 116,
+      "title": "Bad URL foundOne or more arguments contained a URL that has been used for abuse on Flickr.",
+      "description": ""
+    }
+  ]
+}

@@ -1,0 +1,85 @@
+{
+  "name": "flickr.panda.getPhotos",
+  "description": "Ask theFlickr Pandasfor a list of recent public (and \"safe\") photos.More information about the pandas can be found on thedev blog.",
+  "authentication": " This method does not require authentication. ",
+  "arguments": [
+    {
+      "name": "api_key",
+      "required": true,
+      "description": "Your API application key.See herefor more details."
+    },
+    {
+      "name": "panda_name",
+      "required": true,
+      "description": "The name of the panda to ask for photos from. There are currently three pandas named:ling linghsing hsingwang wangYou can fetch a list of all the current pandas using theflickr.panda.getListAPI method."
+    },
+    {
+      "name": "extras",
+      "required": false,
+      "description": "A comma-delimited list of extra information to fetch for each returned record. Currently supported fields are:description,license,date_upload,date_taken,owner_name,icon_server,original_format,last_update,geo,tags,machine_tags,o_dims,views,media,path_alias,url_sq,url_t,url_s,url_q,url_m,url_n,url_z,url_c,url_l,url_o"
+    },
+    {
+      "name": "per_page",
+      "required": false,
+      "description": "Number of photos to return per page. If this argument is omitted, it defaults to 100. The maximum allowed value is 500."
+    },
+    {
+      "name": "page",
+      "required": false,
+      "description": "The page of results to return. If this argument is omitted, it defaults to 1."
+    }
+  ],
+  "response": "\n<photos interval=\"60000\" lastupdate=\"1235765058272\" total=\"120\" panda=\"ling ling\">\n  <photo title=\"Shorebirds at Pillar Point\" id=\"3313428913\" secret=\"2cd3cb44cb\" server=\"3609\" farm=\"4\" owner=\"72442527@N00\" ownername=\"Pat Ulrich\" />\n  <photo title=\"Battle of the sky\" id=\"3313713993\" secret=\"3f7f51500f\" server=\"3382\" farm=\"4\" owner=\"10459691@N05\" ownername=\"Sven Ericsson\" />\n</photos>",
+  "errors": [
+    {
+      "code": 1,
+      "title": "Required parameter missing.One or more required parameters was not included with your request.",
+      "description": ""
+    },
+    {
+      "code": 2,
+      "title": "Unknown pandaYou requested a panda we haven't met yet.",
+      "description": ""
+    },
+    {
+      "code": 100,
+      "title": "Invalid API KeyThe API key passed was not valid or has expired.",
+      "description": ""
+    },
+    {
+      "code": 105,
+      "title": "Service currently unavailableThe requested service is temporarily unavailable.",
+      "description": ""
+    },
+    {
+      "code": 106,
+      "title": "Write operation failedThe requested operation failed due to a temporary issue.",
+      "description": ""
+    },
+    {
+      "code": 111,
+      "title": "Format \"xxx\" not foundThe requested response format was not found.",
+      "description": ""
+    },
+    {
+      "code": 112,
+      "title": "Method \"xxx\" not foundThe requested method was not found.",
+      "description": ""
+    },
+    {
+      "code": 114,
+      "title": "Invalid SOAP envelopeThe SOAP envelope send in the request could not be parsed.",
+      "description": ""
+    },
+    {
+      "code": 115,
+      "title": "Invalid XML-RPC Method CallThe XML-RPC request document could not be parsed.",
+      "description": ""
+    },
+    {
+      "code": 116,
+      "title": "Bad URL foundOne or more arguments contained a URL that has been used for abuse on Flickr.",
+      "description": ""
+    }
+  ]
+}
