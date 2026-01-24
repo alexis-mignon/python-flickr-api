@@ -71,3 +71,6 @@ api-docs/*
 !api-docs/flickr.photos.getWithoutGeoData.json
 !api-docs/flickr.photos.recentlyUpdated.json
 !api-docs/flickr.photos.search.json
+!api-docs/flickr.photos.comments.addComment.json
+!api-docs/flickr.photos.comments.getList.json
+!api-docs/flickr.photos.comments.getRecentForContacts.json
