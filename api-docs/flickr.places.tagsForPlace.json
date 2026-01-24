@@ -1,0 +1,100 @@
+{
+  "name": "flickr.places.tagsForPlace",
+  "description": "Return a list of the top 100 unique tags for a Flickr Places or Where on Earth (WOE) ID",
+  "authentication": " This method does not require authentication. ",
+  "arguments": [
+    {
+      "name": "api_key",
+      "required": true,
+      "description": "Your API application key.See herefor more details."
+    },
+    {
+      "name": "woe_id",
+      "required": false,
+      "description": "A Where on Earth identifier to use to filter photo clusters.(While optional, you must pass either a valid Places ID or a WOE ID.)"
+    },
+    {
+      "name": "place_id",
+      "required": false,
+      "description": "A Flickr Places identifier to use to filter photo clusters.(While optional, you must pass either a valid Places ID or a WOE ID.)"
+    },
+    {
+      "name": "min_upload_date",
+      "required": false,
+      "description": "Minimum upload date. Photos with an upload date greater than or equal to this value will be returned. The date should be in the form of a unix timestamp."
+    },
+    {
+      "name": "max_upload_date",
+      "required": false,
+      "description": "Maximum upload date. Photos with an upload date less than or equal to this value will be returned. The date should be in the form of a unix timestamp."
+    },
+    {
+      "name": "min_taken_date",
+      "required": false,
+      "description": "Minimum taken date. Photos with an taken date greater than or equal to this value will be returned. The date should be in the form of a mysql datetime."
+    },
+    {
+      "name": "max_taken_date",
+      "required": false,
+      "description": "Maximum taken date. Photos with an taken date less than or equal to this value will be returned. The date should be in the form of a mysql datetime."
+    }
+  ],
+  "response": "\n<tags total=\"100\">\n  <tag count=\"31775\">montreal</tag>\n  <tag count=\"20585\">canada</tag>\n  <tag count=\"12319\">montréal</tag>\n  <tag count=\"12154\">quebec</tag>\n  <tag count=\"6471\">québec</tag>\n  <tag count=\"2173\">sylvainmichaud</tag>\n  <tag count=\"2091\">nikon</tag>\n  <tag count=\"1541\">lucbus</tag>\n  <tag count=\"1539\">music</tag>\n  <tag count=\"1479\">urban</tag>\n  <tag count=\"1425\">lucbussieres</tag>\n  <tag count=\"1419\">festival</tag>\n</tags>",
+  "errors": [
+    {
+      "code": 1,
+      "title": "Required parameter missingOne or more parameters was not included with the API request",
+      "description": ""
+    },
+    {
+      "code": 2,
+      "title": "Not a valid Places IDAn invalid Places (or WOE) identifier was included with your request.",
+      "description": ""
+    },
+    {
+      "code": 3,
+      "title": "Place not foundAn invalid Places (or WOE) identifier was included with your request.",
+      "description": ""
+    },
+    {
+      "code": 100,
+      "title": "Invalid API KeyThe API key passed was not valid or has expired.",
+      "description": ""
+    },
+    {
+      "code": 105,
+      "title": "Service currently unavailableThe requested service is temporarily unavailable.",
+      "description": ""
+    },
+    {
+      "code": 106,
+      "title": "Write operation failedThe requested operation failed due to a temporary issue.",
+      "description": ""
+    },
+    {
+      "code": 111,
+      "title": "Format \"xxx\" not foundThe requested response format was not found.",
+      "description": ""
+    },
+    {
+      "code": 112,
+      "title": "Method \"xxx\" not foundThe requested method was not found.",
+      "description": ""
+    },
+    {
+      "code": 114,
+      "title": "Invalid SOAP envelopeThe SOAP envelope send in the request could not be parsed.",
+      "description": ""
+    },
+    {
+      "code": 115,
+      "title": "Invalid XML-RPC Method CallThe XML-RPC request document could not be parsed.",
+      "description": ""
+    },
+    {
+      "code": 116,
+      "title": "Bad URL foundOne or more arguments contained a URL that has been used for abuse on Flickr.",
+      "description": ""
+    }
+  ]
+}

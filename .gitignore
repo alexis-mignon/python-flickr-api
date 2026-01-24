@@ -96,3 +96,11 @@ api-docs/*
 !api-docs/flickr.places.getTopPlacesList.json
 !api-docs/flickr.places.placesForBoundingBox.json
 !api-docs/flickr.places.placesForContacts.json
+!api-docs/flickr.places.placesForTags.json
+!api-docs/flickr.places.placesForUser.json
+!api-docs/flickr.places.tagsForPlace.json
+!api-docs/flickr.prefs.getContentType.json
+!api-docs/flickr.prefs.getGeoPerms.json
+!api-docs/flickr.prefs.getHidden.json
+!api-docs/flickr.prefs.getPrivacy.json
+!api-docs/flickr.prefs.getSafetyLevel.json

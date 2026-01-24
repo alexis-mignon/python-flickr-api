@@ -8,6 +8,10 @@ flickr.places.getInfoByUrl, flickr.places.getPlaceTypes,
 flickr.places.getShapeHistory, flickr.places.getTopPlacesList,
 flickr.places.placesForBoundingBox, flickr.places.placesForContacts
 
+Batch 20:
+flickr.places.placesForTags, flickr.places.placesForUser,
+flickr.places.tagsForPlace
+
 Uses example responses from the api-docs/ directory.
 """
 import json
@@ -402,6 +406,132 @@ class TestPlaceMethods(unittest.TestCase):
         self.assertEqual(p1.place_type, "locality")
         self.assertEqual(p1.photo_count, "156")
         self.assertEqual(p1.name, "San Francisco, California")
+
+    @patch.object(method_call.requests, "post")
+    def test_place_places_for_tags(self, mock_post):
+        """Test Place.placesForTags (flickr.places.placesForTags)"""
+        api_doc = load_api_doc("flickr.places.placesForTags")
+        json_response = xml_to_flickr_json(api_doc["response"])
+
+        mock_post.return_value = self._mock_response(json_response)
+
+        places = f.Place.placesForTags(
+            place_type_id=7,
+            place_id="4KO02SibApitvSBieQ",
+            tags="sanfrancisco"
+        )
+
+        # Verify we got 1 place
+        self.assertEqual(len(places), 1)
+
+        # San Francisco
+        p1 = places[0]
+        self.assertIsInstance(p1, f.Place)
+        self.assertEqual(p1.id, "kH8dLOubBZRvX_YZ")
+        self.assertEqual(p1.woeid, "2487956")
+        self.assertEqual(p1.latitude, 37.779)
+        self.assertEqual(p1.longitude, -122.420)
+        self.assertEqual(
+            p1.place_url,
+            "/United+States/California/San+Francisco"
+        )
+        self.assertEqual(p1.place_type, "locality")
+        self.assertEqual(p1.photo_count, "156")
+        self.assertEqual(p1.name, "San Francisco, California")
+
+        # Verify pagination info
+        self.assertEqual(places.info.total, 1)
+
+    @patch.object(method_call.requests, "post")
+    def test_place_places_for_user(self, mock_post):
+        """Test Place.placesForUser (flickr.places.placesForUser)"""
+        api_doc = load_api_doc("flickr.places.placesForUser")
+        json_response = xml_to_flickr_json(api_doc["response"])
+
+        mock_post.return_value = self._mock_response(json_response)
+
+        places = f.Place.placesForUser(place_type_id=7)
+
+        # Verify we got 1 place
+        self.assertEqual(len(places), 1)
+
+        # San Francisco
+        p1 = places[0]
+        self.assertIsInstance(p1, f.Place)
+        self.assertEqual(p1.id, "kH8dLOubBZRvX_YZ")
+        self.assertEqual(p1.woeid, "2487956")
+        self.assertEqual(p1.latitude, 37.779)
+        self.assertEqual(p1.longitude, -122.420)
+        self.assertEqual(
+            p1.place_url,
+            "/United+States/California/San+Francisco"
+        )
+        self.assertEqual(p1.place_type, "locality")
+        self.assertEqual(p1.photo_count, "156")
+        self.assertEqual(p1.name, "San Francisco, California")
+
+        # Verify pagination info
+        self.assertEqual(places.info.total, 1)
+
+    @patch.object(method_call.requests, "post")
+    def test_place_tags_for_place_static(self, mock_post):
+        """Test Place.tagsForPlace static method (flickr.places.tagsForPlace)"""
+        api_doc = load_api_doc("flickr.places.tagsForPlace")
+        json_response = xml_to_flickr_json(api_doc["response"])
+
+        mock_post.return_value = self._mock_response(json_response)
+
+        tags = f.Place.tagsForPlace(place_id="4hLQygSaBJ92")
+
+        # Verify we got 12 tags in the example response
+        self.assertEqual(len(tags), 12)
+
+        # First tag - montreal
+        t1 = tags[0]
+        self.assertIsInstance(t1, f.Place.Tag)
+        self.assertEqual(t1.text, "montreal")
+        self.assertEqual(t1.count, 31775)
+
+        # Second tag - canada
+        t2 = tags[1]
+        self.assertEqual(t2.text, "canada")
+        self.assertEqual(t2.count, 20585)
+
+        # Third tag - montréal (with accent)
+        t3 = tags[2]
+        self.assertEqual(t3.text, "montréal")
+        self.assertEqual(t3.count, 12319)
+
+        # Last tag - festival
+        t12 = tags[11]
+        self.assertEqual(t12.text, "festival")
+        self.assertEqual(t12.count, 1419)
+
+    @patch.object(method_call.requests, "post")
+    def test_place_get_tags_instance(self, mock_post):
+        """Test Place.getTags instance method (flickr.places.tagsForPlace)"""
+        api_doc = load_api_doc("flickr.places.tagsForPlace")
+        json_response = xml_to_flickr_json(api_doc["response"])
+
+        mock_post.return_value = self._mock_response(json_response)
+
+        # Montreal place
+        place = f.Place(id="4hLQygSaBJ92")
+        tags = place.getTags()
+
+        # Verify we got 12 tags
+        self.assertEqual(len(tags), 12)
+
+        # First tag - montreal
+        t1 = tags[0]
+        self.assertIsInstance(t1, f.Place.Tag)
+        self.assertEqual(t1.text, "montreal")
+        self.assertEqual(t1.count, 31775)
+
+        # Second tag - canada
+        t2 = tags[1]
+        self.assertEqual(t2.text, "canada")
+        self.assertEqual(t2.count, 20585)
 
 
 if __name__ == "__main__":
