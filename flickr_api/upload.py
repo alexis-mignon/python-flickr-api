@@ -32,31 +32,101 @@ def format_dict(d):
     for k, v in d.items():
         if isinstance(v, bool):
             v = int(v)
-        elif isinstance(v, str):
-            v = v.encode("utf8")
         if isinstance(k, str):
             k = k.encode("utf8")
-        v = bytes(v) if not isinstance(v, bytes) else v
+        # Convert to string first, then encode - bytes(int) doesn't work as expected
+        # (bytes(0) gives b'', bytes(1) gives b'\x00', not b'0' or b'1')
+        if not isinstance(v, bytes):
+            v = str(v).encode("utf8")
         d_[k] = v
     return d_
 
 
 def post(url, auth_handler, args, photo_file, photo_file_data=None):
-    args = format_dict(args)
-    args["api_key"] = auth_handler.key
+    import time
+    import hashlib
+    import hmac
+    import base64
+    from urllib.parse import quote
 
-    oauth_request = auth_handler.complete_parameters(url, args)
-    oauth_auth = oauth_request.oauth
-    params = dict(oauth_request.items())
+    args = format_dict(args)
+    args[b"api_key"] = auth_handler.key.encode("utf8") if isinstance(
+        auth_handler.key, str) else auth_handler.key
 
     if photo_file_data is None:
         photo_file_data = open(photo_file, "rb")
+
+    # Flickr's upload API requires OAuth parameters to be included as form
+    # fields and the signature to cover all parameters (except photo).
+    # We manually construct the OAuth signature for proper control.
+
+    # Generate OAuth parameters
+    oauth_params = {
+        b"oauth_consumer_key": auth_handler.key.encode("utf8"),
+        b"oauth_token": auth_handler.access_token_key.encode("utf8"),
+        b"oauth_signature_method": b"HMAC-SHA1",
+        b"oauth_timestamp": str(int(time.time())).encode("utf8"),
+        b"oauth_nonce": base64.b64encode(os.urandom(16)).replace(b"+", b"").replace(b"/", b"").replace(b"=", b"")[:16],
+        b"oauth_version": b"1.0",
+    }
+
+    # Combine all params for signing (args + oauth_params, but not photo)
+    all_params = dict(args)
+    all_params.update(oauth_params)
+
+    # Sort and encode params for signature base string
+    def percent_encode(s):
+        if isinstance(s, bytes):
+            s = s.decode("utf8")
+        # OAuth requires uppercase percent encoding
+        return quote(s, safe="")
+
+    sorted_params = sorted(all_params.items())
+    param_string = "&".join(
+        percent_encode(k) + "=" + percent_encode(v)
+        for k, v in sorted_params
+    )
+
+    # Create signature base string
+    base_string = "&".join([
+        "POST",
+        percent_encode(url),
+        percent_encode(param_string)
+    ])
+
+    # Create signing key
+    signing_key = (
+        percent_encode(auth_handler.secret) + "&" +
+        percent_encode(auth_handler.access_token_secret)
+    )
+
+    # Calculate signature
+    signature = base64.b64encode(
+        hmac.new(
+            signing_key.encode("utf8"),
+            base_string.encode("utf8"),
+            hashlib.sha1
+        ).digest()
+    )
+
+    oauth_params[b"oauth_signature"] = signature
+
+    # Combine all params for the form data
+    all_params = dict(args)
+    all_params.update(oauth_params)
+
+    # Convert to string keys/values for requests
+    form_data = {
+        k.decode("utf8") if isinstance(k, bytes) else k:
+        v.decode("utf8") if isinstance(v, bytes) else v
+        for k, v in all_params.items()
+    }
 
     files = {
         "photo": (os.path.basename(photo_file), photo_file_data.read())
     }
 
-    resp = requests.post(url, params, files=files, auth=oauth_auth, timeout=get_timeout())
+    resp = requests.post(url, data=form_data, files=files, timeout=get_timeout())
     data = resp.content
 
     if resp.status_code != 200:

@@ -566,9 +566,10 @@ class Group(FlickrObject):
 
     @static_caller("flickr.groups.search")
     def search(**args):
-        def format_result(r, token):
+        def format_result(r, token=None):
             info = r["groups"]
-            groups = [Group(id=g["nsid"], **g) for g in info.pop("group")]
+            group_list = _check_list(info.pop("group", []))
+            groups = [Group(**g) for g in group_list]
             return FlickrList(groups, Info(**info))
         return args, format_result
 
@@ -840,12 +841,12 @@ class Person(FlickrObject):
     def getGalleries(self, **args):
         def format_result(r, token=True):
             info = r["galleries"]
-            galleries = _check_list(info.pop("gallery"))
+            galleries = _check_list(info.pop("gallery", []))
             galleries_ = []
 
             for g in galleries:
                 g["owner"] = Person(id=g["owner"])
-                galleries_.append(g)
+                galleries_.append(Gallery(**g))
             return FlickrList(galleries_, Info(**info))
         return args, format_result
 
@@ -1177,22 +1178,23 @@ class Photo(FlickrObject):
     def getGalleries(self, **args):
         def format_result(r):
             info = r["galleries"]
-            galleries = _check_list(info.pop("gallery"))
+            galleries = _check_list(info.pop("gallery", []))
             galleries_ = []
 
             for g in galleries:
                 g["owner"] = Person(id=g["owner"])
-                pp_id = g.pop("primary_photo_id")
-                pp_secret = g.pop("primary_photo_secret")
-                pp_farm = g.pop("primary_photo_farm")
-                pp_server = g.pop("primary_photo_server")
+                pp_id = g.pop("primary_photo_id", None)
+                pp_secret = g.pop("primary_photo_secret", None)
+                pp_farm = g.pop("primary_photo_farm", None)
+                pp_server = g.pop("primary_photo_server", None)
 
-                g["primary_photo"] = Photo(
-                    id=pp_id, secret=pp_secret,
-                    server=pp_server, farm=pp_farm
-                )
+                if pp_id:
+                    g["primary_photo"] = Photo(
+                        id=pp_id, secret=pp_secret,
+                        server=pp_server, farm=pp_farm
+                    )
 
-                galleries_.append(g)
+                galleries_.append(Gallery(**g))
 
             return FlickrList(galleries_, Info(**info))
         return args, format_result
@@ -1794,8 +1796,8 @@ class Place(FlickrObject):
     def getPlaceTypes(**args):
         def format_result(r):
             places_types = r["place_types"]["place_type"]
-            return [Place.Type(id=pt.pop("place_type_id"), **pt)
-                     for pt in places_types]
+            return [Place.Type(id=pt.pop("id"), **pt)
+                    for pt in places_types]
         return args, format_result
 
     @static_caller("flickr.places.getShapeHistory")
@@ -2140,7 +2142,7 @@ def _extract_place_list(r):
 def _extract_photo_list(r, token=None):
     photos = []
     infos = r["photos"]
-    pp = infos.pop("photo")
+    pp = infos.pop("photo", [])
     if not isinstance(pp, list):
         pp = [pp]
     for p in pp:
@@ -2155,7 +2157,9 @@ def _extract_photo_list(r, token=None):
                 p["sizes"] = sizes
 
         photos.append(Photo(**p))
-    return FlickrList(photos, Info(**infos))
+    # Filter out None values that can't be converted to int
+    clean_infos = {k: v for k, v in infos.items() if v is not None}
+    return FlickrList(photos, Info(**clean_infos))
 
 def _parse_inline_sizes(p):
     keys = [k for k in p.keys() if k.startswith("url_")]
