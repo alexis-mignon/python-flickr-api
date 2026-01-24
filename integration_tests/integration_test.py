@@ -5,26 +5,26 @@ Integration test script for python-flickr-api.
 Tests read-only API methods against the live Flickr API.
 Optionally tests write methods (upload, modify, delete) with --write-tests flag.
 
-Usage:
+Usage (run from project root):
     # API key only (no auth - public endpoints only)
-    python integration_test.py --api-key YOUR_KEY --api-secret YOUR_SECRET
+    python integration_tests/integration_test.py --api-key YOUR_KEY --api-secret YOUR_SECRET
 
     # With OAuth tokens (authenticated endpoints)
-    python integration_test.py --api-key YOUR_KEY --api-secret YOUR_SECRET \
+    python integration_tests/integration_test.py --api-key YOUR_KEY --api-secret YOUR_SECRET \
         --token YOUR_TOKEN --token-secret YOUR_TOKEN_SECRET
 
     # With config files (recommended)
-    python integration_test.py --config
+    python integration_tests/integration_test.py --config
 
     # With a specific user to test against
-    python integration_test.py --api-key YOUR_KEY --api-secret YOUR_SECRET \
+    python integration_tests/integration_test.py --api-key YOUR_KEY --api-secret YOUR_SECRET \
         --test-username someuser
 
     # With write tests (will prompt for OAuth if needed)
-    python integration_test.py --config --write-tests
+    python integration_tests/integration_test.py --config --write-tests
 
     # Verbose output
-    python integration_test.py --api-key YOUR_KEY --api-secret YOUR_SECRET -v
+    python integration_tests/integration_test.py --api-key YOUR_KEY --api-secret YOUR_SECRET -v
 
 Coverage:
     Tests ~85 of 117 read-only API methods (~73% coverage).
@@ -1518,21 +1518,21 @@ def main():
         description="Run integration tests against the Flickr API",
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
-Examples:
+Examples (run from project root):
   # Use ~/.flickr_api_key and ~/.flickr_api_token (easiest)
-  python integration_test.py --config
+  python integration_tests/integration_test.py --config
 
   # Use a specific config file
-  python integration_test.py --config /path/to/config
+  python integration_tests/integration_test.py --config /path/to/config
 
   # API key only (public endpoints)
-  python integration_test.py --api-key KEY --api-secret SECRET
+  python integration_tests/integration_test.py --api-key KEY --api-secret SECRET
 
   # Run OAuth flow to get a new token with write permissions
-  python integration_test.py --config --auth --write-tests
+  python integration_tests/integration_test.py --config --auth --write-tests
 
   # Run write tests (will prompt for OAuth if no token exists)
-  python integration_test.py --config --write-tests
+  python integration_tests/integration_test.py --config --write-tests
 """
     )
     parser.add_argument(
@@ -1567,9 +1567,12 @@ Examples:
         "--write-tests", action="store_true",
         help="Run write tests (upload, modify, delete). Requires auth tokens."
     )
+    # Default test image is in the same directory as this script
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    default_test_image = os.path.join(script_dir, "Test.png")
     parser.add_argument(
-        "--test-image", default="./Test.png",
-        help="Path to test image for write tests (default: ./Test.png)"
+        "--test-image", default=default_test_image,
+        help=f"Path to test image for write tests (default: {default_test_image})"
     )
     parser.add_argument(
         "--auth", action="store_true",

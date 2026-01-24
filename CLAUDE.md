@@ -25,6 +25,36 @@ uv run pytest test/test_parse_sizes.py
 uv run pytest test/test_parse_sizes.py::TestPhotoSizes::test_video_largest_size
 ```
 
+### Integration Tests
+
+Integration tests run against the live Flickr API. They require API credentials and are located in `integration_tests/`.
+
+```bash
+# Read-only tests with config file (~/.flickr_api_key, ~/.flickr_api_token)
+python integration_tests/integration_test.py --config
+
+# Read-only tests with explicit credentials
+python integration_tests/integration_test.py --api-key KEY --api-secret SECRET
+
+# Include write tests (upload, modify, delete) - requires OAuth with write permissions
+python integration_tests/integration_test.py --config --write-tests
+
+# Verbose output
+python integration_tests/integration_test.py --config -v
+```
+
+Config file format (`~/.flickr_api_key`):
+```
+api_key: YOUR_API_KEY
+api_secret: YOUR_API_SECRET
+```
+
+Token file format (`~/.flickr_api_token`):
+```
+ACCESS_TOKEN_KEY
+ACCESS_TOKEN_SECRET
+```
+
 ### Linting
 ```bash
 uv run flake8 flickr_api/
