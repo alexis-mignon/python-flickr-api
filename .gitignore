@@ -74,3 +74,7 @@ api-docs/*
 !api-docs/flickr.photos.comments.addComment.json
 !api-docs/flickr.photos.comments.getList.json
 !api-docs/flickr.photos.comments.getRecentForContacts.json
+!api-docs/flickr.photos.geo.getLocation.json
+!api-docs/flickr.photos.geo.getPerms.json
+!api-docs/flickr.photos.geo.photosForLocation.json
+!api-docs/flickr.photos.licenses.getInfo.json
