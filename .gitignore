@@ -69,4 +69,5 @@ api-docs/*
 !api-docs/flickr.photos.getUntagged.json
 !api-docs/flickr.photos.getWithGeoData.json
 !api-docs/flickr.photos.getWithoutGeoData.json
+!api-docs/flickr.photos.recentlyUpdated.json
 !api-docs/flickr.photos.search.json

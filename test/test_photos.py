@@ -694,25 +694,8 @@ class TestPhotoMethods(unittest.TestCase):
     @patch.object(method_call.requests, "post")
     def test_photo_recently_updated(self, mock_post):
         """Test Photo.recentlyUpdated (flickr.photos.recentlyUpdated)"""
-        # The api-docs XML has unescaped quotes, so construct JSON manually
-        # Based on the api-docs response structure
-        json_response = {
-            "photos": {
-                "page": 1, "pages": 1, "perpage": 100, "total": 2,
-                "photo": [
-                    {"id": "169885459", "owner": "35034348999@N01",
-                     "secret": "c85114c195", "server": "46",
-                     "title": "Doubting Michael",
-                     "ispublic": 1, "isfriend": 0, "isfamily": 0,
-                     "lastupdate": "1150755888"},
-                    {"id": "85022332", "owner": "35034348999@N01",
-                     "secret": "23de6de0c0", "server": "41",
-                     "title": "Do you think we're allowed to tape stuff?",
-                     "ispublic": 1, "isfriend": 0, "isfamily": 0,
-                     "lastupdate": "1150564974"}
-                ]
-            }
-        }
+        api_doc = load_api_doc("flickr.photos.recentlyUpdated")
+        json_response = xml_to_flickr_json(api_doc["response"])
 
         mock_post.return_value = self._mock_response(json_response)
 
@@ -734,10 +717,13 @@ class TestPhotoMethods(unittest.TestCase):
         # lastupdate is converted to int by the library
         self.assertEqual(p1.lastupdate, 1150755888)
 
-        # Second photo
+        # Second photo - title has quotes in it (from &quot; in XML)
         p2 = photos[1]
         self.assertEqual(p2.id, "85022332")
-        self.assertEqual(p2.title, "Do you think we're allowed to tape stuff?")
+        self.assertEqual(
+            p2.title,
+            "\"Do you think we're allowed to tape stuff to the walls?\""
+        )
         self.assertEqual(p2.lastupdate, 1150564974)
 
         # Verify pagination info

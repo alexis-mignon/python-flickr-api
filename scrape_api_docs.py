@@ -52,6 +52,52 @@ def get_all_method_links(session):
     return methods
 
 
+def sanitize_xml_response(xml_text):
+    """
+    Fix malformed XML in API response examples.
+
+    Flickr's documentation sometimes contains XML with unescaped quotes
+    inside attribute values (e.g., title=""quoted text""). This function
+    detects and escapes these nested quotes.
+    """
+    if not xml_text:
+        return xml_text
+
+    # Pattern to find attribute values with nested unescaped quotes
+    # Matches: attr="..."..." where there are quotes inside the value
+    # We look for patterns like: ="text""more text""
+    # which should become: ="text&quot;more text&quot;"
+    def fix_attr_value(match):
+        attr_name = match.group(1)
+        full_value = match.group(2)
+
+        # Check if there are unescaped quotes inside (not at boundaries)
+        # A valid attribute value shouldn't have " inside unless escaped
+        if '""' in full_value:
+            # Pattern like ""text"" - the outer quotes are the attr delimiters
+            # and inner quotes should be escaped
+            # Replace "" at start/end with &quot;
+            fixed = full_value
+            # Handle opening quote-quote: ="" followed by quote
+            if fixed.startswith('"'):
+                fixed = '&quot;' + fixed[1:]
+            # Handle closing quote-quote: quote followed by ""
+            if fixed.endswith('"'):
+                fixed = fixed[:-1] + '&quot;'
+            return f'{attr_name}="{fixed}"'
+        return match.group(0)
+
+    # Match attribute="value" patterns - capture the whole attribute
+    # This regex finds attr="..." and we process each match
+    result = re.sub(
+        r'(\w+)="([^"]*""[^"]*)"',
+        fix_attr_value,
+        xml_text
+    )
+
+    return result
+
+
 def parse_method_page(soup, method_name):
     """Parse a method documentation page and extract structured data."""
     data = {
@@ -121,20 +167,24 @@ def parse_method_page(soup, method_name):
             if not hasattr(elem, "name") or elem.name is None:
                 continue
             # Look for pre or code tags that contain the XML
+            response_text = None
             if elem.name == "pre":
-                data["response"] = elem.get_text()
-                break
+                response_text = elem.get_text()
             elif elem.name == "code":
-                data["response"] = elem.get_text()
-                break
-            # Check if pre/code is nested inside this element
-            pre = elem.find("pre")
-            if pre:
-                data["response"] = pre.get_text()
-                break
-            code = elem.find("code")
-            if code:
-                data["response"] = code.get_text()
+                response_text = elem.get_text()
+            else:
+                # Check if pre/code is nested inside this element
+                pre = elem.find("pre")
+                if pre:
+                    response_text = pre.get_text()
+                else:
+                    code = elem.find("code")
+                    if code:
+                        response_text = code.get_text()
+
+            if response_text:
+                # Sanitize any malformed XML (e.g., unescaped quotes)
+                data["response"] = sanitize_xml_response(response_text)
                 break
 
     # Parse error codes
