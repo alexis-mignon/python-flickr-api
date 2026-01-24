@@ -1,0 +1,90 @@
+{
+  "name": "flickr.galleries.getPhotos",
+  "description": "Return the list of photos for a gallery",
+  "authentication": " This method does not require authentication. ",
+  "arguments": [
+    {
+      "name": "api_key",
+      "required": true,
+      "description": "Your API application key.See herefor more details."
+    },
+    {
+      "name": "gallery_id",
+      "required": true,
+      "description": "The ID of the gallery of photos to return"
+    },
+    {
+      "name": "continuation",
+      "required": false,
+      "description": "Using this parameter indicates to the server that the client is using the new, continuation based pagination rather than the older page/per_page based pagination.\nThe first request must pass the \"continuation\" parameter with the value of \"0\". The server responds back with a response that includes the \"continuation\" field along with the \"per_page\" field in the response. For the subsequent requests, the client must relay the value of the \"continuation\" response field as the value of the \"continuation\" request parameter. On the last page of results, the server will respond with a continuation value of \"-1\"."
+    },
+    {
+      "name": "get_user_info",
+      "required": false,
+      "description": "set to 1 if user details should be returned"
+    },
+    {
+      "name": "get_gallery_info",
+      "required": false,
+      "description": "if set to 1, info about the gallery is also returned"
+    },
+    {
+      "name": "extras",
+      "required": false,
+      "description": "A comma-delimited list of extra information to fetch for each returned record. Currently supported fields are:description,license,date_upload,date_taken,owner_name,icon_server,original_format,last_update,geo,tags,machine_tags,o_dims,views,media,path_alias,url_sq,url_t,url_s,url_q,url_m,url_n,url_z,url_c,url_l,url_o"
+    },
+    {
+      "name": "per_page",
+      "required": false,
+      "description": "Number of photos to return per page. If this argument is omitted, it defaults to 100. The maximum allowed value is 500."
+    },
+    {
+      "name": "page",
+      "required": false,
+      "description": "The page of results to return. If this argument is omitted, it defaults to 1."
+    }
+  ],
+  "response": "\n<photos page=\"1\" pages=\"1\" perpage=\"500\" total=\"2\">\n  <photo id=\"2822546461\" owner=\"78398753@N00\" secret=\"2dbcdb589f\" server=\"1\" farm=\"1\" title=\"FOO\" ispublic=\"1\" isfriend=\"0\" isfamily=\"0\" is_primary=\"1\" has_comment=\"1\">\n    <comment>best cat picture ever!</comment>\n  </photo>\n  <photo id=\"2822544806\" owner=\"78398753@N00\" secret=\"bd93cbe917\" server=\"1\" farm=\"1\" title=\"OOK\" ispublic=\"1\" isfriend=\"0\" isfamily=\"0\" is_primary=\"0\" has_comment=\"0\" />\n</photos>",
+  "errors": [
+    {
+      "code": 100,
+      "title": "Invalid API KeyThe API key passed was not valid or has expired.",
+      "description": ""
+    },
+    {
+      "code": 105,
+      "title": "Service currently unavailableThe requested service is temporarily unavailable.",
+      "description": ""
+    },
+    {
+      "code": 106,
+      "title": "Write operation failedThe requested operation failed due to a temporary issue.",
+      "description": ""
+    },
+    {
+      "code": 111,
+      "title": "Format \"xxx\" not foundThe requested response format was not found.",
+      "description": ""
+    },
+    {
+      "code": 112,
+      "title": "Method \"xxx\" not foundThe requested method was not found.",
+      "description": ""
+    },
+    {
+      "code": 114,
+      "title": "Invalid SOAP envelopeThe SOAP envelope send in the request could not be parsed.",
+      "description": ""
+    },
+    {
+      "code": 115,
+      "title": "Invalid XML-RPC Method CallThe XML-RPC request document could not be parsed.",
+      "description": ""
+    },
+    {
+      "code": 116,
+      "title": "Bad URL foundOne or more arguments contained a URL that has been used for abuse on Flickr.",
+      "description": ""
+    }
+  ]
+}

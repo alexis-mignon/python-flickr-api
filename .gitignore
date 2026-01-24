@@ -26,3 +26,8 @@ api-docs/*
 !api-docs/flickr.favorites.getContext.json
 !api-docs/flickr.favorites.getList.json
 !api-docs/flickr.favorites.getPublicList.json
+!api-docs/flickr.galleries.create.json
+!api-docs/flickr.galleries.getInfo.json
+!api-docs/flickr.galleries.getList.json
+!api-docs/flickr.galleries.getListForPhoto.json
+!api-docs/flickr.galleries.getPhotos.json

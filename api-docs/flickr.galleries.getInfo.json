@@ -1,0 +1,80 @@
+{
+  "name": "flickr.galleries.getInfo",
+  "description": "",
+  "authentication": " This method does not require authentication. ",
+  "arguments": [
+    {
+      "name": "api_key",
+      "required": true,
+      "description": "Your API application key.See herefor more details."
+    },
+    {
+      "name": "gallery_id",
+      "required": true,
+      "description": "The gallery ID you are requesting information for."
+    },
+    {
+      "name": "primary_photo_size",
+      "required": false,
+      "description": "size of the primary photo"
+    },
+    {
+      "name": "cover_photos_size",
+      "required": false,
+      "description": "size of the cover photos (excluding the primary photo)"
+    },
+    {
+      "name": "limit",
+      "required": false,
+      "description": "number of cover photos to fetch for galleries without a primary photo. Default is 6"
+    },
+    {
+      "name": "short_limit",
+      "required": false,
+      "description": "number of cover photos to fetch (excluding primary photo) for galleries with a primary photo. Default is 2."
+    }
+  ],
+  "response": "\n<gallery id=\"6065-72157617483228192\" url=\"http://www.flickr.com/photos/straup/galleries/72157617483228192\" owner=\"35034348999@N01\" primary_photo_id=\"292882708\" date_create=\"1241028772\" date_update=\"1270111667\" count_photos=\"17\" count_videos=\"0\" primary_photo_server=\"112\" primary_photo_farm=\"1\" primary_photo_secret=\"7f29861bc4\">\n  <title>Cat Pictures I've Sent To Kevin Collins</title>\n  <description />\n</gallery>",
+  "errors": [
+    {
+      "code": 100,
+      "title": "Invalid API KeyThe API key passed was not valid or has expired.",
+      "description": ""
+    },
+    {
+      "code": 105,
+      "title": "Service currently unavailableThe requested service is temporarily unavailable.",
+      "description": ""
+    },
+    {
+      "code": 106,
+      "title": "Write operation failedThe requested operation failed due to a temporary issue.",
+      "description": ""
+    },
+    {
+      "code": 111,
+      "title": "Format \"xxx\" not foundThe requested response format was not found.",
+      "description": ""
+    },
+    {
+      "code": 112,
+      "title": "Method \"xxx\" not foundThe requested method was not found.",
+      "description": ""
+    },
+    {
+      "code": 114,
+      "title": "Invalid SOAP envelopeThe SOAP envelope send in the request could not be parsed.",
+      "description": ""
+    },
+    {
+      "code": 115,
+      "title": "Invalid XML-RPC Method CallThe XML-RPC request document could not be parsed.",
+      "description": ""
+    },
+    {
+      "code": 116,
+      "title": "Bad URL foundOne or more arguments contained a URL that has been used for abuse on Flickr.",
+      "description": ""
+    }
+  ]
+}
