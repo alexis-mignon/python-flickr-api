@@ -80,3 +80,6 @@ api-docs/*
 !api-docs/flickr.photos.licenses.getInfo.json
 !api-docs/flickr.photos.notes.add.json
 !api-docs/flickr.photos.people.getList.json
+!api-docs/flickr.photosets.comments.addComment.json
+!api-docs/flickr.photosets.comments.getList.json
+!api-docs/flickr.photosets.create.json

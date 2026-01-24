@@ -1563,7 +1563,9 @@ class Photoset(FlickrObject):
     def addComment(self, **args):
         return (
             args,
-            lambda r, token: Photoset.Comment(token=token, photoset=self, **r)
+            lambda r, token: Photoset.Comment(
+                token=token, photoset=self, **r["comment"]
+            )
         )
 
     @static_caller("flickr.photosets.create")
@@ -1609,7 +1611,7 @@ class Photoset(FlickrObject):
     @caller("flickr.photosets.comments.getList")
     def getComments(self, **args):
         def format_result(r, token):
-            comments = r["comments"]["comment"]
+            comments = r["comments"].get("comment", [])
             comments_ = []
             if not isinstance(comments, list):
                 comments = [comments]
@@ -1618,7 +1620,7 @@ class Photoset(FlickrObject):
                 authorname = c.pop("authorname")
                 c["author"] = Person(id=author, username=authorname)
                 comments_.append(
-                    Photoset.Comment(token=token, photo=self, **c)
+                    Photoset.Comment(token=token, photoset=self, **c)
                 )
             return comments_
         return args, format_result
