@@ -1,27 +1,26 @@
 # -*- encoding: utf-8 -*-
 """
-    Object Oriented implementation of Flickr API.
+Object Oriented implementation of Flickr API.
 
-    Important notes:
-    - For consistency, the naming of methods might differ from the name
-      in the official API. Please check the method "docstring" to know
-      what is the implemented method.
+Important notes:
+- For consistency, the naming of methods might differ from the name
+  in the official API. Please check the method "docstring" to know
+  what is the implemented method.
 
-    - For methods which expect an object "id", either the 'id' string
-      or the object itself can be used as argument. Similar consideration
-      holds for lists of id's.
+- For methods which expect an object "id", either the 'id' string
+  or the object itself can be used as argument. Similar consideration
+  holds for lists of id's.
 
-      For instance if "photo_id" is expected you can give call the function
-      with named argument "photo=PhotoObject" or with the id string
-      "photo_id=id_string".
+  For instance if "photo_id" is expected you can give call the function
+  with named argument "photo=PhotoObject" or with the id string
+  "photo_id=id_string".
 
-    Author: Alexis Mignon (c)
-    email: alexis.mignon_at_gmail.com
-    Date: 05/08/2011
+Author: Alexis Mignon (c)
+email: alexis.mignon_at_gmail.com
+Date: 05/08/2011
 """
 # pylint: disable=method-name-lower-case
 
-from . import method_call
 from .flickrerrors import FlickrError
 from .reflection import caller, static_caller, FlickrAutoDoc
 from collections import UserList
@@ -29,49 +28,50 @@ import io
 import urllib.request
 from . import auth
 import warnings
-from itertools import groupby
 import os.path
 from typing import Any, TypeVar, Generic, Callable, cast
 
-T = TypeVar('T', bound='FlickrObject')
+T = TypeVar("T", bound="FlickrObject")
 
 try:
     from PIL import Image
 except ImportError:
+
     class Image(object):  # type: ignore[no-redef]
         @staticmethod
         def open(*args, **kwargs):
-            image_module_404 = "\nThe PIL package was not found on this system. Images cannot be displayed." \
+            image_module_404 = (
+                "\nThe PIL package was not found on this system. Images cannot be displayed."
                 "\nConsider installing PIL or Pillow."
+            )
             warnings.warn(image_module_404)
             raise RuntimeError("Image module not found.")
 
 
-
 _SIZES_LABEL = {
-    'sq': 'Square',
-    'q': 'Large Square',
-    't': 'Thumbnail',
-    's': 'Small',
-    'n': 'Small 320',
-    'm': 'Medium',
-    'z': 'Medium 640',
-    'c': 'Medium 800',
-    'l': 'Large',
-    'h': 'Large 1600',
-    'k': 'Large 2048',
-    'o': 'Original'
+    "sq": "Square",
+    "q": "Large Square",
+    "t": "Thumbnail",
+    "s": "Small",
+    "n": "Small 320",
+    "m": "Medium",
+    "z": "Medium 640",
+    "c": "Medium 800",
+    "l": "Large",
+    "h": "Large 1600",
+    "k": "Large 2048",
+    "o": "Original",
 }
 
-def dict_converter(
-    keys: list[str], func: Callable[[Any], Any]
-) -> Callable[[dict[str, Any]], None]:
+
+def dict_converter(keys: list[str], func: Callable[[Any], Any]) -> Callable[[dict[str, Any]], None]:
     def convert(dict_: dict[str, Any]) -> None:
         for k in keys:
             try:
                 dict_[k] = func(dict_[k])
             except KeyError:
                 pass
+
     return convert
 
 
@@ -86,14 +86,16 @@ def str_to_bool(value):
 
 class FlickrObject(object, metaclass=FlickrAutoDoc):
     """
-        Base Object for Flickr API Objects.
-        Flickr Objects are dynamically created from the
-        named arguments given to the constructor.
+    Base Object for Flickr API Objects.
+    Flickr Objects are dynamically created from the
+    named arguments given to the constructor.
     """
 
-    __converters__: list[Callable[[dict[str, Any]], None]] = []  # some functions used to convert some result field
+    __converters__: list[
+        Callable[[dict[str, Any]], None]
+    ] = []  # some functions used to convert some result field
     __display__: list[str] = []  # The attribute to display when the object is converted
-                      # to a string
+    # to a string
     __self_name__: str = ""
     loaded: bool
 
@@ -106,28 +108,33 @@ class FlickrObject(object, metaclass=FlickrAutoDoc):
             c(params)
         self.__dict__.update(params)
 
-    def setToken(self, filename: str | None = None, token: Any = None, token_key: str | None = None,
-                 token_secret: str | None = None) -> None:
+    def setToken(
+        self,
+        filename: str | None = None,
+        token: Any = None,
+        token_key: str | None = None,
+        token_secret: str | None = None,
+    ) -> None:
         """
-            Set the authentication token to use with the object.
+        Set the authentication token to use with the object.
         """
         if token is None:
-            token = auth.token_factory(filename=filename, token_key=token_key,
-                                       token_secret=token_secret)
+            token = auth.token_factory(
+                filename=filename, token_key=token_key, token_secret=token_secret
+            )
         self.__dict__["token"] = token
 
     def getToken(self) -> Any:
         """
-            Get the authentication token is any.
+        Get the authentication token is any.
         """
         return self.__dict__.get("token", None)
 
     def __getattr__(self, name: str) -> Any:
-        if name == 'id' and name not in self.__dict__:
+        if name == "id" and name not in self.__dict__:
             raise AttributeError(
-              "'%s' object has no attribute '%s'" % (
-                    self.__class__.__name__, name)
-              )
+                "'%s' object has no attribute '%s'" % (self.__class__.__name__, name)
+            )
         if name not in self.__dict__:
             if not self.loaded:
                 self.load()
@@ -135,10 +142,8 @@ class FlickrObject(object, metaclass=FlickrAutoDoc):
             return self.__dict__[name]
         except KeyError:
             raise AttributeError(
-                "'%s' object has no attribute '%s'" % (
-                     self.__class__.__name__, name
-                    )
-                )
+                "'%s' object has no attribute '%s'" % (self.__class__.__name__, name)
+            )
 
     def __setattr__(self, name: str, values: Any) -> None:
         raise FlickrError("Readonly attribute")
@@ -182,8 +187,8 @@ class FlickrObject(object, metaclass=FlickrAutoDoc):
 
     def getInfo(self) -> dict[str, Any]:
         """
-            Returns object information as a dictionary.
-            Should be overriden.
+        Returns object information as a dictionary.
+        Should be overriden.
         """
         return {}
 
@@ -201,10 +206,10 @@ class FlickrList(UserList[FlickrObject]):
         self.info = info
 
     def __str__(self) -> str:
-        return '%s;%s' % (str(self.data), str(self.info))
+        return "%s;%s" % (str(self.data), str(self.info))
 
     def __repr__(self) -> str:
-        return '%s;%s' % (repr(self.data), repr(self.info))
+        return "%s;%s" % (repr(self.data), repr(self.info))
 
 
 class Activity(FlickrObject):
@@ -241,8 +246,7 @@ class BlogService(FlickrObject):
             pass
 
         def format_result(r, token=None):
-            return [Blog(token=token, **b)
-                       for b in _check_list(r["blogs"]["blog"])]
+            return [Blog(token=token, **b) for b in _check_list(r["blogs"]["blog"])]
 
         return args, format_result
 
@@ -252,10 +256,10 @@ class BlogService(FlickrObject):
 
     @static_caller("flickr.blogs.getServices")
     def getServices():
-        return ({},
-                lambda r: [BlogService(**s)
-                          for s in _check_list(r["services"]["service"])]
-               )
+        return (
+            {},
+            lambda r: [BlogService(**s) for s in _check_list(r["services"]["service"])],
+        )
 
 
 class Camera(FlickrObject):
@@ -268,14 +272,13 @@ class Camera(FlickrObject):
 
         @static_caller("flickr.cameras.getBrands")
         def getList():
-            return ({},
-                    lambda r: [Camera.Brand(**b) for b in r["brands"]["brand"]]
-            )
+            return ({}, lambda r: [Camera.Brand(**b) for b in r["brands"]["brand"]])
 
         @caller("flickr.cameras.getBrandModels")
         def getModels(self):
-            return ({},
-                   lambda r: [Camera(**m) for m in _check_list(r["cameras"]["camera"])]
+            return (
+                {},
+                lambda r: [Camera(**m) for m in _check_list(r["cameras"]["camera"])],
             )
 
 
@@ -294,6 +297,7 @@ class Collection(FlickrObject):
                 photos.append(Photo(**p))
             collection["iconphotos"] = photos
             return collection
+
         return args, format_result
 
     @caller("flickr.stats.getCollectionStats")
@@ -311,6 +315,7 @@ class Collection(FlickrObject):
                 sets_ = [Photoset(token=token, **s) for s in sets]
                 collections_.append(Collection(token=token, sets=sets_, **c))
             return collections_
+
         return _format_id("user", args), format_result
 
 
@@ -323,7 +328,7 @@ class CommonInstitution(FlickrObject):
             institutions = _check_list(r["institutions"]["institution"])
             institutions_ = []
             for i in institutions:
-                urls = _check_list(i['urls']['url'])
+                urls = _check_list(i["urls"]["url"])
                 urls_ = []
                 for u in urls:
                     u["url"] = u.pop("text")
@@ -331,6 +336,7 @@ class CommonInstitution(FlickrObject):
                 i["urls"] = urls_
                 institutions_.append(CommonInstitution(id=i["nsid"], **i))
             return institutions_
+
         return {}, format_result
 
 
@@ -343,35 +349,34 @@ class Contact(FlickrObject):
     def getList(**args):
         def format_result(r):
             info = r["contacts"]
-            contacts = [Person(id=c["nsid"], **c)
-                         for c in _check_list(info["contact"])]
+            contacts = [Person(id=c["nsid"], **c) for c in _check_list(info["contact"])]
             return FlickrList(contacts, Info(**info))
+
         return args, format_result
 
     @static_caller("flickr.contacts.getListRecentlyUploaded")
     def getListRecentlyUploaded(**args):
         def format_result(r):
             info = r["contacts"]
-            contacts = [Person(id=c["nsid"], **c)
-                         for c in _check_list(info["contact"])]
+            contacts = [Person(id=c["nsid"], **c) for c in _check_list(info["contact"])]
             return FlickrList(contacts, Info(**info))
+
         return args, format_result
 
     @static_caller("flickr.contacts.getTaggingSuggestions")
     def getTaggingSuggestions(**args):
         def format_result(r):
             info = r["contacts"]
-            contacts = [Person(id=c["nsid"], **c)
-                         for c in _check_list(info["contact"])]
+            contacts = [Person(id=c["nsid"], **c) for c in _check_list(info["contact"])]
             return FlickrList(contacts, Info(**info))
+
         return args, format_result
 
 
 class Gallery(FlickrObject):
     __display__ = ["id", "title"]
     __converters__ = [
-        dict_converter(["date_create", "date_update", "count_photos",
-                        "count_videos"], int),
+        dict_converter(["date_create", "date_update", "count_photos", "count_videos"], int),
     ]
     __self_name__ = "gallery_id"
 
@@ -409,7 +414,8 @@ class Gallery(FlickrObject):
             gallery = r["gallery"]
             gallery["owner"] = Person(id=gallery["owner"])
             return Gallery(**gallery)
-        return {'url': url}, format_result
+
+        return {"url": url}, format_result
 
     @caller("flickr.galleries.getInfo")
     def getInfo(self):
@@ -421,12 +427,17 @@ class Gallery(FlickrObject):
                 pp_secret = gallery.pop("primary_photo_secret")
                 pp_farm = gallery.pop("primary_photo_farm")
                 pp_server = gallery.pop("primary_photo_server")
-                gallery["primary_photo"] = Photo(id=pp_id, secret=pp_secret,
-                                                 server=pp_server, farm=pp_farm,
-                                                 token=token)
+                gallery["primary_photo"] = Photo(
+                    id=pp_id,
+                    secret=pp_secret,
+                    server=pp_server,
+                    farm=pp_farm,
+                    token=token,
+                )
             except KeyError:
                 pass
             return gallery
+
         return {}, format_result
 
     @caller("flickr.galleries.getPhotos")
@@ -439,10 +450,7 @@ class Category(FlickrObject):
 
 
 class Info(FlickrObject):
-    __converters__ = [
-        dict_converter(["page", "perpage", "pages", "total", "count"], int)
-
-    ]
+    __converters__ = [dict_converter(["page", "perpage", "pages", "total", "count"], int)]
     __display__ = ["page", "perpage", "pages", "total", "count"]
     pass
 
@@ -450,7 +458,7 @@ class Info(FlickrObject):
 class Group(FlickrObject):
     __converters__ = [
         dict_converter(["members", "privacy"], int),
-        dict_converter(["admin", "eighteenplus", "invistation_only"], bool)
+        dict_converter(["admin", "eighteenplus", "invistation_only"], bool),
     ]
     __display__ = ["id", "name"]
     __self_name__ = "group_id"
@@ -472,9 +480,9 @@ class Group(FlickrObject):
             @staticmethod
             def _format_reply(reply):
                 author = {
-                    'id': reply.pop("author"),
-                    'role': reply.pop("role"),
-                    'is_pro': bool(reply.pop("is_pro", 0)),
+                    "id": reply.pop("author"),
+                    "role": reply.pop("role"),
+                    "is_pro": bool(reply.pop("is_pro", 0)),
                 }
                 reply["author"] = Person(**author)
                 return reply
@@ -502,13 +510,12 @@ class Group(FlickrObject):
 
         @staticmethod
         def _format_topic(topic):
-            """ reformat a topic dict
-            """
+            """reformat a topic dict"""
 
             author = {
-                'id': topic.pop("author"),
-                'is_pro': bool(topic.pop('is_pro', 0)),
-                'role': topic.pop("role"),
+                "id": topic.pop("author"),
+                "is_pro": bool(topic.pop("is_pro", 0)),
+                "role": topic.pop("role"),
             }
             topic["author"] = Person(**author)
             return topic
@@ -517,6 +524,7 @@ class Group(FlickrObject):
         def getInfo(self, **args):
             def format_result(r):
                 return self._format_topic(r["topic"])
+
             return args, format_result
 
         @caller("flickr.groups.discuss.replies.getList")
@@ -531,11 +539,13 @@ class Group(FlickrObject):
                     if topic_info.get(k) is not None
                 }
                 return FlickrList(
-                    [Group.Topic.Reply(topic=self,
-                                       **Group.Topic.Reply._format_reply(rep))
-                            for rep in info.pop("reply", [])],
-                     Info(**pagination)
+                    [
+                        Group.Topic.Reply(topic=self, **Group.Topic.Reply._format_reply(rep))
+                        for rep in info.pop("reply", [])
+                    ],
+                    Info(**pagination),
                 )
+
             return args, format_result
 
         @caller("flickr.groups.discuss.replies.delete")
@@ -555,10 +565,9 @@ class Group(FlickrObject):
         def format_result(r, token):
             cat = r["category"]
             subcats = [Category(**c) for c in _check_list(cat.pop("subcats"))]
-            groups = [Group(id=g["nsid"], **g)
-                       for g in _check_list(cat.pop("group"))]
-            return Category(id=args["cat_id"], subcats=subcats, groups=groups,
-                            **cat)
+            groups = [Group(id=g["nsid"], **g) for g in _check_list(cat.pop("group"))]
+            return Category(id=args["cat_id"], subcats=subcats, groups=groups, **cat)
+
         return _format_id("cat", args), format_result
 
     @caller("flickr.groups.getInfo")
@@ -577,6 +586,7 @@ class Group(FlickrObject):
             group = r["group"]
             group["name"] = group.pop("groupname")
             return Group(**group)
+
         return args, format_result
 
     @static_caller("flickr.groups.search")
@@ -586,6 +596,7 @@ class Group(FlickrObject):
             group_list = _check_list(info.pop("group", []))
             groups = [Group(**g) for g in group_list]
             return FlickrList(groups, Info(**info))
+
         return args, format_result
 
     @caller("flickr.groups.members.getList")
@@ -599,10 +610,8 @@ class Group(FlickrObject):
 
         def format_result(r):
             info = r["members"]
-            return FlickrList(
-                [Person(**p) for p in _check_list(info.pop("member"))],
-                 Info(**info)
-            )
+            return FlickrList([Person(**p) for p in _check_list(info.pop("member"))], Info(**info))
+
         return args, format_result
 
     @caller("flickr.groups.pools.add")
@@ -611,8 +620,9 @@ class Group(FlickrObject):
 
     @caller("flickr.groups.pools.getContext")
     def getPoolContext(self, **args):
-        return (_format_id("photo", args),
-                lambda r: (Photo(**r["prevphoto"]), Photo(**r["nextphoto"]))
+        return (
+            _format_id("photo", args),
+            lambda r: (Photo(**r["prevphoto"]), Photo(**r["nextphoto"])),
         )
 
     @caller("flickr.groups.discuss.topics.getList")
@@ -620,10 +630,13 @@ class Group(FlickrObject):
         def format_result(r):
             info = r["topics"]
             return FlickrList(
-                [Group.Topic(group=self, **Group.Topic._format_topic(t))
-                    for t in info.pop("topic", [])],
-                Info(**info)
+                [
+                    Group.Topic(group=self, **Group.Topic._format_topic(t))
+                    for t in info.pop("topic", [])
+                ],
+                Info(**info),
             )
+
         return args, format_result
 
     @static_caller("flickr.groups.pools.getGroups")
@@ -631,9 +644,9 @@ class Group(FlickrObject):
         def format_result(r, token):
             info = r["groups"]
             return FlickrList(
-                [Group(token=token, **g) for g in info.pop("group", [])],
-                 Info(**info)
+                [Group(token=token, **g) for g in info.pop("group", [])], Info(**info)
             )
+
         return args, format_result
 
     @static_caller("flickr.people.getGroups")
@@ -641,9 +654,9 @@ class Group(FlickrObject):
         def format_result(r, token):
             info = r["groups"]
             return FlickrList(
-                [Group(token=token, **g) for g in info.pop("group", [])],
-                 Info(**info)
+                [Group(token=token, **g) for g in info.pop("group", [])], Info(**info)
             )
+
         return args, format_result
 
     @caller("flickr.groups.pools.getPhotos")
@@ -677,7 +690,8 @@ class License(FlickrObject):
             licenses = r["licenses"]["license"]
             if not isinstance(licenses, list):
                 licenses = [licenses]
-            return [License(**l) for l in licenses]
+            return [License(**lic) for lic in licenses]
+
         return {}, format_result
 
 
@@ -690,7 +704,6 @@ class Location(FlickrObject):
 
 
 class MachineTag(FlickrObject):
-
     class Namespace(FlickrObject):
         __display__ = ["text", "usage", "predicate"]
 
@@ -708,10 +721,10 @@ class MachineTag(FlickrObject):
         def format_result(r):
             info = r["namespaces"]
             return FlickrList(
-                [MachineTag.Namespace(**ns)
-                    for ns in _check_list(info.pop("namespace"))],
-                Info(**info)
+                [MachineTag.Namespace(**ns) for ns in _check_list(info.pop("namespace"))],
+                Info(**info),
             )
+
         return args, format_result
 
     @static_caller("flickr.machinetags.getPairs")
@@ -720,8 +733,9 @@ class MachineTag(FlickrObject):
             info = r["pairs"]
             return FlickrList(
                 [MachineTag.Pair(**p) for p in _check_list(info.pop("pair"))],
-                 Info(**info)
+                Info(**info),
             )
+
         return args, format_result
 
     @static_caller("flickr.machinetags.getPredicates")
@@ -729,10 +743,10 @@ class MachineTag(FlickrObject):
         def format_result(r):
             info = r["predicates"]
             return FlickrList(
-                [MachineTag.Predicate(**p)
-                    for p in _check_list(info.pop("predicate"))],
-                Info(**info)
+                [MachineTag.Predicate(**p) for p in _check_list(info.pop("predicate"))],
+                Info(**info),
             )
+
         return args, format_result
 
     @static_caller("flickr.machinetags.getRecentValues")
@@ -740,10 +754,10 @@ class MachineTag(FlickrObject):
         def format_result(r):
             info = r["values"]
             return FlickrList(
-                [MachineTag.Value(**v)
-                    for v in _check_list(info.pop("value"))],
-                Info(**info)
+                [MachineTag.Value(**v) for v in _check_list(info.pop("value"))],
+                Info(**info),
             )
+
         return args, format_result
 
     @static_caller("flickr.machinetags.getValues")
@@ -751,23 +765,20 @@ class MachineTag(FlickrObject):
         def format_result(r):
             info = r["values"]
             return FlickrList(
-                [MachineTag.Value(**v)
-                    for v in _check_list(info.pop("value"))],
-                Info(**info)
+                [MachineTag.Value(**v) for v in _check_list(info.pop("value"))],
+                Info(**info),
             )
+
         return args, format_result
 
 
 class Panda(FlickrObject):
     __display__ = ["name"]
-    __self_name__ = 'panda_name'
+    __self_name__ = "panda_name"
 
     @static_caller("flickr.panda.getList")
     def getList():
-        return (
-            {},
-            lambda r: [Panda(name=p, id=p) for p in r["pandas"]["panda"]]
-        )
+        return ({}, lambda r: [Panda(name=p, id=p) for p in r["pandas"]["panda"]])
 
     @caller("flickr.panda.getPhotos")
     def getPhotos(self, **args):
@@ -786,7 +797,7 @@ class Person(FlickrObject):
     nsid: str
 
     def __init__(self, **params):
-        if not "id" in params:
+        if "id" not in params:
             if "nsid" in params:
                 params["id"] = params["nsid"]
             else:
@@ -798,33 +809,36 @@ class Person(FlickrObject):
         return _format_id("place", args), _none
 
     @staticmethod
-    def getFromToken(token=None, filename=None, token_key=None,
-                     token_secret=None):
+    def getFromToken(token=None, filename=None, token_key=None, token_secret=None):
         """
-            Retrieve the person corresponding to the authentication token.
+        Retrieve the person corresponding to the authentication token.
         """
         if token is None:
-            token = auth.token_factory(filename=filename, token_key=token_key,
-                                       token_secret=token_secret)
+            token = auth.token_factory(
+                filename=filename, token_key=token_key, token_secret=token_secret
+            )
         return test.login(token=token)
 
     @static_caller("flickr.people.findByEmail")
     def findByEmail(find_email):
-        return {'find_email': find_email}, lambda r: Person(**r["user"])
+        return {"find_email": find_email}, lambda r: Person(**r["user"])
 
     @static_caller("flickr.people.findByUsername")
     def findByUserName(username):
-        return {'username': username}, lambda r: Person(**r["user"])
+        return {"username": username}, lambda r: Person(**r["user"])
 
     @static_caller("flickr.urls.lookupUser")
     def findByUrl(url):
-        return {'url': url}, lambda r: Person(**r["user"])
+        return {"url": url}, lambda r: Person(**r["user"])
 
     @caller("flickr.favorites.getContext")
     def getFavoriteContext(self, **args):
         def format_result(r, token=None):
-            return (Photo(token=token, **r["prevphoto"]),
-                    Photo(token=token, **r["nextphoto"]))
+            return (
+                Photo(token=token, **r["prevphoto"]),
+                Photo(token=token, **r["nextphoto"]),
+            )
+
         return _format_id("photo", args), format_result
 
     @caller("flickr.favorites.getList")
@@ -838,10 +852,8 @@ class Person(FlickrObject):
             photosets = info.pop("photoset")
             if not isinstance(photosets, list):
                 photosets = [photosets]
-            return FlickrList(
-                [Photoset(token=token, **ps) for ps in photosets],
-                 Info(**info)
-            )
+            return FlickrList([Photoset(token=token, **ps) for ps in photosets], Info(**info))
+
         return args, format_result
 
     @caller("flickr.favorites.getPublicList")
@@ -854,6 +866,7 @@ class Person(FlickrObject):
             user = r["person"]
             user["photos_info"] = user.pop("photos")
             return user
+
         return args, format_result
 
     @caller("flickr.galleries.getList")
@@ -867,6 +880,7 @@ class Person(FlickrObject):
                 g["owner"] = Person(id=g["owner"])
                 galleries_.append(Gallery(**g))
             return FlickrList(galleries_, Info(**info))
+
         return args, format_result
 
     @caller("flickr.people.getLimits")
@@ -895,16 +909,20 @@ class Person(FlickrObject):
 
     @caller("flickr.people.getPhotosOf")
     def getPhotosOf(self, **args):
-        return (_format_id("owner", _format_extras(args)),
-               lambda r: _extract_photo_list(r, token=self.getToken()))
+        return (
+            _format_id("owner", _format_extras(args)),
+            lambda r: _extract_photo_list(r, token=self.getToken()),
+        )
 
     @caller("flickr.contacts.getPublicList")
     def getPublicContacts(self, **args):
         def format_result(r, token=None):
             info = r["contacts"]
-            contacts = [Person(id=c["nsid"], token=token, **c)
-                                for c in _check_list(info["contact"])]
+            contacts = [
+                Person(id=c["nsid"], token=token, **c) for c in _check_list(info["contact"])
+            ]
             return FlickrList(contacts, Info(**info))
+
         return args, format_result
 
     @caller("flickr.people.getPublicGroups")
@@ -916,6 +934,7 @@ class Person(FlickrObject):
                 gr["id"] = gr["nsid"]
                 groups_.append(Group(token=token, **gr))
             return groups_
+
         return args, format_result
 
     @static_caller("flickr.people.getUploadStatus")
@@ -932,13 +951,15 @@ class Person(FlickrObject):
                 sets_ = [Photoset(token=token, **s) for s in sets]
                 collections_.append(Collection(token=token, sets=sets_, **c))
             return collections_
+
         return _format_id("collection", args), format_result
 
     @caller("flickr.photos.getContactsPublicPhotos")
     def getContactsPublicPhotos(self, **args):
-        return (_format_extras(args),
-                lambda r: _extract_photo_list(r, token=self.getToken())
-                )
+        return (
+            _format_extras(args),
+            lambda r: _extract_photo_list(r, token=self.getToken()),
+        )
 
     @caller("flickr.tags.getListUser")
     def getTags(self):
@@ -959,9 +980,19 @@ class Person(FlickrObject):
 
 class Photo(FlickrObject):
     __converters__ = [
-        dict_converter(["isfamily", "ispublic", "isfriend", "cancomment",
-                        "canaddmeta", "permcomment", "permmeta", "isfavorite"],
-                        bool),
+        dict_converter(
+            [
+                "isfamily",
+                "ispublic",
+                "isfriend",
+                "cancomment",
+                "canaddmeta",
+                "permcomment",
+                "permmeta",
+                "isfavorite",
+            ],
+            bool,
+        ),
         dict_converter(["posted", "lastupdate"], int),
         dict_converter(["views", "comments"], int),
     ]
@@ -1039,6 +1070,7 @@ class Photo(FlickrObject):
             args["id"] = r["comment"]["id"]
             args["photo"] = self
             return Photo.Comment(**args)
+
         return args, format_result
 
     @caller("flickr.photos.notes.add")
@@ -1047,6 +1079,7 @@ class Photo(FlickrObject):
             args["id"] = r["note"]["id"]
             args["photo"] = self
             return Photo.Note(**args)
+
         return args, format_result
 
     @caller("flickr.photos.people.add")
@@ -1075,7 +1108,8 @@ class Photo(FlickrObject):
             if not isinstance(tickets, list):
                 tickets = [tickets]
             return [UploadTicket(**t) for t in tickets]
-        args["tickets"] = ','.join(tickets)
+
+        args["tickets"] = ",".join(tickets)
         return args, format_result
 
     @caller("flickr.photos.delete")
@@ -1094,6 +1128,7 @@ class Photo(FlickrObject):
                 for p in r["pool"]:
                     pools.append(Group(token=token, **p))
             return photosets, pools
+
         return args, format_result
 
     @caller("flickr.photos.comments.getList")
@@ -1110,10 +1145,10 @@ class Photo(FlickrObject):
             for c in comments:
                 author = c["author"]
                 authorname = c.pop("authorname")
-                c["author"] = Person(id=author, username=authorname,
-                                        token=token)
+                c["author"] = Person(id=author, username=authorname, token=token)
                 comments_.append(Photo.Comment(token=token, photo=self, **c))
             return comments_
+
         return args, format_result
 
     @caller("flickr.photos.getInfo")
@@ -1136,15 +1171,15 @@ class Photo(FlickrObject):
                 tags.append(Tag(token=token, **t))
             photo["tags"] = tags
             photo["notes"] = [
-                Photo.Note(token=token, **n)
-                    for n in _check_list(photo["notes"]["note"])
+                Photo.Note(token=token, **n) for n in _check_list(photo["notes"]["note"])
             ]
 
             sizes = photo.pop("sizes", None)
             if sizes:
-                photo["sizes"] = dict([(s['label'], s) for s in sizes["size"]])
+                photo["sizes"] = dict([(s["label"], s) for s in sizes["size"]])
 
             return photo
+
         return args, format_result
 
     @caller("flickr.photos.getContactsPhotos")
@@ -1155,13 +1190,17 @@ class Photo(FlickrObject):
             for p in photos:
                 photos_.append(Photo(token=token, **p))
             return photos_
+
         return args, format_result
 
     @caller("flickr.photos.getContext")
     def getContext(self, **args):
         def format_result(r, token):
-            return (Photo(token=token, **r["prevphoto"]),
-                    Photo(token=token, **r["nextphoto"]))
+            return (
+                Photo(token=token, **r["prevphoto"]),
+                Photo(token=token, **r["nextphoto"]),
+            )
+
         return args, format_result
 
     @caller("flickr.photos.getExif")
@@ -1174,13 +1213,17 @@ class Photo(FlickrObject):
                 return [Photo.Exif(**e) for e in r["photo"]["exif"]]
             except KeyError:
                 return []
+
         return args, format_result
 
     @caller("flickr.favorites.getContext")
     def getFavoriteContext(self, **args):
         def format_result(r, token):
-            return (Photo(token=token, **r["prevphoto"]),
-                    Photo(token=token, **r["nextphoto"]))
+            return (
+                Photo(token=token, **r["prevphoto"]),
+                Photo(token=token, **r["nextphoto"]),
+            )
+
         return _format_id("user", args), format_result
 
     @caller("flickr.photos.getFavorites")
@@ -1197,6 +1240,7 @@ class Photo(FlickrObject):
                 persons_.append(Person(token=token, **p))
             infos = Info(**photo)
             return FlickrList(persons_, infos)
+
         return args, format_result
 
     @caller("flickr.galleries.getListForPhoto")
@@ -1215,13 +1259,13 @@ class Photo(FlickrObject):
 
                 if pp_id:
                     g["primary_photo"] = Photo(
-                        id=pp_id, secret=pp_secret,
-                        server=pp_server, farm=pp_farm
+                        id=pp_id, secret=pp_secret, server=pp_server, farm=pp_farm
                     )
 
                 galleries_.append(Gallery(**g))
 
             return FlickrList(galleries_, Info(**info))
+
         return args, format_result
 
     @caller("flickr.photos.geo.getPerms")
@@ -1233,11 +1277,12 @@ class Photo(FlickrObject):
         def format_result(r, token):
             loc = r["photo"]["location"]
             return Location(token=token, photo=self, **loc)
+
         return args, format_result
 
     def getNotes(self):
         """
-            Returns the list of notes for a photograph
+        Returns the list of notes for a photograph
         """
         return self.notes
 
@@ -1262,12 +1307,14 @@ class Photo(FlickrObject):
                     s["suggested_by"] = Person(id=s["suggested_by"])
                 suggestions.append(Photo.Suggestion(**s))
             return FlickrList(suggestions, info=Info(**info))
+
         return args, format_result
 
     @caller("flickr.photos.getSizes")
     def _getSizes(self, **args):
         def format_result(r):
             return dict([(s["label"], s) for s in r["sizes"]["size"]])
+
         return args, format_result
 
     def getSizes(self, force=False, **args):
@@ -1278,10 +1325,7 @@ class Photo(FlickrObject):
     @caller("flickr.stats.getPhotoStats")
     def getStats(self, date, **args):
         args["date"] = date
-        return (
-            args,
-            lambda r: dict([(k, int(v)) for k, v in r["stats"].items()])
-        )
+        return (args, lambda r: dict([(k, int(v)) for k, v in r["stats"].items()]))
 
     @caller("flickr.tags.getListPhoto")
     def getTags(self, **args):
@@ -1289,7 +1333,7 @@ class Photo(FlickrObject):
 
     def getPageUrl(self):
         """
-            returns the URL to the photo's page.
+        returns the URL to the photo's page.
         """
         return "http://www.flickr.com/photos/%s/%s" % (self.owner.id, self.id)
 
@@ -1299,9 +1343,9 @@ class Photo(FlickrObject):
 
     def _getLargestSizeLabel(self):
         """
-            returns the largest size for the current photo.
+        returns the largest size for the current photo.
         """
-        sizes = {k:v for k,v in self.getSizes().items() if v["media"] == self.media}
+        sizes = {k: v for k, v in self.getSizes().items() if v["media"] == self.media}
         max_size = None
         max_area = None
         for sl, s in sizes.items():
@@ -1363,14 +1407,13 @@ class Photo(FlickrObject):
 
     def _getOutputFilename(self, filename, size_label):
         photo_file = self.getPhotoFile(size_label)
-        file_ext = ('.' + photo_file.split('.')[-1]) if self.media == "photo" else ".mp4"
+        file_ext = ("." + photo_file.split(".")[-1]) if self.media == "photo" else ".mp4"
 
         output_filename = filename
-        if os.path.splitext(filename)[1] == '':
+        if os.path.splitext(filename)[1] == "":
             output_filename = filename + file_ext
 
         return output_filename
-
 
     def save(self, filename, size_label=None, timeout=10):
         """
@@ -1396,7 +1439,7 @@ class Photo(FlickrObject):
 
         photo_file = self.getPhotoFile(size_label)
         r = urllib.request.urlopen(photo_file, timeout=timeout)
-        with open(output_filename, 'wb') as f:
+        with open(output_filename, "wb") as f:
             f.write(r.read())
             f.close()
 
@@ -1451,6 +1494,7 @@ class Photo(FlickrObject):
                 p["photo"] = self
                 people_.append(Person(**p))
             return people_
+
         return args, format_result
 
     @static_caller("flickr.photos.geo.photosForLocation")
@@ -1477,6 +1521,7 @@ class Photo(FlickrObject):
             photo_id = r["photo_id"]["text"]
             photo_secret = r["photo_id"]["secret"]
             return Photo(token=token, id=photo_id, secret=photo_secret)
+
         return args, format_result
 
     @static_caller("flickr.photos.search")
@@ -1485,7 +1530,11 @@ class Photo(FlickrObject):
             args["extras"] = []
         if not isinstance(args["extras"], list):
             args["extras"] = [args["extras"]]
-        args["extras"] += "media,url_sq, url_t, url_s, url_q, url_m, url_n, url_z, url_c, url_l, url_o".split(", ")
+        args["extras"] += (
+            "media,url_sq, url_t, url_s, url_q, url_m, url_n, url_z, url_c, url_l, url_o".split(
+                ", "
+            )
+        )
 
         args = _format_id("user", args)
         args = _format_extras(args)
@@ -1552,13 +1601,12 @@ class Photo(FlickrObject):
                     s["suggested_by"] = Person(id=s["suggested_by"])
                 suggestions.append(Photo.Suggestion(**s))
             return FlickrList(suggestions, info=Info(**info))
+
         return args, format_result
 
 
 class PhotoGeoPerms(FlickrObject):
-    __converters__ = [
-        dict_converter(["ispublic", "iscontact", "isfamily", "isfriend"], bool)
-    ]
+    __converters__ = [dict_converter(["ispublic", "iscontact", "isfamily", "isfriend"], bool)]
     __display__ = ["id", "ispublic", "iscontact", "isfamily", "isfriend"]
 
 
@@ -1594,9 +1642,7 @@ class Photoset(FlickrObject):
     def addComment(self, **args):
         return (
             args,
-            lambda r, token: Photoset.Comment(
-                token=token, photoset=self, **r["comment"]
-            )
+            lambda r, token: Photoset.Comment(token=token, photoset=self, **r["comment"]),
         )
 
     @static_caller("flickr.photosets.create")
@@ -1613,6 +1659,7 @@ class Photoset(FlickrObject):
             photoset = r["photoset"]
             photoset["primary"] = pphoto
             return Photoset(token=token, **photoset)
+
         return args, format_result
 
     @caller("flickr.photosets.delete")
@@ -1650,17 +1697,19 @@ class Photoset(FlickrObject):
                 author = c["author"]
                 authorname = c.pop("authorname")
                 c["author"] = Person(id=author, username=authorname)
-                comments_.append(
-                    Photoset.Comment(token=token, photoset=self, **c)
-                )
+                comments_.append(Photoset.Comment(token=token, photoset=self, **c))
             return comments_
+
         return args, format_result
 
     @caller("flickr.photosets.getContext")
     def getContext(self, **args):
         def format_result(r, token):
-            return (Photo(token=token, **r["prevphoto"]),
-                    Photo(token=token, **r["nextphoto"]))
+            return (
+                Photo(token=token, **r["prevphoto"]),
+                Photo(token=token, **r["nextphoto"]),
+            )
+
         return _format_id("photo", args), format_result
 
     @caller("flickr.photosets.getInfo")
@@ -1669,26 +1718,29 @@ class Photoset(FlickrObject):
             photoset = r["photoset"]
             photoset["owner"] = Person(token=token, id=photoset["owner"])
             return photoset
+
         return args, format_result
 
     @caller("flickr.photosets.getPhotos")
     def getPhotos(self, **args):
         def format_result(r):
             ps = r["photoset"]
-            return FlickrList([Photo(**p) for p in ps["photo"]],
-                               Info(pages=ps["pages"],
-                                    page=ps["page"],
-                                    perpage=ps["perpage"],
-                                    total=ps["total"]))
+            return FlickrList(
+                [Photo(**p) for p in ps["photo"]],
+                Info(
+                    pages=ps["pages"],
+                    page=ps["page"],
+                    perpage=ps["perpage"],
+                    total=ps["total"],
+                ),
+            )
+
         return _format_extras(args), format_result
 
     @caller("flickr.stats.getPhotosetStats")
     def getStats(self, date, **args):
         args["date"] = date
-        return (
-            args,
-            lambda r: dict([(k, int(v)) for k, v in r["stats"].items()])
-        )
+        return (args, lambda r: dict([(k, int(v)) for k, v in r["stats"].items()]))
 
     @static_caller("flickr.photosets.orderSets")
     def orderSets(**args):
@@ -1717,7 +1769,7 @@ class Photoset(FlickrObject):
 
         photo_ids = args["photo_ids"]
         if isinstance(photo_ids, list):
-            args["photo_ids"] = u", ".join(photo_ids)
+            args["photo_ids"] = ", ".join(photo_ids)
 
         return args, _none
 
@@ -1730,7 +1782,7 @@ class Photoset(FlickrObject):
 
         photo_ids = args["photo_ids"]
         if isinstance(photo_ids, list):
-            args["photo_ids"] = u",".join(photo_ids)
+            args["photo_ids"] = ",".join(photo_ids)
 
         return args, _none
 
@@ -1744,7 +1796,7 @@ class Place(FlickrObject):
     __converters__ = [
         dict_converter(["latitude", "longitude"], float),
     ]
-    __self_name__ = 'place_id'
+    __self_name__ = "place_id"
 
     class ShapeData(FlickrObject):
         class Polyline(FlickrObject):
@@ -1775,6 +1827,7 @@ class Place(FlickrObject):
     def getInfo(self, **args):
         def format_result(r):
             return Place.parse_place(r["place"])
+
         return args, format_result
 
     @staticmethod
@@ -1785,8 +1838,7 @@ class Place(FlickrObject):
         if isinstance(polyline_data, str):
             polyline_data = [polyline_data]
         shapedata["polylines"] = [
-            Place.ShapeData.Polyline(coords=p.split(" "))
-            for p in polyline_data
+            Place.ShapeData.Polyline(coords=p.split(" ")) for p in polyline_data
         ]
         if "url" in shapedata:
             shapedata["shapefile"] = shapedata.pop("urls")["shapefile"].text
@@ -1819,22 +1871,25 @@ class Place(FlickrObject):
 
     @static_caller("flickr.places.getInfoByUrl")
     def getByUrl(url):
-        return {'url': url}, lambda r: Place(**Place.parse_place(r["place"]))
+        return {"url": url}, lambda r: Place(**Place.parse_place(r["place"]))
 
     @static_caller("flickr.places.getPlaceTypes")
     def getPlaceTypes(**args):
         def format_result(r):
             places_types = r["place_types"]["place_type"]
-            return [Place.Type(id=pt.pop("id"), **pt)
-                    for pt in places_types]
+            return [Place.Type(id=pt.pop("id"), **pt) for pt in places_types]
+
         return args, format_result
 
     @static_caller("flickr.places.getShapeHistory")
     def getShapeHistory(**args):
         def format_result(r):
             info = r["shapes"]
-            return [Place.ShapeData(**Place.parse_shapedata(sd))
-                    for sd in _check_list(info.pop("shapedata"))]
+            return [
+                Place.ShapeData(**Place.parse_shapedata(sd))
+                for sd in _check_list(info.pop("shapedata"))
+            ]
+
         return args, format_result
 
     @caller("flickr.places.getTopPlacesList")
@@ -1848,9 +1903,8 @@ class Place(FlickrObject):
             places_data = info.pop("place")
             if not isinstance(places_data, list):
                 places_data = [places_data]
-            return [
-                Place(**Place.parse_place(place))
-                for place in places_data]
+            return [Place(**Place.parse_place(place)) for place in places_data]
+
         return args, format_result
 
     @static_caller("flickr.places.placesForContacts")
@@ -1860,9 +1914,8 @@ class Place(FlickrObject):
             places_data = info.pop("place")
             if not isinstance(places_data, list):
                 places_data = [places_data]
-            return [
-                Place(**Place.parse_place(place))
-                for place in places_data]
+            return [Place(**Place.parse_place(place)) for place in places_data]
+
         return args, format_result
 
     @static_caller("flickr.places.placesForTags")
@@ -1932,6 +1985,7 @@ class stats(FlickrObject):
             info = r["domains"]
             domains = [stats.Domain(**d) for d in info.pop("domain")]
             return FlickrList(domains, Info(**info))
+
         return _format_id("collection", args), format_result
 
     @static_caller("flickr.stats.getCollectionReferrers")
@@ -1940,6 +1994,7 @@ class stats(FlickrObject):
             info = r["domain"]
             referrers = [stats.Referrer(**r) for r in info.pop("referrer")]
             return FlickrList(referrers, Info(**info))
+
         return _format_id("collection", args), format_result
 
     @static_caller("flickr.stats.getCSVFiles")
@@ -1952,6 +2007,7 @@ class stats(FlickrObject):
             info = r["domains"]
             domains = [stats.Domain(**d) for d in info.pop("domain")]
             return FlickrList(domains, Info(**info))
+
         return _format_id("photo", args), format_result
 
     @static_caller("flickr.stats.getPhotoReferrers")
@@ -1960,6 +2016,7 @@ class stats(FlickrObject):
             info = r["domain"]
             referrers = [stats.Referrer(**r) for r in info.pop("referrer")]
             return FlickrList(referrers, Info(**info))
+
         return _format_id("photo", args), format_result
 
     @static_caller("flickr.stats.getPhotosetDomains")
@@ -1968,6 +2025,7 @@ class stats(FlickrObject):
             info = r["domains"]
             domains = [stats.Domain(**d) for d in info.pop("domain")]
             return FlickrList(domains, Info(**info))
+
         return _format_id("photoset", args), format_result
 
     @static_caller("flickr.stats.getPhotosetReferrers")
@@ -1976,6 +2034,7 @@ class stats(FlickrObject):
             info = r["domain"]
             referrers = [stats.Referrer(**r) for r in info.pop("referrer")]
             return FlickrList(referrers, Info(**info))
+
         return _format_id("photoset", args), format_result
 
     @static_caller("flickr.stats.getPhotostreamDomains")
@@ -1984,6 +2043,7 @@ class stats(FlickrObject):
             info = r["domains"]
             domains = [stats.Domain(**d) for d in info.pop("domain")]
             return FlickrList(domains, Info(**info))
+
         return args, format_result
 
     @static_caller("flickr.stats.getPhotostreamReferrers")
@@ -1992,6 +2052,7 @@ class stats(FlickrObject):
             info = r["domain"]
             referrers = [stats.Referrer(**r) for r in info.pop("referrer")]
             return FlickrList(referrers, Info(**info))
+
         return args, format_result
 
     @static_caller("flickr.stats.getPhotostreamStats")
@@ -2008,6 +2069,7 @@ class stats(FlickrObject):
                 pstat = p.pop("stats")
                 photos.append((Photo(**p), pstat))
             return FlickrList(photos, Info(**info))
+
         return {}, format_result
 
     @static_caller("flickr.stats.getTotalViews")
@@ -2043,11 +2105,14 @@ class Tag(FlickrObject):
         def format_result(r):
             clusters = r["clusters"]["cluster"]
             return [
-                Tag.Cluster(tag=args["tag"],
-                            tags=[Tag(text=t) for t in c["tag"]],
-                            total=c["total"]
-                ) for c in clusters
+                Tag.Cluster(
+                    tag=args["tag"],
+                    tags=[Tag(text=t) for t in c["tag"]],
+                    total=c["total"],
+                )
+                for c in clusters
             ]
+
         return args, format_result
 
     @static_caller("flickr.tags.getHotList")
@@ -2060,13 +2125,15 @@ class Tag(FlickrObject):
         # they become strings (not dicts). Use Tag(text=t) like Person.getTags.
         return (
             _format_id("user", args),
-            lambda r: [Tag(text=t) for t in r["who"]["tags"]["tag"]]
+            lambda r: [Tag(text=t) for t in r["who"]["tags"]["tag"]],
         )
 
     @static_caller("flickr.tags.getListUserPopular")
     def getListUserPopular(**args):
-        return (_format_id("user", args),
-                lambda r: [Tag(**t) for t in r["who"]["tags"]["tag"]])
+        return (
+            _format_id("user", args),
+            lambda r: [Tag(**t) for t in r["who"]["tags"]["tag"]],
+        )
 
     @static_caller("flickr.tags.getListUserRaw")
     def getListUserRaw(**args):
@@ -2074,7 +2141,8 @@ class Tag(FlickrObject):
             tags = r["who"]["tags"]["tag"]
             if not isinstance(tags, list):
                 tags = [tags]
-            return [{'clean': t["clean"], "raws": t["raw"]} for t in tags]
+            return [{"clean": t["clean"], "raws": t["raw"]} for t in tags]
+
         return args, format_result
 
     @static_caller("flickr.tags.getRelated")
@@ -2123,7 +2191,7 @@ def _extract_activity_list(r):
                     events_.append(Photo.Comment(photo=item, **e))
                 elif item_type == "photoset":
                     events_.append(Photoset.Comment(photoset=item, **e))
-            elif e_type == 'note':
+            elif e_type == "note":
                 events_.append(Photo.Note(photo=item, **e))
         activities.append(Activity(item=item, events=events_))
     return activities
@@ -2150,6 +2218,7 @@ def _format_extras(args):
 def _new(cls):
     def _newobject(**args):
         return cls(**args)
+
     return _newobject
 
 
@@ -2194,16 +2263,21 @@ def _extract_photo_list(r, token=None):
     clean_infos = {k: v for k, v in infos.items() if v is not None}
     return FlickrList(photos, Info(**clean_infos))
 
+
 def _parse_inline_sizes(p):
     keys = [k for k in p.keys() if k.startswith("url_")]
     size_keys = set(k.split("_")[-1] for k in keys)
 
     sizes = {}
     for s in size_keys:
-        w = p["width_"+s]
-        h = p["height_"+s]
-        url = "https://www.flickr.com/photos/%s/%s/sizes/%s/" % (p["owner"].id, p["id"], s)
-        source = p["url_"+s]
+        w = p["width_" + s]
+        h = p["height_" + s]
+        url = "https://www.flickr.com/photos/%s/%s/sizes/%s/" % (
+            p["owner"].id,
+            p["id"],
+            s,
+        )
+        source = p["url_" + s]
         label = _SIZES_LABEL[s]
         media = p["media"]
 
@@ -2221,32 +2295,33 @@ def _check_list(obj):
 
 class Walker(Generic[T]):
     """
-        Object to walk along paginated results. This allows
-        to loop on all the results corresponding to a query
-        regardless pagination.
+    Object to walk along paginated results. This allows
+    to loop on all the results corresponding to a query
+    regardless pagination.
 
-        w = Walker(method,*args, **kwargs)
+    w = Walker(method,*args, **kwargs)
 
-        arguments:
-        - method: a method returning a FlickrList object.
-        - *args: positional arguments to call 'method' with
-        - **kwargs: named arguments to call 'method' with
+    arguments:
+    - method: a method returning a FlickrList object.
+    - *args: positional arguments to call 'method' with
+    - **kwargs: named arguments to call 'method' with
 
-        ex:
-        >>> w = Walker(Photo.search, tags="animals")
-        >>> for photo in w:
-        >>>     print photo.title
+    ex:
+    >>> w = Walker(Photo.search, tags="animals")
+    >>> for photo in w:
+    >>>     print photo.title
 
-        You can also use slices:
-        ex:
-        >>> w = Walker(Photo.search, tags="animals")
-        >>> for photo in w[:20]:
-        >>>     print photo.title
+    You can also use slices:
+    ex:
+    >>> w = Walker(Photo.search, tags="animals")
+    >>> for photo in w[:20]:
+    >>>     print photo.title
 
-        but be aware that if a starting index is given all the items
-        till the wanted one will be iterated, so using a large
-        starting value might be slow.
+    but be aware that if a starting index is given all the items
+    till the wanted one will be iterated, so using a large
+    starting value might be slow.
     """
+
     method: Callable[..., FlickrList]
     args: tuple[Any, ...]
     kwargs: dict[str, Any]
@@ -2280,10 +2355,7 @@ class Walker(Generic[T]):
 
     def __getitem__(self, slice_: slice) -> "SlicedWalker[T]":
         if isinstance(slice_, slice):
-            return SlicedWalker(self,
-                slice_.start,
-                slice_.stop,
-                slice_.step)
+            return SlicedWalker(self, slice_.start, slice_.stop, slice_.step)
         else:
             raise ValueError("Only slices can be used as subscript")
 
@@ -2309,16 +2381,19 @@ class Walker(Generic[T]):
 
 
 class SlicedWalker(Generic[T]):
-    """ Used to apply slices on objects.
-        Starting at a large index might be slow since all items till
-        the start one will be iterated.
+    """Used to apply slices on objects.
+    Starting at a large index might be slow since all items till
+    the start one will be iterated.
     """
+
     walker: "Walker[T]"
     start: int
     stop: int
     step: int
 
-    def __init__(self, walker: "Walker[T]", start: int | None, stop: int | None, step: int | None) -> None:
+    def __init__(
+        self, walker: "Walker[T]", start: int | None, stop: int | None, step: int | None
+    ) -> None:
         self.walker = walker
         self.start = start or 0
         self.stop = stop or len(walker)

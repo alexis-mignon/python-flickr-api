@@ -1,19 +1,19 @@
 """
-    method_call module.
+method_call module.
 
-    This module is used to perform the calls to the REST interface.
+This module is used to perform the calls to the REST interface.
 
-    Author: Alexis Mignon (c)
-    e-mail: alexis.mignon@gmail.com
-    Date: 06/08/2011
+Author: Alexis Mignon (c)
+e-mail: alexis.mignon@gmail.com
+Date: 06/08/2011
 
 """
+
 import urllib.parse
 import urllib.request
 import urllib.error
 import requests
 import hashlib
-import json
 import logging
 from typing import Any
 
@@ -32,7 +32,7 @@ logger = logging.getLogger(__name__)
 
 
 def enable_cache(cache_object: Any | None = None) -> None:
-    """ enable caching
+    """enable caching
     Parameters:
     -----------
     cache_object: object, optional
@@ -44,8 +44,7 @@ def enable_cache(cache_object: Any | None = None) -> None:
 
 
 def disable_cache() -> None:
-    """Disable cachine capabilities
-    """
+    """Disable cachine capabilities"""
     global CACHE
     CACHE = None
 
@@ -56,8 +55,7 @@ TIMEOUT: float = 10
 
 
 def set_timeout(seconds: float) -> None:
-    """Set timeout in seconds for requests calls
-    """
+    """Set timeout in seconds for requests calls"""
     global TIMEOUT
     TIMEOUT = seconds
 
@@ -65,18 +63,25 @@ def set_timeout(seconds: float) -> None:
 def get_timeout() -> float:
     return TIMEOUT
 
+
 def send_request(url, data):
-    """send a http request.
-    """
+    """send a http request."""
     req = urllib.request.Request(url, data.encode())
     try:
         return urlopen_and_read(req)
     except urllib.error.HTTPError as e:
-        raise FlickrError(e.read().split('&')[0])
+        raise FlickrError(e.read().split("&")[0])
 
 
-def call_api(api_key=None, api_secret=None, auth_handler=None,
-             needssigning=False, request_url=REST_URL, raw=False, **args):
+def call_api(
+    api_key=None,
+    api_secret=None,
+    auth_handler=None,
+    needssigning=False,
+    request_url=REST_URL,
+    raw=False,
+    **args,
+):
     """
         Performs the calls to the Flickr REST interface.
 
@@ -119,7 +124,7 @@ def call_api(api_key=None, api_secret=None, auth_handler=None,
     clean_args(args)
     args["api_key"] = api_key
     if not raw:
-        args["format"] = 'json'
+        args["format"] = "json"
         args["nojsoncallback"] = 1
 
     # Get OAuth auth object if using authentication
@@ -128,16 +133,13 @@ def call_api(api_key=None, api_secret=None, auth_handler=None,
         if needssigning:
             query_elements = list(args.items())
             query_elements.sort()
-            sig = keys.API_SECRET + \
-                ["".join(["".join(e) for e in query_elements])]
+            sig = keys.API_SECRET + ["".join(["".join(e) for e in query_elements])]
             m = hashlib.md5()
             m.update(sig)
             api_sig = m.digest()
             args["api_sig"] = api_sig
     else:
-        oauth_request = auth_handler.complete_parameters(
-            url=request_url, params=args
-        )
+        oauth_request = auth_handler.complete_parameters(url=request_url, params=args)
         # Extract the OAuth auth object and params from the OAuthRequest
         oauth_auth = oauth_request.oauth
         args = dict(oauth_request.items())
@@ -145,11 +147,12 @@ def call_api(api_key=None, api_secret=None, auth_handler=None,
     if CACHE is None:
         resp = requests.post(request_url, args, auth=oauth_auth, timeout=get_timeout())
     else:
-        cachekey = {k:v for k,v in args.items() if k not in IGNORED_FIELDS}
+        cachekey = {k: v for k, v in args.items() if k not in IGNORED_FIELDS}
         cachekey = urllib.parse.urlencode(cachekey)
 
-        resp = CACHE.get(cachekey) or requests.post(request_url, args,
-            auth=oauth_auth, timeout=get_timeout())
+        resp = CACHE.get(cachekey) or requests.post(
+            request_url, args, auth=oauth_auth, timeout=get_timeout()
+        )
         if cachekey not in CACHE:
             CACHE.set(cachekey, resp)
             logger.debug("NO HIT for cache key: %s" % cachekey)
@@ -161,12 +164,12 @@ def call_api(api_key=None, api_secret=None, auth_handler=None,
 
     # catch for all 5xx errors
     if 500 <= resp.status_code < 600:
-        raise FlickrServerError(resp.status_code, resp.content.decode('utf8'))
+        raise FlickrServerError(resp.status_code, resp.content.decode("utf8"))
 
     try:
         resp = resp.json()
 
-    except ValueError as e:
+    except ValueError:
         logger.error("Could not parse response: %s", str(resp.content))
 
     if resp["stat"] != "ok":
@@ -203,15 +206,18 @@ def clean_content(d):
 
 # Unix timestamp parameters that must be integers for Flickr API
 _TIMESTAMP_PARAMS = {
-    'min_upload_date', 'max_upload_date',
-    'min_taken_date', 'max_taken_date',
-    'min_date', 'max_date',
+    "min_upload_date",
+    "max_upload_date",
+    "min_taken_date",
+    "max_taken_date",
+    "min_date",
+    "max_date",
 }
 
 
 def clean_args(args):
     """
-        Reformat the arguments.
+    Reformat the arguments.
     """
     for k, v in args.items():
         if isinstance(v, bool):

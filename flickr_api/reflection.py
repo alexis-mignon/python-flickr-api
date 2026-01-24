@@ -1,12 +1,12 @@
 """
-    Reflection module.
+Reflection module.
 
-    This modules implements the bases of the reflection mechanisms of
-    'flikr_api'.
+This modules implements the bases of the reflection mechanisms of
+'flikr_api'.
 
-    author: Alexis Mignon (c) 2012
-    e-mail: alexis.mignon@gmail.com
-    date: 21/03/2012
+author: Alexis Mignon (c) 2012
+e-mail: alexis.mignon@gmail.com
+date: 21/03/2012
 """
 
 import re
@@ -23,7 +23,7 @@ try:
 
     def make_docstring(method, ignore_arguments=[], show_errors=True):
         info = __methods__[method]
-        context = {'method': method}
+        context = {"method": method}
 
         doc = """
     flickr method: %(method)s
@@ -41,17 +41,14 @@ try:
         needs_login = info["needslogin"]
         required = info["requiredperms"]
         if needs_login:
-            if required == 'none':
+            if required == "none":
                 authentication = "This method requires authentication"
-            elif required == 'read':
-                authentication = ("This method requires authentication with "
-                                  "'read' permission")
-            elif required == 'write':
-                authentication = ("This method requires authentication with "
-                                  "'write' permission")
-            elif required == 'delete':
-                authentication = ("This method requires authentication with "
-                                  "'delete' permission")
+            elif required == "read":
+                authentication = "This method requires authentication with 'read' permission"
+            elif required == "write":
+                authentication = "This method requires authentication with 'write' permission"
+            elif required == "delete":
+                authentication = "This method requires authentication with 'delete' permission"
             else:
                 raise ValueError("Unexpected permision value: %s" % required)
         else:
@@ -65,10 +62,9 @@ try:
             if aname in ignore_arguments:
                 continue
             argument_context = {
-                'argument_name': aname,
-                'argument_required': 'optional' if a["optional"] \
-                                                else 'required',
-                'argument_descr': format_block(a["text"], 80, " " * 12)
+                "argument_name": aname,
+                "argument_required": "optional" if a["optional"] else "required",
+                "argument_descr": format_block(a["text"], 80, " " * 12),
             }
             arguments.append(argument % argument_context)
         context["arguments"] = "\n".join(arguments)
@@ -83,8 +79,8 @@ try:
     %(message)s"""
             for e in info["errors"]:
                 error_context = {
-                    'code': e["code"],
-                    'message': format_block(e["message"], 80, " " * 12)
+                    "code": e["code"],
+                    "message": format_block(e["message"], 80, " " * 12),
                 }
                 errors.append(error % error_context)
             context["errors"] = "\n".join(errors)
@@ -96,22 +92,23 @@ except ImportError:
     def make_docstring(method, ignore_arguments=[], show_errors=True):
         return None
 
-LIST_REG = re.compile(r'<ul>(.*?)</ul>', re.DOTALL | re.UNICODE | re.MULTILINE)
-LIST_ITEM_REG = re.compile(r'<li>(.*?)</li>', re.DOTALL | re.UNICODE)
+
+LIST_REG = re.compile(r"<ul>(.*?)</ul>", re.DOTALL | re.UNICODE | re.MULTILINE)
+LIST_ITEM_REG = re.compile(r"<li>(.*?)</li>", re.DOTALL | re.UNICODE)
 
 __bindings__: dict[str, list[str]] = {}
 
 
 def bindings_to(flickr_method):
     """
-        Returns the list of bindings to the given Flickr API method
-        in the object API.
+    Returns the list of bindings to the given Flickr API method
+    in the object API.
 
-        ex:
-        >>> bindings_to("flickr.people.getPhotos")
-        ['Person.getPhotos']
-        this tells that the method from Flickr API 'flickr.people.getPhotos'
-        is bound to the 'Person.getPhotos' method of the object API.
+    ex:
+    >>> bindings_to("flickr.people.getPhotos")
+    ['Person.getPhotos']
+    this tells that the method from Flickr API 'flickr.people.getPhotos'
+    is bound to the 'Person.getPhotos' method of the object API.
     """
     try:
         return __bindings__[flickr_method]
@@ -124,43 +121,42 @@ def bindings_to(flickr_method):
 
 class FlickrAutoDoc(type):
     """
-        Meta class that adds documentation to methods that bind
-        to a flickr method, which are called 'caller methods'.
+    Meta class that adds documentation to methods that bind
+    to a flickr method, which are called 'caller methods'.
 
-        It basically adds two attributes to each caller methods:
-        * __doc__: the docstring is set from the documentation
-            returned by flickr.reflection.getMethodInfo. If the method
-            is not static, the entry related to the object itself is
-            removed from the docstring, using the __self_name__ class
-            attribute.
-            For instance, Person.__self_name__ = "user_id". This means
-            the for a bound (not static) method, the entry corresponding
-            to "user_id" in the docstring is removed.
-        * __self_name__: for non static method, a '__self_name__' attribute
-            is added to the method. This is used by the 'caller'
-            decorator to know how to refer to the calling object.
+    It basically adds two attributes to each caller methods:
+    * __doc__: the docstring is set from the documentation
+        returned by flickr.reflection.getMethodInfo. If the method
+        is not static, the entry related to the object itself is
+        removed from the docstring, using the __self_name__ class
+        attribute.
+        For instance, Person.__self_name__ = "user_id". This means
+        the for a bound (not static) method, the entry corresponding
+        to "user_id" in the docstring is removed.
+    * __self_name__: for non static method, a '__self_name__' attribute
+        is added to the method. This is used by the 'caller'
+        decorator to know how to refer to the calling object.
 
     """
+
     def __new__(mcl, classname, bases, classDict):
         self_name = classDict.get("__self_name__", None)
         for k, v in classDict.items():
             ignore_arguments = ["api_key"]
-            if hasattr(v, 'flickr_method'):
+            if hasattr(v, "flickr_method"):
                 if v.isstatic:
-                    v.inner_func.__doc__ = make_docstring(v.flickr_method,
-                                                          ignore_arguments,
-                                                          show_errors=False)
+                    v.inner_func.__doc__ = make_docstring(
+                        v.flickr_method, ignore_arguments, show_errors=False
+                    )
                 else:
                     ignore_arguments.append(self_name)
                     v.__self_name__ = self_name  # this is used by the
                     # decorator caller to know the argument name to use to refer
                     # to the current object.
-                    v.__doc__ = make_docstring(v.flickr_method,
-                                               ignore_arguments,
-                                               show_errors=False)
+                    v.__doc__ = make_docstring(v.flickr_method, ignore_arguments, show_errors=False)
 
                 class_method_name = classname + "." + k
-                method_bindings = __bindings__.setdefault(class_method_name, [])
+                __bindings__.setdefault(class_method_name, [])
 
         return type.__new__(mcl, classname, bases, classDict)
 
@@ -168,7 +164,7 @@ class FlickrAutoDoc(type):
 def format_block(text, width, prefix=""):
     text = text.replace(r"<br />", r"<br/>")
     text = text.replace(r"<br/><br/>", r" <br/> ")
-    text = text.replace('<strong>', "").replace("</strong>", "")
+    text = text.replace("<strong>", "").replace("</strong>", "")
     text = text.replace("<code>", "'").replace("</code>", "'")
     text.replace("&mdash;", "--")
     text = text.split()
@@ -196,7 +192,7 @@ def format_block(text, width, prefix=""):
                 start = False
         else:
             if not start:
-                line += ' '
+                line += " "
             line += word
             start = False
     if not start:
@@ -206,10 +202,16 @@ def format_block(text, width, prefix=""):
     list_blocks = LIST_REG.findall(res)
     for block in list_blocks:
         block.replace("\n", " ")
-        items = "\n" + "".join(
-            [format_block("* %s" % i.strip(), width, prefix)
-                for i in LIST_ITEM_REG.findall(block)]
-        ) + prefix
+        items = (
+            "\n"
+            + "".join(
+                [
+                    format_block("* %s" % i.strip(), width, prefix)
+                    for i in LIST_ITEM_REG.findall(block)
+                ]
+            )
+            + prefix
+        )
         res = LIST_REG.sub(items, res)
     return res
 
@@ -232,24 +234,29 @@ def _get_token(self, **kwargs):
 
 def caller(flickr_method, static=False):
     """
-        This decorator binds a method to the flickr method given
-        by 'flickr_method'.
-        The wrapped method should return the argument dictionary
-        and a function that format the result of method_call.call_api.
+    This decorator binds a method to the flickr method given
+    by 'flickr_method'.
+    The wrapped method should return the argument dictionary
+    and a function that format the result of method_call.call_api.
 
-        Some method can propagate authentication tokens. For instance a
-        Person object can propagate its token to photos retrieved from
-        it. In this case, it should return its token also and the
-        result formatting function should take an additional argument
-        token.
+    Some method can propagate authentication tokens. For instance a
+    Person object can propagate its token to photos retrieved from
+    it. In this case, it should return its token also and the
+    result formatting function should take an additional argument
+    token.
     """
+
     def decorator(method):
         @wraps(method)
         def call(self, *args, **kwargs):
             token, kwargs = _get_token(self, **kwargs)
             method_args, format_result = method(self, *args, **kwargs)
             method_args[self.__self_name__] = self.id
-            logger.debug("Calling method '%s' with arguments: %s", flickr_method, str(method_args))
+            logger.debug(
+                "Calling method '%s' with arguments: %s",
+                flickr_method,
+                str(method_args),
+            )
             if token:
                 method_args["auth_handler"] = token
             r = method_call.call_api(method=flickr_method, **method_args)
@@ -257,9 +264,11 @@ def caller(flickr_method, static=False):
                 return format_result(r, token)
             except TypeError:
                 return format_result(r)
+
         call.flickr_method = flickr_method
         call.isstatic = False
         return call
+
     return decorator
 
 
@@ -272,30 +281,37 @@ class StaticCaller(staticmethod):
 
 def static_caller(flickr_method, static=False):
     """
-        This decorator binds a static method to the flickr method given
-        by 'flickr_method'.
-        The wrapped method should return the argument dictionary
-        and a function that format the result of method_call.call_api.
+    This decorator binds a static method to the flickr method given
+    by 'flickr_method'.
+    The wrapped method should return the argument dictionary
+    and a function that format the result of method_call.call_api.
 
-        Some method can propagate authentication tokens. For instance a
-        Person object can propagate its token to photos retrieved from
-        it. In this case, it should return its token also and the
-        result formating function should take an additional argument
-        token.
+    Some method can propagate authentication tokens. For instance a
+    Person object can propagate its token to photos retrieved from
+    it. In this case, it should return its token also and the
+    result formating function should take an additional argument
+    token.
     """
+
     def decorator(method):
         @wraps(method)
         def static_call(*args, **kwargs):
             token, kwargs = _get_token(None, **kwargs)
             method_args, format_result = method(*args, **kwargs)
             method_args["auth_handler"] = token
-            logger.debug("Calling method '%s' with arguments: %s", flickr_method, str(method_args))
+            logger.debug(
+                "Calling method '%s' with arguments: %s",
+                flickr_method,
+                str(method_args),
+            )
             r = method_call.call_api(method=flickr_method, **method_args)
             try:
                 return format_result(r, token)
             except TypeError:
                 return format_result(r)
+
         static_call.flickr_method = flickr_method
         static_call.isstatic = True
         return StaticCaller(static_call)
+
     return decorator

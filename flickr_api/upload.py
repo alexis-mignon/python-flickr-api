@@ -1,16 +1,16 @@
 """
-    Upload API for Flickr.
-    It is separated since it requires different treatments than
-    the usual API.
+Upload API for Flickr.
+It is separated since it requires different treatments than
+the usual API.
 
-    Two functions are provided:
+Two functions are provided:
 
-    - upload
-    - replace (presently not working)
+- upload
+- replace (presently not working)
 
-    Author: Alexis Mignon (c)
-    email: alexis.mignon@gmail.com
-    Date:  06/08/2011
+Author: Alexis Mignon (c)
+email: alexis.mignon@gmail.com
+Date:  06/08/2011
 
 """
 
@@ -52,8 +52,9 @@ def post(url, auth_handler, args, photo_file, photo_file_data=None):
     from urllib.parse import quote
 
     args = format_dict(args)
-    args[b"api_key"] = auth_handler.key.encode("utf8") if isinstance(
-        auth_handler.key, str) else auth_handler.key
+    args[b"api_key"] = (
+        auth_handler.key.encode("utf8") if isinstance(auth_handler.key, str) else auth_handler.key
+    )
 
     if photo_file_data is None:
         photo_file_data = open(photo_file, "rb")
@@ -68,7 +69,10 @@ def post(url, auth_handler, args, photo_file, photo_file_data=None):
         b"oauth_token": auth_handler.access_token_key.encode("utf8"),
         b"oauth_signature_method": b"HMAC-SHA1",
         b"oauth_timestamp": str(int(time.time())).encode("utf8"),
-        b"oauth_nonce": base64.b64encode(os.urandom(16)).replace(b"+", b"").replace(b"/", b"").replace(b"=", b"")[:16],
+        b"oauth_nonce": base64.b64encode(os.urandom(16))
+        .replace(b"+", b"")
+        .replace(b"/", b"")
+        .replace(b"=", b"")[:16],
         b"oauth_version": b"1.0",
     }
 
@@ -84,31 +88,19 @@ def post(url, auth_handler, args, photo_file, photo_file_data=None):
         return quote(s, safe="")
 
     sorted_params = sorted(all_params.items())
-    param_string = "&".join(
-        percent_encode(k) + "=" + percent_encode(v)
-        for k, v in sorted_params
-    )
+    param_string = "&".join(percent_encode(k) + "=" + percent_encode(v) for k, v in sorted_params)
 
     # Create signature base string
-    base_string = "&".join([
-        "POST",
-        percent_encode(url),
-        percent_encode(param_string)
-    ])
+    base_string = "&".join(["POST", percent_encode(url), percent_encode(param_string)])
 
     # Create signing key
     signing_key = (
-        percent_encode(auth_handler.secret) + "&" +
-        percent_encode(auth_handler.access_token_secret)
+        percent_encode(auth_handler.secret) + "&" + percent_encode(auth_handler.access_token_secret)
     )
 
     # Calculate signature
     signature = base64.b64encode(
-        hmac.new(
-            signing_key.encode("utf8"),
-            base_string.encode("utf8"),
-            hashlib.sha1
-        ).digest()
+        hmac.new(signing_key.encode("utf8"), base_string.encode("utf8"), hashlib.sha1).digest()
     )
 
     oauth_params[b"oauth_signature"] = signature
@@ -119,14 +111,13 @@ def post(url, auth_handler, args, photo_file, photo_file_data=None):
 
     # Convert to string keys/values for requests
     form_data = {
-        k.decode("utf8") if isinstance(k, bytes) else k:
-        v.decode("utf8") if isinstance(v, bytes) else v
+        k.decode("utf8") if isinstance(k, bytes) else k: v.decode("utf8")
+        if isinstance(v, bytes)
+        else v
         for k, v in all_params.items()
     }
 
-    files = {
-        "photo": (os.path.basename(photo_file), photo_file_data.read())
-    }
+    files = {"photo": (os.path.basename(photo_file), photo_file_data.read())}
 
     resp = requests.post(url, data=form_data, files=files, timeout=get_timeout())
     data = resp.content
@@ -135,7 +126,7 @@ def post(url, auth_handler, args, photo_file, photo_file_data=None):
         raise FlickrError("HTTP Error %i: %s" % (resp.status_code, resp.text))
 
     r = ET.fromstring(data)
-    if r.get("stat") != 'ok':
+    if r.get("stat") != "ok":
         err = r[0]
         raise FlickrAPIError(int(err.get("code")), err.get("msg"))
     return r
@@ -178,7 +169,7 @@ def upload(**args: Any) -> Photo | UploadTicket:
         args["async"] = False
 
     photo_file = args.pop("photo_file")
-    if 'photo_file_data' in args:
+    if "photo_file_data" in args:
         photo_file_data = args.pop("photo_file_data")
     else:
         photo_file_data = None
@@ -186,12 +177,12 @@ def upload(**args: Any) -> Photo | UploadTicket:
     r = post(UPLOAD_URL, auth.AUTH_HANDLER, args, photo_file, photo_file_data)
 
     t = r[0]
-    if t.tag == 'photoid':
+    if t.tag == "photoid":
         return Photo(
             id=t.text,
-            editurl='https://www.flickr.com/photos/upload/edit/?ids=' + t.text
+            editurl="https://www.flickr.com/photos/upload/edit/?ids=" + t.text,
         )
-    elif t.tag == 'ticketid':
+    elif t.tag == "ticketid":
         return UploadTicket(id=t.text)
     else:
         raise FlickrError("Unexpected tag: %s" % t.tag)
@@ -234,7 +225,7 @@ def replace(**args: Any) -> Photo | UploadTicket:
 
     photo_file = args.pop("photo_file")
 
-    if 'photo_file_data' in args:
+    if "photo_file_data" in args:
         photo_file_data = args.pop("photo_file_data")
     else:
         photo_file_data = None
@@ -243,9 +234,9 @@ def replace(**args: Any) -> Photo | UploadTicket:
 
     t = r[0]
 
-    if t.tag == 'photoid':
+    if t.tag == "photoid":
         return Photo(id=t.text)
-    elif t.tag == 'ticketid':
+    elif t.tag == "ticketid":
         return UploadTicket(id=t.text)
     else:
         raise FlickrError("Unexpected tag: %s" % t.tag)

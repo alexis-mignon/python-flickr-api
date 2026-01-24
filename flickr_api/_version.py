@@ -1,6 +1,6 @@
-""" Version module.
+"""Version module.
 
-    Allows to define the version number uniquely.
+Allows to define the version number uniquely.
 """
 
 __version__ = "0.8.0"
