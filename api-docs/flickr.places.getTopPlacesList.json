@@ -1,0 +1,95 @@
+{
+  "name": "flickr.places.getTopPlacesList",
+  "description": "Return the top 100 most geotagged places for a day.",
+  "authentication": " This method does not require authentication. ",
+  "arguments": [
+    {
+      "name": "api_key",
+      "required": true,
+      "description": "Your API application key.See herefor more details."
+    },
+    {
+      "name": "place_type_id",
+      "required": true,
+      "description": "The numeric ID for a specific place type to cluster photos by.Valid place type IDs are :22: neighbourhood7: locality8: region12: country29: continent"
+    },
+    {
+      "name": "date",
+      "required": false,
+      "description": "A valid date in YYYY-MM-DD format. The default is yesterday."
+    },
+    {
+      "name": "woe_id",
+      "required": false,
+      "description": "Limit your query to only those top places belonging to a specific Where on Earth (WOE) identifier."
+    },
+    {
+      "name": "place_id",
+      "required": false,
+      "description": "Limit your query to only those top places belonging to a specific Flickr Places identifier."
+    }
+  ],
+  "response": "\n<places total=\"100\" date_start=\"1246320000\" date_stop=\"1246406399\">\n  <place place_id=\"4KO02SibApitvSBieQ\" woeid=\"23424977\" latitude=\"48.890\" longitude=\"-116.982\" place_url=\"/United+States\" place_type=\"country\" place_type_id=\"12\" photo_count=\"23371\">United States</place>\n</places>",
+  "errors": [
+    {
+      "code": 1,
+      "title": "Required parameter missingOne or more required parameters with missing from your request.",
+      "description": ""
+    },
+    {
+      "code": 2,
+      "title": "Not a valid place type.An unknown or unsupported place type ID was passed with your request.",
+      "description": ""
+    },
+    {
+      "code": 3,
+      "title": "Not a valid date.The date argument passed with your request is invalid.",
+      "description": ""
+    },
+    {
+      "code": 4,
+      "title": "Not a valid Place IDAn invalid Places (or WOE) identifier was included with your request.",
+      "description": ""
+    },
+    {
+      "code": 100,
+      "title": "Invalid API KeyThe API key passed was not valid or has expired.",
+      "description": ""
+    },
+    {
+      "code": 105,
+      "title": "Service currently unavailableThe requested service is temporarily unavailable.",
+      "description": ""
+    },
+    {
+      "code": 106,
+      "title": "Write operation failedThe requested operation failed due to a temporary issue.",
+      "description": ""
+    },
+    {
+      "code": 111,
+      "title": "Format \"xxx\" not foundThe requested response format was not found.",
+      "description": ""
+    },
+    {
+      "code": 112,
+      "title": "Method \"xxx\" not foundThe requested method was not found.",
+      "description": ""
+    },
+    {
+      "code": 114,
+      "title": "Invalid SOAP envelopeThe SOAP envelope send in the request could not be parsed.",
+      "description": ""
+    },
+    {
+      "code": 115,
+      "title": "Invalid XML-RPC Method CallThe XML-RPC request document could not be parsed.",
+      "description": ""
+    },
+    {
+      "code": 116,
+      "title": "Bad URL foundOne or more arguments contained a URL that has been used for abuse on Flickr.",
+      "description": ""
+    }
+  ]
+}

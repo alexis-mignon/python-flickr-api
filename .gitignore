@@ -86,3 +86,13 @@ api-docs/*
 !api-docs/flickr.photosets.getInfo.json
 !api-docs/flickr.photosets.getList.json
 !api-docs/flickr.photosets.getPhotos.json
+!api-docs/flickr.places.find.json
+!api-docs/flickr.places.findByLatLon.json
+!api-docs/flickr.places.getChildrenWithPhotosPublic.json
+!api-docs/flickr.places.getInfo.json
+!api-docs/flickr.places.getInfoByUrl.json
+!api-docs/flickr.places.getPlaceTypes.json
+!api-docs/flickr.places.getShapeHistory.json
+!api-docs/flickr.places.getTopPlacesList.json
+!api-docs/flickr.places.placesForBoundingBox.json
+!api-docs/flickr.places.placesForContacts.json

@@ -1749,9 +1749,13 @@ class Place(FlickrObject):
     @staticmethod
     def parse_shapedata(shape_data_dict):
         shapedata = shape_data_dict.copy()
+        polyline_data = shapedata["polylines"]["polyline"]
+        # Handle single polyline (string) vs multiple polylines (list)
+        if isinstance(polyline_data, str):
+            polyline_data = [polyline_data]
         shapedata["polylines"] = [
             Place.ShapeData.Polyline(coords=p.split(" "))
-                for p in shapedata["polylines"]["polyline"]
+            for p in polyline_data
         ]
         if "url" in shapedata:
             shapedata["shapefile"] = shapedata.pop("urls")["shapefile"].text
@@ -1810,18 +1814,24 @@ class Place(FlickrObject):
     def placesForBoundingBox(**args):
         def format_result(r):
             info = r["places"]
+            places_data = info.pop("place")
+            if not isinstance(places_data, list):
+                places_data = [places_data]
             return [
-                Place(Place.parse_place(place))
-                    for place in info.pop("place")]
+                Place(**Place.parse_place(place))
+                for place in places_data]
         return args, format_result
 
     @static_caller("flickr.places.placesForContacts")
     def placesForContacts(**args):
         def format_result(r):
             info = r["places"]
+            places_data = info.pop("place")
+            if not isinstance(places_data, list):
+                places_data = [places_data]
             return [
-                Place(Place.parse_place(place))
-                    for place in info.pop("place")]
+                Place(**Place.parse_place(place))
+                for place in places_data]
         return args, format_result
 
     @static_caller("flickr.places.placesForTags")
@@ -2112,11 +2122,17 @@ def _none(r):
 
 def _extract_place_list(r):
     info = r["places"]
-    return FlickrList(
-        [Place(id=place.pop("place_id"), **place)
-            for place in info.pop("place")],
-        Info(**info)
-    )
+    places_data = info.pop("place")
+    if not isinstance(places_data, list):
+        places_data = [places_data]
+    places = []
+    for place in places_data:
+        # Convert text to name if name not present (clean_content converts
+        # _content to text)
+        if "text" in place and "name" not in place:
+            place["name"] = place.pop("text")
+        places.append(Place(id=place.pop("place_id"), **place))
+    return FlickrList(places, Info(**info))
 
 
 def _extract_photo_list(r, token=None):

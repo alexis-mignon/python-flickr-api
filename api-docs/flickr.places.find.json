@@ -1,0 +1,65 @@
+{
+  "name": "flickr.places.find",
+  "description": "Return a list of place IDs for a query string.The flickr.places.find method isnota geocoder. It will roundupto the nearest place type to which place IDs apply. For example, if you pass it a street level address it will return the city that contains the address rather than the street, or building, itself.",
+  "authentication": " This method does not require authentication. ",
+  "arguments": [
+    {
+      "name": "api_key",
+      "required": true,
+      "description": "Your API application key.See herefor more details."
+    },
+    {
+      "name": "query",
+      "required": true,
+      "description": "The query string to use for place ID lookups"
+    }
+  ],
+  "response": "\n<places query=\"Alabama\" total=\"3\">\n  <place place_id=\"VrrjuESbApjeFS4.\" woeid=\"2347559\" latitude=\"32.614\" longitude=\"-86.680\" place_url=\"/United+States/Alabama\" place_type=\"region\">Alabama, Alabama, United States</place>\n  <place place_id=\"cGHuc0mbApmzEHoP\" woeid=\"2352520\" latitude=\"43.096\" longitude=\"-78.389\" place_url=\"/United+States/New+York/Alabama\" place_type=\"locality\">Alabama, New York, United States</place>\n  <place place_id=\"o4yVPEqYBJvFMP8Q\" woeid=\"1579389\" latitude=\"-26.866\" longitude=\"26.583\" place_url=\"/South+Africa/North+West/Alabama\" place_type=\"locality\">Alabama, North West, South Africa</place>\n</places>",
+  "errors": [
+    {
+      "code": 1,
+      "title": "Required parameter missingOne or more required parameters was not included with the API call.",
+      "description": ""
+    },
+    {
+      "code": 100,
+      "title": "Invalid API KeyThe API key passed was not valid or has expired.",
+      "description": ""
+    },
+    {
+      "code": 105,
+      "title": "Service currently unavailableThe requested service is temporarily unavailable.",
+      "description": ""
+    },
+    {
+      "code": 106,
+      "title": "Write operation failedThe requested operation failed due to a temporary issue.",
+      "description": ""
+    },
+    {
+      "code": 111,
+      "title": "Format \"xxx\" not foundThe requested response format was not found.",
+      "description": ""
+    },
+    {
+      "code": 112,
+      "title": "Method \"xxx\" not foundThe requested method was not found.",
+      "description": ""
+    },
+    {
+      "code": 114,
+      "title": "Invalid SOAP envelopeThe SOAP envelope send in the request could not be parsed.",
+      "description": ""
+    },
+    {
+      "code": 115,
+      "title": "Invalid XML-RPC Method CallThe XML-RPC request document could not be parsed.",
+      "description": ""
+    },
+    {
+      "code": 116,
+      "title": "Bad URL foundOne or more arguments contained a URL that has been used for abuse on Flickr.",
+      "description": ""
+    }
+  ]
+}
