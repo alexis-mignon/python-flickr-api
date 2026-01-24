@@ -83,3 +83,6 @@ api-docs/*
 !api-docs/flickr.photosets.comments.addComment.json
 !api-docs/flickr.photosets.comments.getList.json
 !api-docs/flickr.photosets.create.json
+!api-docs/flickr.photosets.getInfo.json
+!api-docs/flickr.photosets.getList.json
+!api-docs/flickr.photosets.getPhotos.json

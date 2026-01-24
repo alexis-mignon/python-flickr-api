@@ -1,0 +1,95 @@
+{
+  "name": "flickr.photosets.getList",
+  "description": "Returns the photosets belonging to the specified user.",
+  "authentication": " This method does not require authentication. ",
+  "arguments": [
+    {
+      "name": "api_key",
+      "required": true,
+      "description": "Your API application key.See herefor more details."
+    },
+    {
+      "name": "user_id",
+      "required": false,
+      "description": "The NSID of the user to get a photoset list for. If none is specified, the calling user is assumed."
+    },
+    {
+      "name": "page",
+      "required": false,
+      "description": "The page of results to get. Currently, if this is not provided, all sets are returned, but this behaviour may change in future."
+    },
+    {
+      "name": "per_page",
+      "required": false,
+      "description": "The number of sets to get per page. If paging is enabled, the maximum number of sets per page is 500."
+    },
+    {
+      "name": "primary_photo_extras",
+      "required": false,
+      "description": "A comma-delimited list of extra information to fetch for the primary photo. Currently supported fields are: license, date_upload, date_taken, owner_name, icon_server, original_format, last_update, geo, tags, machine_tags, o_dims, views, media, path_alias, url_sq, url_t, url_s, url_m, url_o"
+    },
+    {
+      "name": "photo_ids",
+      "required": false,
+      "description": "A comma-separated list of photo ids. If specified, each returned set will include a list of these photo ids that are present in the set as \"has_requested_photos\""
+    },
+    {
+      "name": "sort_groups",
+      "required": false,
+      "description": "A comma-separated list of groups used to sort the output sets. If has_photo is present, any of the calling user's galleries containing photos referred to in photo_ids will be returned before other galleries. The order of the sort_groups will dictate the order that the groups are returned in. Only available if continuation is used. The resulting output will include a \"sort_group\" parameter indicating the sort_group that each set is part of, or null if not applicable"
+    }
+  ],
+  "response": "\n<photosets page=\"1\" pages=\"1\" perpage=\"30\" total=\"2\" cancreate=\"1\">\n  <photoset id=\"72157626216528324\" primary=\"5504567858\" secret=\"017804c585\" server=\"5174\" farm=\"6\" photos=\"22\" videos=\"0\" count_views=\"137\" count_comments=\"0\" can_comment=\"1\" date_create=\"1299514498\" date_update=\"1300335009\">\n    <title>Avis Blanche</title>\n    <description>My Grandma's Recipe File.</description>\n  </photoset>\n  <photoset id=\"72157624618609504\" primary=\"4847770787\" secret=\"6abd09a292\" server=\"4153\" farm=\"5\" photos=\"43\" videos=\"12\" count_views=\"523\" count_comments=\"1\" can_comment=\"1\" date_create=\"1280530593\" date_update=\"1308091378\">\n    <title>Mah Kittehs</title>\n    <description>Sixty and Niner. Born on the 3rd of May, 2010, or thereabouts. Came to my place on Thursday, July 29, 2010.</description>\n  </photoset>\n</photosets>",
+  "errors": [
+    {
+      "code": 1,
+      "title": "User not foundThe user NSID passed was not a valid user NSID and the calling user was not logged in.",
+      "description": ""
+    },
+    {
+      "code": 2,
+      "title": "Continuation key is invalid or expiredThe continuation key passed was not valid or has already expired.",
+      "description": ""
+    },
+    {
+      "code": 100,
+      "title": "Invalid API KeyThe API key passed was not valid or has expired.",
+      "description": ""
+    },
+    {
+      "code": 105,
+      "title": "Service currently unavailableThe requested service is temporarily unavailable.",
+      "description": ""
+    },
+    {
+      "code": 106,
+      "title": "Write operation failedThe requested operation failed due to a temporary issue.",
+      "description": ""
+    },
+    {
+      "code": 111,
+      "title": "Format \"xxx\" not foundThe requested response format was not found.",
+      "description": ""
+    },
+    {
+      "code": 112,
+      "title": "Method \"xxx\" not foundThe requested method was not found.",
+      "description": ""
+    },
+    {
+      "code": 114,
+      "title": "Invalid SOAP envelopeThe SOAP envelope send in the request could not be parsed.",
+      "description": ""
+    },
+    {
+      "code": 115,
+      "title": "Invalid XML-RPC Method CallThe XML-RPC request document could not be parsed.",
+      "description": ""
+    },
+    {
+      "code": 116,
+      "title": "Bad URL foundOne or more arguments contained a URL that has been used for abuse on Flickr.",
+      "description": ""
+    }
+  ]
+}
