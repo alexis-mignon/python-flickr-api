@@ -48,3 +48,13 @@ api-docs/*
 !api-docs/flickr.machinetags.getValues.json
 !api-docs/flickr.panda.getList.json
 !api-docs/flickr.panda.getPhotos.json
+!api-docs/flickr.people.findByEmail.json
+!api-docs/flickr.people.findByUsername.json
+!api-docs/flickr.people.getGroups.json
+!api-docs/flickr.people.getInfo.json
+!api-docs/flickr.people.getLimits.json
+!api-docs/flickr.people.getPhotos.json
+!api-docs/flickr.people.getPhotosOf.json
+!api-docs/flickr.people.getPublicGroups.json
+!api-docs/flickr.people.getPublicPhotos.json
+!api-docs/flickr.people.getUploadStatus.json
