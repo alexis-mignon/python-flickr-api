@@ -15,13 +15,15 @@
 """
 
 
-from .flickrerrors import FlickrError, FlickrAPIError
-from .objects import Photo, UploadTicket
-from .method_call import get_timeout
-from . import auth
 import os
 from xml.etree import ElementTree as ET
+
 import requests
+
+from . import auth
+from .flickrerrors import FlickrAPIError, FlickrError
+from .method_call import get_timeout
+from .objects import Photo, UploadTicket
 
 UPLOAD_URL = "https://api.flickr.com/services/upload/"
 REPLACE_URL = "https://api.flickr.com/services/replace/"
@@ -60,7 +62,7 @@ def post(url, auth_handler, args, photo_file, photo_file_data=None):
     data = resp.content
 
     if resp.status_code != 200:
-        raise FlickrError("HTTP Error %i: %s" % (resp.status_code, resp.text))
+        raise FlickrError(f"HTTP Error {resp.status_code}: {resp.text}")
 
     r = ET.fromstring(data)
     if r.get("stat") != 'ok':
@@ -122,7 +124,7 @@ def upload(**args):
     elif t.tag == 'ticketid':
         return UploadTicket(id=t.text)
     else:
-        raise FlickrError("Unexpected tag: %s" % t.tag)
+        raise FlickrError(f"Unexpected tag: {t.tag}")
 
 
 def replace(**args):
@@ -176,4 +178,4 @@ def replace(**args):
     elif t.tag == 'ticketid':
         return UploadTicket(id=t.text)
     else:
-        raise FlickrError("Unexpected tag: %s" % t.tag)
+        raise FlickrError(f"Unexpected tag: {t.tag}")

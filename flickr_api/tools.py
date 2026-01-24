@@ -1,6 +1,7 @@
-from .method_call import call_api
-import sys
 import os
+import sys
+
+from .method_call import call_api
 
 
 def load_methods():
@@ -9,6 +10,7 @@ def load_methods():
     """
     r = call_api(method="flickr.reflection.getMethods")
     return r["methods"]["method"]
+
 
 __perms__ = {0: 'none', '1': 'read', '2': 'write', '3': 'delete'}
 
@@ -33,7 +35,7 @@ def methods_info():
 def write_reflection(path, template, methods=None):
     if methods is None:
         methods = methods_info()
-    with open(template, "r") as t:
+    with open(template) as t:
         templ = t.read()
 
     prefix = ""
@@ -54,8 +56,10 @@ def write_reflection(path, template, methods=None):
         f.write(new_templ)
 
 
-def write_doc(output_path, exclude=["flickr_keys", "methods"]):
+def write_doc(output_path, exclude=None):
     import flickr_api
+    if exclude is None:
+        exclude = ["flickr_keys", "methods"]
     exclude.append("__init__")
     modules = ['flickr_api']
     dir = os.path.dirname(flickr_api.__file__)

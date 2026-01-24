@@ -29,9 +29,10 @@ class FlickrAPIError(FlickrError):
     message: str
         Error message
     """
-        FlickrError.__init__(self, "%i : %s" % (code, message))
+        FlickrError.__init__(self, f"{code} : {message}")
         self.code = code
         self.message = message
+
 
 class FlickrServerError(FlickrError):
     """ Exception for Flickr Server Errors
@@ -55,6 +56,6 @@ class FlickrServerError(FlickrError):
     content: str
         error content message
     """
-        FlickrError.__init__(self, "HTTP Server Error %i: %s" % (status_code, content))
+        FlickrError.__init__(self, f"HTTP Server Error {status_code}: {content}")
         self.status_code = status_code
         self.content = content

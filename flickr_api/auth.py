@@ -34,8 +34,9 @@
 
 """
 
-from requests_oauthlib import OAuth1
 import requests
+from requests_oauthlib import OAuth1
+
 from . import keys
 
 TOKEN_REQUEST_URL = "https://www.flickr.com/services/oauth/request_token"
@@ -49,7 +50,7 @@ class AuthHandlerError(Exception):
     pass
 
 
-class AuthHandler(object):
+class AuthHandler:
     def __init__(self, key=None, secret=None, callback=None,
                  access_token_key=None, access_token_secret=None,
                  request_token_key=None, request_token_secret=None):
@@ -61,8 +62,8 @@ class AuthHandler(object):
             raise ValueError("API keys have not been set.")
 
         if callback is None:
-            callback = ("https://api.flickr.com/services/rest/"
-                        "?method=flickr.test.echo&api_key=%s" % self.key)
+            callback = (f"https://api.flickr.com/services/rest/"
+                        f"?method=flickr.test.echo&api_key={self.key}")
 
         self.callback = callback
 
@@ -93,19 +94,17 @@ class AuthHandler(object):
     def get_authorization_url(self, perms='read'):
         if self.request_token_key is None:
             raise AuthHandlerError(
-                ("Request token is not defined. This ususally means that the"
-                 " access token has been loaded from a file.")
+                "Request token is not defined. This ususally means that the"
+                 " access token has been loaded from a file."
             )
-        return "%s?oauth_token=%s&perms=%s" % (
-            AUTHORIZE_URL, self.request_token_key, perms
-        )
+        return f"{AUTHORIZE_URL}?oauth_token={self.request_token_key}&perms={perms}"
 
     def set_verifier(self, oauth_verifier):
         if self.request_token_key is None:
             raise AuthHandlerError(
-                ("Request token is not defined. "
+                "Request token is not defined. "
                  "This ususally means that the access token has been loaded "
-                 "from a file.")
+                 "from a file."
             )
 
         oauth = OAuth1(
@@ -124,7 +123,9 @@ class AuthHandler(object):
         self.access_token_key = token_data['oauth_token']
         self.access_token_secret = token_data['oauth_token_secret']
 
-    def complete_parameters(self, url, params={}):
+    def complete_parameters(self, url, params=None):
+        if params is None:
+            params = {}
         """
         Returns an OAuth1 auth object that can be used with requests.
         For compatibility with existing code that expects a dict-like object,
@@ -222,7 +223,7 @@ class AuthHandler(object):
         `flickr_keys.py` file. Setting `set_api_keys=True` should be considered
         as a conveniency only for single user settings.
 """
-        with open(filename, "r") as f:
+        with open(filename) as f:
             keys_info = f.read().split("\n")
             try:
                 key, secret, access_key, access_secret = keys_info
@@ -258,7 +259,7 @@ class AuthHandler(object):
                 request_token_key = input_dict['request_token_key']
                 request_token_secret = input_dict['request_token_secret']
         except Exception:
-            raise AuthHandlerError("Error occurred while processing data")
+            raise AuthHandlerError("Error occurred while processing data") from None
 
         return AuthHandler(key, secret, access_token_key=access_key,
                            access_token_secret=access_secret,

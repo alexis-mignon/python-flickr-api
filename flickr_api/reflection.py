@@ -9,19 +9,21 @@
     date: 21/03/2012
 """
 
+import logging
 import re
 from functools import wraps
-from . import method_call
-from . import auth
+
+from . import auth, method_call
 from .flickrerrors import FlickrError
-import logging
 
 logger = logging.getLogger(__name__)
 
 try:
     from .methods import __methods__
 
-    def make_docstring(method, ignore_arguments=[], show_errors=True):
+    def make_docstring(method, ignore_arguments=None, show_errors=True):
+        if ignore_arguments is None:
+            ignore_arguments = []
         info = __methods__[method]
         context = {'method': method}
 
@@ -53,7 +55,7 @@ try:
                 authentication = ("This method requires authentication with "
                                   "'delete' permission")
             else:
-                raise ValueError("Unexpected permision value: %s" % required)
+                raise ValueError(f"Unexpected permision value: {required}")
         else:
             authentication = "This method does not require authentication"
         context["authentication"] = authentication
@@ -66,8 +68,7 @@ try:
                 continue
             argument_context = {
                 'argument_name': aname,
-                'argument_required': 'optional' if a["optional"] \
-                                                else 'required',
+                'argument_required': 'optional' if a["optional"] else 'required',
                 'argument_descr': format_block(a["text"], 80, " " * 12)
             }
             arguments.append(argument % argument_context)
@@ -93,7 +94,7 @@ try:
 except ImportError:
     __methods__ = {}
 
-    def make_docstring(method, ignore_arguments=[], show_errors=True):
+    def make_docstring(method, ignore_arguments=None, show_errors=True):
         return None
 
 LIST_REG = re.compile(r'<ul>(.*?)</ul>', re.DOTALL | re.UNICODE | re.MULTILINE)
@@ -119,7 +120,7 @@ def bindings_to(flickr_method):
         if flickr_method in __methods__:
             return []
         else:
-            raise FlickrError("Unknown Flickr API method: %s" % flickr_method)
+            raise FlickrError(f"Unknown Flickr API method: {flickr_method}") from None
 
 
 class FlickrAutoDoc(type):
@@ -160,7 +161,7 @@ class FlickrAutoDoc(type):
                                                show_errors=False)
 
                 class_method_name = classname + "." + k
-                method_bindings = __bindings__.setdefault(class_method_name, [])
+                __bindings__.setdefault(class_method_name, [])
 
         return type.__new__(mcl, classname, bases, classDict)
 
@@ -207,7 +208,7 @@ def format_block(text, width, prefix=""):
     for block in list_blocks:
         block.replace("\n", " ")
         items = "\n" + "".join(
-            [format_block("* %s" % i.strip(), width, prefix)
+            [format_block(f"* {i.strip()}", width, prefix)
                 for i in LIST_ITEM_REG.findall(block)]
         ) + prefix
         res = LIST_REG.sub(items, res)

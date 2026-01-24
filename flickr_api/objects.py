@@ -1,4 +1,3 @@
-# -*- encoding: utf-8 -*-
 """
     Object Oriented implementation of Flickr API.
 
@@ -21,28 +20,28 @@
 """
 # pylint: disable=method-name-lower-case
 
-from . import method_call
-from .flickrerrors import FlickrError
-from .reflection import caller, static_caller, FlickrAutoDoc
-from collections import UserList
 import io
-import urllib.request
-from . import auth
-import warnings
-from itertools import groupby
 import os.path
+import urllib.request
+import warnings
+from collections import UserList
+
+from . import auth
+from .flickrerrors import FlickrError
+from .reflection import FlickrAutoDoc, caller, static_caller
 
 try:
     from PIL import Image
 except ImportError:
-    class Image(object):
+    class Image:
         @staticmethod
         def open(*args, **kwargs):
-            image_module_404 = "\nThe PIL package was not found on this system. Images cannot be displayed." \
-                "\nConsider installing PIL or Pillow."
-            warnings.warn(image_module_404)
+            image_module_404 = (
+                "\nThe PIL package was not found on this system. "
+                "Images cannot be displayed.\nConsider installing PIL or Pillow."
+            )
+            warnings.warn(image_module_404, stacklevel=2)
             raise RuntimeError("Image module not found.")
-
 
 
 _SIZES_LABEL = {
@@ -59,6 +58,7 @@ _SIZES_LABEL = {
     'k': 'Large 2048',
     'o': 'Original'
 }
+
 
 def dict_converter(keys, func):
     def convert(dict_):
@@ -79,7 +79,7 @@ def str_to_bool(value):
     return value not in ("0", "false", "False", False, 0)
 
 
-class FlickrObject(object, metaclass=FlickrAutoDoc):
+class FlickrObject(metaclass=FlickrAutoDoc):
     """
         Base Object for Flickr API Objects.
         Flickr Objects are dynamically created from the
@@ -661,7 +661,7 @@ class License(FlickrObject):
             licenses = r["licenses"]["license"]
             if not isinstance(licenses, list):
                 licenses = [licenses]
-            return [License(**l) for l in licenses]
+            return [License(**lic) for lic in licenses]
         return {}, format_result
 
 
@@ -766,7 +766,7 @@ class Person(FlickrObject):
     __self_name__ = "user_id"
 
     def __init__(self, **params):
-        if not "id" in params:
+        if "id" not in params:
             if "nsid" in params:
                 params["id"] = params["nsid"]
             else:
@@ -1274,7 +1274,7 @@ class Photo(FlickrObject):
         """
             returns the largest size for the current photo.
         """
-        sizes = {k:v for k,v in self.getSizes().items() if v["media"] == self.media}
+        sizes = {k: v for k, v in self.getSizes().items() if v["media"] == self.media}
         max_size = None
         max_area = None
         for sl, s in sizes.items():
@@ -1343,7 +1343,6 @@ class Photo(FlickrObject):
             output_filename = filename + file_ext
 
         return output_filename
-
 
     def save(self, filename, size_label=None, timeout=10):
         """
@@ -1458,7 +1457,10 @@ class Photo(FlickrObject):
             args["extras"] = []
         if not isinstance(args["extras"], list):
             args["extras"] = [args["extras"]]
-        args["extras"] += "media,url_sq, url_t, url_s, url_q, url_m, url_n, url_z, url_c, url_l, url_o".split(", ")
+        args["extras"] += (
+            "media,url_sq, url_t, url_s, url_q, url_m, url_n, url_z, url_c, url_l, url_o"
+            .split(", ")
+        )
 
         args = _format_id("user", args)
         args = _format_extras(args)
@@ -1686,7 +1688,7 @@ class Photoset(FlickrObject):
 
         photo_ids = args["photo_ids"]
         if isinstance(photo_ids, list):
-            args["photo_ids"] = u", ".join(photo_ids)
+            args["photo_ids"] = ", ".join(photo_ids)
 
         return args, _none
 
@@ -1699,7 +1701,7 @@ class Photoset(FlickrObject):
 
         photo_ids = args["photo_ids"]
         if isinstance(photo_ids, list):
-            args["photo_ids"] = u",".join(photo_ids)
+            args["photo_ids"] = ",".join(photo_ids)
 
         return args, _none
 
@@ -2157,6 +2159,7 @@ def _extract_photo_list(r, token=None):
         photos.append(Photo(**p))
     return FlickrList(photos, Info(**infos))
 
+
 def _parse_inline_sizes(p):
     keys = [k for k in p.keys() if k.startswith("url_")]
     size_keys = set(k.split("_")[-1] for k in keys)
@@ -2182,7 +2185,7 @@ def _check_list(obj):
         return [obj]
 
 
-class Walker(object):
+class Walker:
     """
         Object to walk along paginated results. This allows
         to loop on all the results corresponding to a query
@@ -2266,7 +2269,7 @@ class Walker(object):
         return curr
 
 
-class SlicedWalker(object):
+class SlicedWalker:
     """ Used to apply slices on objects.
         Starting at a large index might be slow since all items till
         the start one will be iterated.

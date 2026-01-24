@@ -6,3 +6,4 @@ extend-exclude =
     .venv,
     build,
     dist,
+    flickr_api/methods.py,

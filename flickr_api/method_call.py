@@ -8,24 +8,24 @@
     Date: 06/08/2011
 
 """
+import hashlib
+import logging
+import urllib.error
 import urllib.parse
 import urllib.request
-import urllib.error
+
 import requests
-import hashlib
-import json
-import logging
 
 from . import keys
-from .utils import urlopen_and_read
-from .flickrerrors import FlickrError, FlickrAPIError, FlickrServerError
 from .cache import SimpleCache
+from .flickrerrors import FlickrAPIError, FlickrError, FlickrServerError
+from .utils import urlopen_and_read
 
 REST_URL = "https://api.flickr.com/services/rest/"
 
 CACHE = None
 
-IGNORED_FIELDS = set(["oauth_nonce", "oauth_timestamp", "oauth_signature"])
+IGNORED_FIELDS = {"oauth_nonce", "oauth_timestamp", "oauth_signature"}
 
 logger = logging.getLogger(__name__)
 
@@ -52,14 +52,18 @@ def disable_cache():
 # See requests package documentation for timeout usage details.
 # https://requests.readthedocs.io/en/latest/user/quickstart/#timeouts
 TIMEOUT = 10
+
+
 def set_timeout(seconds):
     """Set timeout in seconds for requests calls
     """
     global TIMEOUT
     TIMEOUT = seconds
 
+
 def get_timeout():
     return TIMEOUT
+
 
 def send_request(url, data):
     """send a http request.
@@ -68,7 +72,7 @@ def send_request(url, data):
     try:
         return urlopen_and_read(req)
     except urllib.error.HTTPError as e:
-        raise FlickrError(e.read().split('&')[0])
+        raise FlickrError(e.read().split(b'&')[0]) from e
 
 
 def call_api(api_key=None, api_secret=None, auth_handler=None,
@@ -141,16 +145,17 @@ def call_api(api_key=None, api_secret=None, auth_handler=None,
     if CACHE is None:
         resp = requests.post(request_url, args, auth=oauth_auth, timeout=get_timeout())
     else:
-        cachekey = {k:v for k,v in args.items() if k not in IGNORED_FIELDS}
+        cachekey = {k: v for k, v in args.items() if k not in IGNORED_FIELDS}
         cachekey = urllib.parse.urlencode(cachekey)
 
-        resp = CACHE.get(cachekey) or requests.post(request_url, args,
-            auth=oauth_auth, timeout=get_timeout())
+        resp = CACHE.get(cachekey) or requests.post(
+            request_url, args, auth=oauth_auth, timeout=get_timeout()
+        )
         if cachekey not in CACHE:
             CACHE.set(cachekey, resp)
-            logger.debug("NO HIT for cache key: %s" % cachekey)
+            logger.debug("NO HIT for cache key: %s", cachekey)
         else:
-            logger.debug("   HIT for cache key: %s" % cachekey)
+            logger.debug("   HIT for cache key: %s", cachekey)
 
     if raw:
         return resp.content
@@ -162,7 +167,7 @@ def call_api(api_key=None, api_secret=None, auth_handler=None,
     try:
         resp = resp.json()
 
-    except ValueError as e:
+    except ValueError:
         logger.error("Could not parse response: %s", str(resp.content))
 
     if resp["stat"] != "ok":

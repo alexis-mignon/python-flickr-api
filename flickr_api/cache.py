@@ -1,34 +1,32 @@
-# -*- encoding: utf-8 -*-
 # This code comes form the Stuvel's "flickrapi" project.
 
-#Copyright (c) 2007 by the respective coders, see
-#http://www.stuvel.eu/projects/flickrapi
+# Copyright (c) 2007 by the respective coders, see
+# http://www.stuvel.eu/projects/flickrapi
 
-#This code is subject to the Python licence, as can be read on
-#http://www.python.org/download/releases/2.5.2/license/
+# This code is subject to the Python licence, as can be read on
+# http://www.python.org/download/releases/2.5.2/license/
 
-#For those without an internet connection, here is a summary. When this
-#summary clashes with the Python licence, the latter will be applied.
+# For those without an internet connection, here is a summary. When this
+# summary clashes with the Python licence, the latter will be applied.
 
-#Permission is hereby granted, free of charge, to any person obtaining
-#a copy of this software and associated documentation files (the
-#"Software"), to deal in the Software without restriction, including
-#without limitation the rights to use, copy, modify, merge, publish,
-#distribute, sublicense, and/or sell copies of the Software, and to
-#permit persons to whom the Software is furnished to do so, subject to
-#the following conditions:
+# Permission is hereby granted, free of charge, to any person obtaining
+# a copy of this software and associated documentation files (the
+# "Software"), to deal in the Software without restriction, including
+# without limitation the rights to use, copy, modify, merge, publish,
+# distribute, sublicense, and/or sell copies of the Software, and to
+# permit persons to whom the Software is furnished to do so, subject to
+# the following conditions:
 
-#The above copyright notice and this permission notice shall be
-#included in all copies or substantial portions of the Software.
+# The above copyright notice and this permission notice shall be
+# included in all copies or substantial portions of the Software.
 
-#THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-#EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-#MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
-#IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
-#CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
-#TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
-#SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+# EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+# MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+# IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
+# CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
+# TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
+# SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 ''' Call result cache.
 
 Designed to have the same interface as the `Django low-level cache API`_.
@@ -43,7 +41,7 @@ import threading
 import time
 
 
-class SimpleCache(object):
+class SimpleCache:
     '''Simple response cache for FlickrAPI calls.
 
     This stores max 50 entries, timing them out after 120 seconds:

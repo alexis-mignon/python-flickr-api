@@ -21,16 +21,22 @@
 
 """
 
-try:
-    from .objects import *
-    from . import objects
-    from .upload import upload as Upload
-    from .upload import upload, replace
-except Exception as e:
-    print ("Could not load all modules")
-    print (type(e), e)
+from ._version import __version__ as __version__  # noqa: F401
+from .auth import set_auth_handler as set_auth_handler  # noqa: F401
+from .keys import set_keys as set_keys  # noqa: F401
+from .method_call import (  # noqa: F401
+    disable_cache as disable_cache,
+    enable_cache as enable_cache,
+    get_timeout as get_timeout,
+    set_timeout as set_timeout,
+)
 
-from .auth import set_auth_handler
-from .method_call import enable_cache, disable_cache, set_timeout, get_timeout
-from .keys import set_keys
-from ._version import __version__
+try:
+    from . import objects as objects  # noqa: F401
+    from .objects import *  # noqa: F401, F403
+    from .upload import replace as replace, upload as upload  # noqa: F401
+
+    Upload = upload  # Alias for backward compatibility
+except Exception as e:
+    print("Could not load all modules")
+    print(type(e), e)
