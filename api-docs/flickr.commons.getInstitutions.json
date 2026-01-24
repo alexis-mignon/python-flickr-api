@@ -1,0 +1,55 @@
+{
+  "name": "flickr.commons.getInstitutions",
+  "description": "Retrieves a list of the current Commons institutions.",
+  "authentication": " This method does not require authentication. ",
+  "arguments": [
+    {
+      "name": "api_key",
+      "required": true,
+      "description": "Your API application key.See herefor more details."
+    }
+  ],
+  "response": "\n<rsp stat=\"ok\">\n  <institutions>\n    <institution nsid=\"123456@N01\" date_launch=\"1232000000\">\n      <name>Institution</name>\n      <urls>\n        <url type=\"site\">http://example.com/</url>\n        <url type=\"license\">http://example.com/commons/license</url>\n        <url type=\"flickr\">http://flickr.com/photos/institution</url>\n      </urls>\n    </institution>\n  </institutions>\n</rsp>",
+  "errors": [
+    {
+      "code": 100,
+      "title": "Invalid API KeyThe API key passed was not valid or has expired.",
+      "description": ""
+    },
+    {
+      "code": 105,
+      "title": "Service currently unavailableThe requested service is temporarily unavailable.",
+      "description": ""
+    },
+    {
+      "code": 106,
+      "title": "Write operation failedThe requested operation failed due to a temporary issue.",
+      "description": ""
+    },
+    {
+      "code": 111,
+      "title": "Format \"xxx\" not foundThe requested response format was not found.",
+      "description": ""
+    },
+    {
+      "code": 112,
+      "title": "Method \"xxx\" not foundThe requested method was not found.",
+      "description": ""
+    },
+    {
+      "code": 114,
+      "title": "Invalid SOAP envelopeThe SOAP envelope send in the request could not be parsed.",
+      "description": ""
+    },
+    {
+      "code": 115,
+      "title": "Invalid XML-RPC Method CallThe XML-RPC request document could not be parsed.",
+      "description": ""
+    },
+    {
+      "code": 116,
+      "title": "Bad URL foundOne or more arguments contained a URL that has been used for abuse on Flickr.",
+      "description": ""
+    }
+  ]
+}

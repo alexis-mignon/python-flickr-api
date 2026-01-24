@@ -266,7 +266,7 @@ class Camera(FlickrObject):
         @caller("flickr.cameras.getBrandModels")
         def getModels(self):
             return ({},
-                   lambda r: [Camera(**m) for m in r["cameras"]["camera"]]
+                   lambda r: [Camera(**m) for m in _check_list(r["cameras"]["camera"])]
             )
 
 
@@ -276,12 +276,12 @@ class Collection(FlickrObject):
 
     @caller("flickr.collections.getInfo")
     def getInfo(self, **args):
-        def format_result(r):
+        def format_result(r, token=None):
             collection = r["collection"]
             icon_photos = _check_list(collection["iconphotos"]["photo"])
             photos = []
-            for p in photos:
-                p["owner"] = Person(p["owner"])
+            for p in icon_photos:
+                p["owner"] = Person(id=p["owner"])
                 photos.append(Photo(**p))
             collection["iconphotos"] = photos
             return collection
@@ -295,10 +295,10 @@ class Collection(FlickrObject):
     @caller("flickr.collections.getTree")
     def getTree(self, **args):
         def format_result(r, token=None):
-            collections = _check_list(r["collections"])
+            collections = _check_list(r["collections"]["collection"])
             collections_ = []
             for c in collections:
-                sets = _check_list(c.pop("set"))
+                sets = _check_list(c.pop("set", []))
                 sets_ = [Photoset(token=token, **s) for s in sets]
                 collections_.append(Collection(token=token, sets=sets_, **c))
             return collections_
@@ -894,10 +894,10 @@ class Person(FlickrObject):
     @caller("flickr.collections.getTree")
     def getCollectionTree(self, **args):
         def format_result(r, token=None):
-            collections = _check_list(r["collections"])
+            collections = _check_list(r["collections"]["collection"])
             collections_ = []
-            for c in collections[0]["collection"]:
-                sets = _check_list(c.pop("set"))
+            for c in collections:
+                sets = _check_list(c.pop("set", []))
                 sets_ = [Photoset(token=token, **s) for s in sets]
                 collections_.append(Collection(token=token, sets=sets_, **c))
             return collections_

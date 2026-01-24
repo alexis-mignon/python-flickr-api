@@ -1,0 +1,75 @@
+{
+  "name": "flickr.collections.getTree",
+  "description": "Returns a tree (or sub tree) of collections belonging to a given user.\n\t\t\t\tNote that the response values of `iconlarge` and `iconsmall` are defunct and will now return empty mosaic grids. For more information on how to\n\t\t\t\tuse the new style of collection mosaics, gohere.",
+  "authentication": " This method does not require authentication. ",
+  "arguments": [
+    {
+      "name": "api_key",
+      "required": true,
+      "description": "Your API application key.See herefor more details."
+    },
+    {
+      "name": "collection_id",
+      "required": false,
+      "description": "The ID of the collection to fetch a tree for, or zero to fetch the root collection. Defaults to zero."
+    },
+    {
+      "name": "user_id",
+      "required": false,
+      "description": "The ID of the account to fetch the collection tree for. Defaults to the calling user."
+    }
+  ],
+  "response": "\n<collections>\n  <collection id=\"12-72157594586579649\" title=\"All My Photos\" description=\"a collection\" iconlarge=\"https://combo.staticflickr.com/pw/images/collection_default_l.gif\" iconsmall=\"https://combo.staticflickr.com/pw/images/collection_default_s.gif\">\n    <set id=\"92157594171298291\" title=\"kitesurfing\" description=\"a set\" />\n    <set id=\"72157594247596158\" title=\"faves\" description=\"some favorites.\" />\n  </collection>\n</collections>",
+  "errors": [
+    {
+      "code": 1,
+      "title": "User not foundThe specified user could not be found.",
+      "description": ""
+    },
+    {
+      "code": 2,
+      "title": "Collection not foundThe specified collection does not exist.",
+      "description": ""
+    },
+    {
+      "code": 100,
+      "title": "Invalid API KeyThe API key passed was not valid or has expired.",
+      "description": ""
+    },
+    {
+      "code": 105,
+      "title": "Service currently unavailableThe requested service is temporarily unavailable.",
+      "description": ""
+    },
+    {
+      "code": 106,
+      "title": "Write operation failedThe requested operation failed due to a temporary issue.",
+      "description": ""
+    },
+    {
+      "code": 111,
+      "title": "Format \"xxx\" not foundThe requested response format was not found.",
+      "description": ""
+    },
+    {
+      "code": 112,
+      "title": "Method \"xxx\" not foundThe requested method was not found.",
+      "description": ""
+    },
+    {
+      "code": 114,
+      "title": "Invalid SOAP envelopeThe SOAP envelope send in the request could not be parsed.",
+      "description": ""
+    },
+    {
+      "code": 115,
+      "title": "Invalid XML-RPC Method CallThe XML-RPC request document could not be parsed.",
+      "description": ""
+    },
+    {
+      "code": 116,
+      "title": "Bad URL foundOne or more arguments contained a URL that has been used for abuse on Flickr.",
+      "description": ""
+    }
+  ]
+}

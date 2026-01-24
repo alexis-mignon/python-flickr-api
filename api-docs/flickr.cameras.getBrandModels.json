@@ -1,0 +1,65 @@
+{
+  "name": "flickr.cameras.getBrandModels",
+  "description": "Retrieve all the models for a given camera brand.",
+  "authentication": " This method does not require authentication. ",
+  "arguments": [
+    {
+      "name": "api_key",
+      "required": true,
+      "description": "Your API application key.See herefor more details."
+    },
+    {
+      "name": "brand",
+      "required": true,
+      "description": "The ID of the requested brand (as returned from flickr.cameras.getBrands)."
+    }
+  ],
+  "response": "\n<rsp stat=\"ok\">\n  <cameras brand=\"apple\">\n    <camera id=\"iphone_9000\">\n      <name>iPhone 9000</name>\n      <details>\n        <megapixels>22.0</megapixels>\n        <zoom>3.0</zoom>\n        <lcd_size>40.5</lcd_size>\n        <storage_type>Flash</storage_type>\n      </details>\n      <images>\n        <small>http://farm3.staticflickr.com/1234/cameras/123456_model_small_123456.jpg</small>\n        <large>http://farm3.staticflickr.com/1234/cameras/123456_model_large_123456.jpg</large>\n      </images>\n    </camera>\n  </cameras>\n</rsp>",
+  "errors": [
+    {
+      "code": 1,
+      "title": "Brand not foundUnable to find the given brand ID.",
+      "description": ""
+    },
+    {
+      "code": 100,
+      "title": "Invalid API KeyThe API key passed was not valid or has expired.",
+      "description": ""
+    },
+    {
+      "code": 105,
+      "title": "Service currently unavailableThe requested service is temporarily unavailable.",
+      "description": ""
+    },
+    {
+      "code": 106,
+      "title": "Write operation failedThe requested operation failed due to a temporary issue.",
+      "description": ""
+    },
+    {
+      "code": 111,
+      "title": "Format \"xxx\" not foundThe requested response format was not found.",
+      "description": ""
+    },
+    {
+      "code": 112,
+      "title": "Method \"xxx\" not foundThe requested method was not found.",
+      "description": ""
+    },
+    {
+      "code": 114,
+      "title": "Invalid SOAP envelopeThe SOAP envelope send in the request could not be parsed.",
+      "description": ""
+    },
+    {
+      "code": 115,
+      "title": "Invalid XML-RPC Method CallThe XML-RPC request document could not be parsed.",
+      "description": ""
+    },
+    {
+      "code": 116,
+      "title": "Bad URL foundOne or more arguments contained a URL that has been used for abuse on Flickr.",
+      "description": ""
+    }
+  ]
+}

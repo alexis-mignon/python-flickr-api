@@ -16,3 +16,8 @@ api-docs/*
 !api-docs/flickr.tags.getHotList.json
 !api-docs/flickr.tags.getListUser.json
 !api-docs/flickr.tags.getListUserPopular.json
+!api-docs/flickr.cameras.getBrands.json
+!api-docs/flickr.cameras.getBrandModels.json
+!api-docs/flickr.collections.getInfo.json
+!api-docs/flickr.collections.getTree.json
+!api-docs/flickr.commons.getInstitutions.json
