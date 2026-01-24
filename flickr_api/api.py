@@ -16,10 +16,9 @@ from .method_call import call_api
 from . import auth
 from . import reflection
 
-__methods__ = reflection.__methods__.keys()
-__methods__ = sorted(__methods__)
+__methods__ = sorted(reflection.__methods__.keys())
 
-__proxys__ = {}
+__proxys__: dict[str, "FlickrMethodProxy"] = {}
 
 
 def _get_proxy(name):
