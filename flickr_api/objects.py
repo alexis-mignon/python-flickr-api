@@ -596,7 +596,7 @@ class Group(FlickrObject):
     @caller("flickr.groups.pools.getContext")
     def getPoolContext(self, **args):
         return (_format_id("photo", args),
-                lambda r: (Photo(**r["prevphoto"]), Photo(r["nextphoto"]))
+                lambda r: (Photo(**r["prevphoto"]), Photo(**r["nextphoto"]))
         )
 
     @caller("flickr.groups.discuss.topics.getList")

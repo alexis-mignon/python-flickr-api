@@ -1,0 +1,100 @@
+{
+  "name": "flickr.groups.pools.getPhotos",
+  "description": "Returns a list of pool photos for a given group, based on the permissions of the group and the user logged in (if any).",
+  "authentication": " This method does not require authentication. ",
+  "arguments": [
+    {
+      "name": "api_key",
+      "required": true,
+      "description": "Your API application key.See herefor more details."
+    },
+    {
+      "name": "group_id",
+      "required": true,
+      "description": "The id of the group who's pool you which to get the photo list for."
+    },
+    {
+      "name": "tags",
+      "required": false,
+      "description": "A tag to filter the pool with. At the moment only one tag at a time is supported."
+    },
+    {
+      "name": "user_id",
+      "required": false,
+      "description": "The nsid of a user. Specifiying this parameter will retrieve for you only those photos that the user has contributed to the group pool."
+    },
+    {
+      "name": "extras",
+      "required": false,
+      "description": "A comma-delimited list of extra information to fetch for each returned record. Currently supported fields are:description,license,date_upload,date_taken,owner_name,icon_server,original_format,last_update,geo,tags,machine_tags,o_dims,views,media,path_alias,url_sq,url_t,url_s,url_q,url_m,url_n,url_z,url_c,url_l,url_o"
+    },
+    {
+      "name": "per_page",
+      "required": false,
+      "description": "Number of photos to return per page. If this argument is omitted, it defaults to 100. The maximum allowed value is 500."
+    },
+    {
+      "name": "page",
+      "required": false,
+      "description": "The page of results to return. If this argument is omitted, it defaults to 1."
+    }
+  ],
+  "response": "\n<photos page=\"1\" pages=\"1\" perpage=\"1\" total=\"1\">\n  <photo id=\"2645\" owner=\"12037949754@N01\" title=\"36679_o\" secret=\"a9f4a06091\" server=\"2\" ispublic=\"1\" isfriend=\"0\" isfamily=\"0\" ownername=\"Bees / ?\" dateadded=\"1089918707\" />\n</photos>",
+  "errors": [
+    {
+      "code": 1,
+      "title": "Group not foundThe group id passed was not a valid group id.",
+      "description": ""
+    },
+    {
+      "code": 2,
+      "title": "You don't have permission to view this poolThe logged in user (if any) does not have permission to view the pool for this group.",
+      "description": ""
+    },
+    {
+      "code": 3,
+      "title": "Unknown userThe user specified by user_id does not exist.",
+      "description": ""
+    },
+    {
+      "code": 100,
+      "title": "Invalid API KeyThe API key passed was not valid or has expired.",
+      "description": ""
+    },
+    {
+      "code": 105,
+      "title": "Service currently unavailableThe requested service is temporarily unavailable.",
+      "description": ""
+    },
+    {
+      "code": 106,
+      "title": "Write operation failedThe requested operation failed due to a temporary issue.",
+      "description": ""
+    },
+    {
+      "code": 111,
+      "title": "Format \"xxx\" not foundThe requested response format was not found.",
+      "description": ""
+    },
+    {
+      "code": 112,
+      "title": "Method \"xxx\" not foundThe requested method was not found.",
+      "description": ""
+    },
+    {
+      "code": 114,
+      "title": "Invalid SOAP envelopeThe SOAP envelope send in the request could not be parsed.",
+      "description": ""
+    },
+    {
+      "code": 115,
+      "title": "Invalid XML-RPC Method CallThe XML-RPC request document could not be parsed.",
+      "description": ""
+    },
+    {
+      "code": 116,
+      "title": "Bad URL foundOne or more arguments contained a URL that has been used for abuse on Flickr.",
+      "description": ""
+    }
+  ]
+}
