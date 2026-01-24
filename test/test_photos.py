@@ -16,6 +16,9 @@ Batch 15:
 flickr.photos.removeTag, flickr.photos.setContentType, flickr.photos.setDates,
 flickr.photos.setMeta, flickr.photos.setPerms, flickr.photos.setSafetyLevel
 
+Batch 16:
+flickr.photos.setTags, flickr.photos.transform.rotate, flickr.photos.upload.checkTickets
+
 Uses example responses from the api-docs/ directory.
 """
 import json
@@ -904,6 +907,127 @@ class TestPhotoMethods(unittest.TestCase):
 
         # setSafetyLevel returns None
         self.assertIsNone(result)
+
+    # Batch 16 tests
+
+    @patch.object(method_call.requests, "post")
+    def test_photo_set_tags(self, mock_post):
+        """Test Photo.setTags (flickr.photos.setTags)"""
+        # Empty response for set operation
+        mock_post.return_value = self._mock_response({})
+
+        photo = f.Photo(id="12345")
+        result = photo.setTags(tags="landscape sunset mountain")
+
+        # setTags returns None
+        self.assertIsNone(result)
+
+    @patch.object(method_call.requests, "post")
+    def test_photo_rotate(self, mock_post):
+        """Test Photo.rotate (flickr.photos.transform.rotate)"""
+        # Response based on api-docs: <photoid secret="abcdef" originalsecret="abcdef">1234</photoid>
+        # After clean_content processing, _content becomes "text" when other keys exist
+        json_response = {
+            "photo_id": {
+                "text": "1234",
+                "secret": "abcdef",
+                "originalsecret": "abcdef"
+            }
+        }
+        mock_post.return_value = self._mock_response(json_response)
+
+        photo = f.Photo(id="1234")
+        result = photo.rotate(degrees=90)
+
+        # rotate returns a new Photo object with updated secret
+        self.assertIsInstance(result, f.Photo)
+        self.assertEqual(result.id, "1234")
+        self.assertEqual(result.secret, "abcdef")
+
+    @patch.object(method_call.requests, "post")
+    def test_photo_rotate_180(self, mock_post):
+        """Test Photo.rotate 180 degrees (flickr.photos.transform.rotate)"""
+        json_response = {
+            "photo_id": {
+                "text": "5678",
+                "secret": "newsecret123",
+                "originalsecret": "newsecret123"
+            }
+        }
+        mock_post.return_value = self._mock_response(json_response)
+
+        photo = f.Photo(id="5678")
+        result = photo.rotate(degrees=180)
+
+        self.assertIsInstance(result, f.Photo)
+        self.assertEqual(result.id, "5678")
+        self.assertEqual(result.secret, "newsecret123")
+
+    @patch.object(method_call.requests, "post")
+    def test_photo_check_upload_tickets(self, mock_post):
+        """Test Photo.checkUploadTickets (flickr.photos.upload.checkTickets)"""
+        # Response based on api-docs uploader/ticket structure
+        json_response = {
+            "uploader": {
+                "ticket": [
+                    {"id": "128", "complete": 1, "photoid": "2995"},
+                    {"id": "129", "complete": 0},
+                    {"id": "130", "complete": "2"},
+                    {"id": "131", "invalid": 1}
+                ]
+            }
+        }
+        mock_post.return_value = self._mock_response(json_response)
+
+        tickets = f.Photo.checkUploadTickets(["128", "129", "130", "131"])
+
+        # Verify we got 4 upload tickets
+        self.assertEqual(len(tickets), 4)
+
+        # First ticket - complete with photo id
+        t1 = tickets[0]
+        self.assertIsInstance(t1, f.UploadTicket)
+        self.assertEqual(t1.id, "128")
+        self.assertEqual(t1.complete, 1)
+        self.assertEqual(t1.photoid, "2995")
+
+        # Second ticket - not complete yet
+        t2 = tickets[1]
+        self.assertEqual(t2.id, "129")
+        self.assertEqual(t2.complete, 0)
+
+        # Third ticket - complete status 2 (failed)
+        t3 = tickets[2]
+        self.assertEqual(t3.id, "130")
+        self.assertEqual(t3.complete, "2")
+
+        # Fourth ticket - invalid
+        t4 = tickets[3]
+        self.assertEqual(t4.id, "131")
+        self.assertEqual(t4.invalid, 1)
+
+    @patch.object(method_call.requests, "post")
+    def test_photo_check_upload_tickets_single(self, mock_post):
+        """Test Photo.checkUploadTickets with single ticket
+        (flickr.photos.upload.checkTickets)"""
+        # When only one ticket, response may not be a list
+        json_response = {
+            "uploader": {
+                "ticket": {"id": "128", "complete": 1, "photoid": "2995"}
+            }
+        }
+        mock_post.return_value = self._mock_response(json_response)
+
+        tickets = f.Photo.checkUploadTickets(["128"])
+
+        # Verify we got 1 upload ticket (library wraps single item in list)
+        self.assertEqual(len(tickets), 1)
+
+        t1 = tickets[0]
+        self.assertIsInstance(t1, f.UploadTicket)
+        self.assertEqual(t1.id, "128")
+        self.assertEqual(t1.complete, 1)
+        self.assertEqual(t1.photoid, "2995")
 
 
 if __name__ == "__main__":
