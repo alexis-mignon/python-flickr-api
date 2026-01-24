@@ -14,14 +14,14 @@ Usage:
         --token YOUR_TOKEN --token-secret YOUR_TOKEN_SECRET
 
     # With config files (recommended)
-    python integration_test.py --config ~/.flickr_api
+    python integration_test.py --config
 
     # With a specific user to test against
     python integration_test.py --api-key YOUR_KEY --api-secret YOUR_SECRET \
         --test-username someuser
 
-    # With write tests (uploads, modifies, deletes a test photo)
-    python integration_test.py --config --write-tests --test-image ./Test.png
+    # With write tests (will prompt for OAuth if needed)
+    python integration_test.py --config --write-tests
 
     # Verbose output
     python integration_test.py --api-key YOUR_KEY --api-secret YOUR_SECRET -v
@@ -1324,17 +1324,22 @@ class IntegrationTester:
         """Test favorites add/remove."""
 
         def test_add_favorite():
-            # Add our test photo to favorites
-            self.ctx.test_photo.addToFavorites()
+            # Add a photo from discovery (not our own) to favorites
+            # Can't favorite your own photos
+            if not self.ctx.photo:
+                return "No discovery photo available"
+            self.ctx.photo.addToFavorites()
             return "Added to favorites"
 
         def test_remove_favorite():
             # Remove from favorites
-            self.ctx.test_photo.removeFromFavorites()
+            if not self.ctx.photo:
+                return "No discovery photo available"
+            self.ctx.photo.removeFromFavorites()
             return "Removed from favorites"
 
-        self.run_test("Photo.addToFavorites", test_add_favorite, requires="test_photo")
-        self.run_test("Photo.removeFromFavorites", test_remove_favorite, requires="test_photo")
+        self.run_test("Photo.addToFavorites", test_add_favorite, requires="photo")
+        self.run_test("Photo.removeFromFavorites", test_remove_favorite, requires="photo")
 
     def _test_write_download(self):
         """Test downloading the uploaded photo."""
@@ -1412,8 +1417,8 @@ def _summarize(obj):
     return str(obj)[:100]
 
 
-def load_config(config_path: str = "~/.flickr_api",
-                token_path: str = "~/.flickr_token"):
+def load_config(config_path: str = "~/.flickr_api_key",
+                token_path: str = "~/.flickr_api_token"):
     """Load API keys and tokens from flickr_download config files.
 
     Returns:
@@ -1454,25 +1459,83 @@ def load_config(config_path: str = "~/.flickr_api",
     return result
 
 
+def do_oauth_flow(api_key: str, api_secret: str, perms: str = "write") -> tuple:
+    """Perform interactive OAuth flow to get access tokens.
+
+    Args:
+        api_key: Flickr API key
+        api_secret: Flickr API secret
+        perms: Permission level ('read', 'write', or 'delete')
+
+    Returns:
+        tuple of (access_token_key, access_token_secret)
+    """
+    print("\n" + "=" * 60)
+    print(f"OAuth Authentication Flow (requesting '{perms}' permission)")
+    print("=" * 60)
+
+    # Create auth handler (fetches request token)
+    print("\nRequesting authorization token from Flickr...")
+    auth = AuthHandler(key=api_key, secret=api_secret)
+
+    # Get authorization URL
+    auth_url = auth.get_authorization_url(perms=perms)
+
+    print("\nPlease visit this URL to authorize the application:")
+    print()
+    print(f"  {auth_url}")
+    print()
+    print("After authorizing, you'll be redirected to a page with XML.")
+    print("Look for <oauth_verifier>XXXXXXXX</oauth_verifier> and copy the code.")
+    print()
+
+    # Get verifier from user
+    verifier = input("Enter the verification code: ").strip()
+
+    if not verifier:
+        raise ValueError("No verification code provided")
+
+    # Exchange for access token
+    print("\nExchanging for access token...")
+    auth.set_verifier(verifier)
+
+    print(f"Successfully authenticated!")
+    return auth.access_token_key, auth.access_token_secret
+
+
+def save_token(token_path: str, token_key: str, token_secret: str):
+    """Save OAuth tokens to a file."""
+    token_path = os.path.expanduser(token_path)
+    with open(token_path, "w") as f:
+        f.write(f"{token_key}\n{token_secret}\n")
+    print(f"Token saved to {token_path}")
+
+
 def main():
     parser = argparse.ArgumentParser(
         description="Run integration tests against the Flickr API",
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
 Examples:
-  # Use ~/.flickr_api and ~/.flickr_token (easiest)
+  # Use ~/.flickr_api_key and ~/.flickr_api_token (easiest)
   python integration_test.py --config
 
   # Use a specific config file
-  python integration_test.py --config ~/.flickr_download
+  python integration_test.py --config /path/to/config
 
   # API key only (public endpoints)
   python integration_test.py --api-key KEY --api-secret SECRET
+
+  # Run OAuth flow to get a new token with write permissions
+  python integration_test.py --config --auth --write-tests
+
+  # Run write tests (will prompt for OAuth if no token exists)
+  python integration_test.py --config --write-tests
 """
     )
     parser.add_argument(
-        "--config", nargs="?", const="~/.flickr_api", metavar="PATH",
-        help="Load API keys from config file (default: ~/.flickr_api)"
+        "--config", nargs="?", const="~/.flickr_api_key", metavar="PATH",
+        help="Load API keys from config file (default: ~/.flickr_api_key)"
     )
     parser.add_argument(
         "--api-key",
@@ -1506,6 +1569,14 @@ Examples:
         "--test-image", default="./Test.png",
         help="Path to test image for write tests (default: ./Test.png)"
     )
+    parser.add_argument(
+        "--auth", action="store_true",
+        help="Run OAuth flow to get new tokens (use with --write-tests for write permissions)"
+    )
+    parser.add_argument(
+        "--token-file", default="~/.flickr_api_token",
+        help="Path to save/load OAuth tokens (default: ~/.flickr_api_token)"
+    )
 
     args = parser.parse_args()
 
@@ -1516,7 +1587,7 @@ Examples:
     token_secret = args.token_secret
 
     if args.config:
-        config = load_config(config_path=args.config)
+        config = load_config(config_path=args.config, token_path=args.token_file)
         api_key = api_key or config["api_key"]
         api_secret = api_secret or config["api_secret"]
         token = token or config["token"]
@@ -1524,6 +1595,15 @@ Examples:
 
     if not api_key or not api_secret:
         parser.error("--api-key and --api-secret required (or use --config)")
+
+    # Handle OAuth flow if requested or needed
+    if args.auth or (args.write_tests and not token):
+        # Write tests need 'delete' permission (includes write)
+        perms = "delete" if args.write_tests else "read"
+        if not token:
+            print("No existing token found.")
+        token, token_secret = do_oauth_flow(api_key, api_secret, perms=perms)
+        save_token(args.token_file, token, token_secret)
 
     tester = IntegrationTester(
         api_key=api_key,
