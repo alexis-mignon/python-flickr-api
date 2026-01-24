@@ -1,0 +1,85 @@
+{
+  "name": "flickr.machinetags.getValues",
+  "description": "Return a list of unique values for a namespace and predicate.",
+  "authentication": " This method does not require authentication. ",
+  "arguments": [
+    {
+      "name": "api_key",
+      "required": true,
+      "description": "Your API application key.See herefor more details."
+    },
+    {
+      "name": "namespace",
+      "required": true,
+      "description": "The namespace that all values should be restricted to."
+    },
+    {
+      "name": "predicate",
+      "required": true,
+      "description": "The predicate that all values should be restricted to."
+    },
+    {
+      "name": "per_page",
+      "required": false,
+      "description": "Number of photos to return per page. If this argument is omitted, it defaults to 100. The maximum allowed value is 500."
+    },
+    {
+      "name": "page",
+      "required": false,
+      "description": "The page of results to return. If this argument is omitted, it defaults to 1."
+    }
+  ],
+  "response": "\n<values namespace=\"upcoming\" predicate=\"event\" page=\"1\" pages=\"1\" total=\"3\" perpage=\"500\">\n  <value usage=\"3\">123</value>\n  <value usage=\"1\">456</value>\n  <value usage=\"147\">789</value>\n</values>",
+  "errors": [
+    {
+      "code": 1,
+      "title": "Not a valid namespaceMissing or invalid namespace argument.",
+      "description": ""
+    },
+    {
+      "code": 2,
+      "title": "Not a valid predicateMissing or invalid predicate argument.",
+      "description": ""
+    },
+    {
+      "code": 100,
+      "title": "Invalid API KeyThe API key passed was not valid or has expired.",
+      "description": ""
+    },
+    {
+      "code": 105,
+      "title": "Service currently unavailableThe requested service is temporarily unavailable.",
+      "description": ""
+    },
+    {
+      "code": 106,
+      "title": "Write operation failedThe requested operation failed due to a temporary issue.",
+      "description": ""
+    },
+    {
+      "code": 111,
+      "title": "Format \"xxx\" not foundThe requested response format was not found.",
+      "description": ""
+    },
+    {
+      "code": 112,
+      "title": "Method \"xxx\" not foundThe requested method was not found.",
+      "description": ""
+    },
+    {
+      "code": 114,
+      "title": "Invalid SOAP envelopeThe SOAP envelope send in the request could not be parsed.",
+      "description": ""
+    },
+    {
+      "code": 115,
+      "title": "Invalid XML-RPC Method CallThe XML-RPC request document could not be parsed.",
+      "description": ""
+    },
+    {
+      "code": 116,
+      "title": "Bad URL foundOne or more arguments contained a URL that has been used for abuse on Flickr.",
+      "description": ""
+    }
+  ]
+}

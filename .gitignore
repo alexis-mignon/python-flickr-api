@@ -41,3 +41,10 @@ api-docs/*
 !api-docs/flickr.groups.pools.getGroups.json
 !api-docs/flickr.groups.pools.getPhotos.json
 !api-docs/flickr.interestingness.getList.json
+!api-docs/flickr.machinetags.getNamespaces.json
+!api-docs/flickr.machinetags.getPairs.json
+!api-docs/flickr.machinetags.getPredicates.json
+!api-docs/flickr.machinetags.getRecentValues.json
+!api-docs/flickr.machinetags.getValues.json
+!api-docs/flickr.panda.getList.json
+!api-docs/flickr.panda.getPhotos.json
