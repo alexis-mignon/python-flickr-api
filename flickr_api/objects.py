@@ -70,6 +70,15 @@ def dict_converter(keys, func):
     return convert
 
 
+def str_to_bool(value):
+    """Convert Flickr API string boolean values to Python bool.
+
+    Flickr API returns "0" for False and "1" for True.
+    Using bool() directly doesn't work because bool("0") is True.
+    """
+    return value not in ("0", "false", "False", False, 0)
+
+
 class FlickrObject(object, metaclass=FlickrAutoDoc):
     """
         Base Object for Flickr API Objects.
@@ -202,7 +211,7 @@ class Activity(FlickrObject):
 class Blog(FlickrObject):
     __display__ = ["id", "name"]
     __converters__ = [
-        dict_converter(["needspassword"], bool),
+        dict_converter(["needspassword"], str_to_bool),
     ]
     __self_name__ = "blog_id"
 
@@ -230,7 +239,7 @@ class BlogService(FlickrObject):
 
     @caller("flickr.blogs.postPhoto")
     def postPhoto(self, **args):
-        return _format_id(args), _none
+        return _format_id("photo", args), _none
 
     @static_caller("flickr.blogs.getServices")
     def getServices():
@@ -2035,7 +2044,7 @@ def _extract_activity_list(r):
     activities = []
     for item in items:
         activity = item.pop("activity")
-        item_type = item.pop(["type"])
+        item_type = item.pop("type")
         if item_type == "photo":
             item = Photo(**item)
         elif item_type == "photoset":
@@ -2054,7 +2063,7 @@ def _extract_activity_list(r):
                     events_.append(Photoset.Comment(photoset=item, **e))
             elif e_type == 'note':
                 events_.append(Photo.Note(photo=item, **e))
-        activities.append(Activity(item=item, events=events))
+        activities.append(Activity(item=item, events=events_))
     return activities
 
 
