@@ -124,3 +124,12 @@ api-docs/*
 !api-docs/flickr.stats.getPhotostreamStats.json
 !api-docs/flickr.stats.getPopularPhotos.json
 !api-docs/flickr.stats.getTotalViews.json
+!api-docs/flickr.test.echo.json
+!api-docs/flickr.test.login.json
+!api-docs/flickr.test.null.json
+!api-docs/flickr.urls.getGroup.json
+!api-docs/flickr.urls.getUserPhotos.json
+!api-docs/flickr.urls.getUserProfile.json
+!api-docs/flickr.urls.lookupGallery.json
+!api-docs/flickr.urls.lookupGroup.json
+!api-docs/flickr.urls.lookupUser.json

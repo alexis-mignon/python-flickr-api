@@ -1,0 +1,70 @@
+{
+  "name": "flickr.urls.getUserPhotos",
+  "description": "Returns the url to a user's photos.",
+  "authentication": " This method does not require authentication. ",
+  "arguments": [
+    {
+      "name": "api_key",
+      "required": true,
+      "description": "Your API application key.See herefor more details."
+    },
+    {
+      "name": "user_id",
+      "required": false,
+      "description": "The NSID of the user to fetch the url for. If omitted, the calling user is assumed."
+    }
+  ],
+  "response": "\n<user nsid=\"12037949754@N01\" url=\"http://www.flickr.com/photos/bees/\" />",
+  "errors": [
+    {
+      "code": 1,
+      "title": "User not foundThe NSID specified was not a valid user.",
+      "description": ""
+    },
+    {
+      "code": 2,
+      "title": "No user specifiedNo user_id was passed and the calling user was not logged in.",
+      "description": ""
+    },
+    {
+      "code": 100,
+      "title": "Invalid API KeyThe API key passed was not valid or has expired.",
+      "description": ""
+    },
+    {
+      "code": 105,
+      "title": "Service currently unavailableThe requested service is temporarily unavailable.",
+      "description": ""
+    },
+    {
+      "code": 106,
+      "title": "Write operation failedThe requested operation failed due to a temporary issue.",
+      "description": ""
+    },
+    {
+      "code": 111,
+      "title": "Format \"xxx\" not foundThe requested response format was not found.",
+      "description": ""
+    },
+    {
+      "code": 112,
+      "title": "Method \"xxx\" not foundThe requested method was not found.",
+      "description": ""
+    },
+    {
+      "code": 114,
+      "title": "Invalid SOAP envelopeThe SOAP envelope send in the request could not be parsed.",
+      "description": ""
+    },
+    {
+      "code": 115,
+      "title": "Invalid XML-RPC Method CallThe XML-RPC request document could not be parsed.",
+      "description": ""
+    },
+    {
+      "code": 116,
+      "title": "Bad URL foundOne or more arguments contained a URL that has been used for abuse on Flickr.",
+      "description": ""
+    }
+  ]
+}
