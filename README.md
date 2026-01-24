@@ -1,89 +1,133 @@
 # Python Flickr API
 
-A Python implementation of the [Flickr API](https://www.flickr.com/services/developer/api/).
+[![PyPI version](https://badge.fury.io/py/flickr-api.svg)](https://pypi.org/project/flickr-api/)
+[![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
+[![License](https://img.shields.io/badge/license-BSD--3--Clause-green.svg)](LICENSE)
 
-The project provides an almost exhaustive access to the [Flickr API](https://www.flickr.com/services/developer/api/), through an *object-oriented* Python interface.
+An object-oriented Python wrapper for the [Flickr REST API](https://www.flickr.com/services/developer/api/).
 
-## Quick Start
+This library provides Pythonic access to Flickr through domain objects like `Photo`, `Person`, `Gallery`, and `Photoset` rather than raw API calls. It covers almost the entire Flickr API.
 
-1. Install the package via PyPI (or manually cloning the repo):
+> **Note:** This package is `flickr_api` on PyPI. The similarly named `flickrapi` is a different package by a different author.
+
+## Installation
 
 ```bash
 pip install flickr_api
 ```
 
-2. Acquire Flickr API keys and set up authorisation as per the [Wiki](https://github.com/alexis-mignon/python-flickr-api/wiki/Flickr-API-Keys-and-Authentication)
+Requires Python 3.10 or later.
 
-3. Start using the OO interface!
+## Quick Start
 
-Here's an example of fetching a list of a specific users' public photos:
+### 1. Get API Keys
+
+Apply for API keys at [Flickr App Garden](https://www.flickr.com/services/apps/create/). You'll receive an API key and secret.
+
+### 2. Configure the Library
 
 ```python
-user = flickr_api.Person.findByUserName("tomquirkphoto")
+import flickr_api
+
+flickr_api.set_keys(api_key="YOUR_API_KEY", api_secret="YOUR_API_SECRET")
+```
+
+### 3. Start Using It
+
+Fetch a user's public photos:
+
+```python
+user = flickr_api.Person.findByUserName("username")
 photos = user.getPhotos()
+
+for photo in photos:
+    print(photo.title)
 ```
 
-If you've authorised yourself as a user, you can do cooler things like upload photos:
+Search for photos by tag:
 
 ```python
-flickr_api.upload(photo_file="path_to_the_photo_file", title="My title")
+photos = flickr_api.Photo.search(tags="sunset", per_page=10)
 ```
 
-And even create albums (a.k.a Photosets):
+### Authentication for Write Operations
+
+Read-only operations (searching, fetching public data) only need API keys. To upload, edit, or access private content, you'll need OAuth authentication:
 
 ```python
-photoset = flickr_api.Photoset.create(title="The title of the photoset", primary_photo=cover_photo)
+# One-time setup: get authorization URL
+auth_handler = flickr_api.auth.AuthHandler()
+url = auth_handler.get_authorization_url("write")
+print(f"Visit this URL and authorize: {url}")
+
+# After user authorizes, set the verifier
+auth_handler.set_verifier("VERIFIER_CODE_FROM_FLICKR")
+flickr_api.set_auth_handler(auth_handler)
+
+# Save credentials for later
+auth_handler.save("flickr_auth.txt")
+```
+
+```python
+# In future sessions, load saved credentials
+auth_handler = flickr_api.auth.AuthHandler.load("flickr_auth.txt")
+flickr_api.set_auth_handler(auth_handler)
+```
+
+Now you can upload photos and create albums:
+
+```python
+# Upload a photo
+flickr_api.upload(photo_file="vacation.jpg", title="Beach sunset", tags="vacation beach")
+
+# Create an album
+photo = flickr_api.Photo.search(user_id="me")[0]
+photoset = flickr_api.Photoset.create(title="Vacation 2024", primary_photo=photo)
 ```
 
 ## Features
 
-Consult the [API Reference](https://github.com/alexis-mignon/python-flickr-api/wiki/API-reference) for a (semi) complete list
+- **Object-oriented interface** - Work with `Photo`, `Person`, `Photoset`, `Gallery`, and other domain objects
+- **Comprehensive API coverage** - Access to nearly all Flickr API methods
+- **OAuth 1.0a authentication** - Secure authentication for write operations
+- **Flexible method arguments** - Pass either objects or IDs:
+  ```python
+  photo.addTag(tag=tag_object)    # Using object
+  photo.addTag(tag_id="12345")    # Using ID string
+  ```
+- **Built-in caching** - Django-compatible cache interface to reduce API calls
+- **Direct API access** - Bypass objects and call the Flickr API directly when needed:
+  ```python
+  flickr_api.flickr.photos.search(tags="test")
+  ```
 
-* Object Oriented implementation
-* (Almost) comprehensive implementation
-* Uses OAuth for authentication
-* Context-sensitive objects (depending on the query context, objects may exhibit different attributes)
-* An interface for direct seamless calls to the Flickr API.
-* A (Django-compliant) caching mechanism
+## Documentation
 
-Requires:
+For more detailed documentation, see the [Wiki](https://github.com/alexis-mignon/python-flickr-api/wiki/).
 
-* python >= 2.7
-* [python-oauth2](https://github.com/joestump/python-oauth2)
-* [six](https://github.com/benjaminp/six)
-* [requests](https://requests.readthedocs.io/)
+## Projects Using This Library
 
-Please note that `flickrapi` on [PyPI](https://pypi.org/) is a different distribution by a different author.
+- [FlickrBox](https://github.com/tomquirk/FlickrBox) - Dropbox-like backup for your Flickr library
+- [Album Sorter](https://github.com/Scraft/flickr-album-sorter) - Sort Flickr albums by date taken
+- [Flickr Download](https://github.com/beaufour/flickr-download) - Download photos and sets from Flickr
 
-## API Guide
-
-A brief guide is available in the [Wiki section](https://github.com/alexis-mignon/python-flickr-api/wiki/).
-
-## Projects using this API
-
-> create a PR to add your project here!
-
-* [FlickrBox](https://github.com/tomquirk/FlickrBox) - A Dropbox-like backup experience for your free 1TB Flickr library!
-* [Album Sorter](https://github.com/Scraft/flickr-album-sorter) - Sort flickr albums into date taken order
-* [Flickr Download](https://github.com/beaufour/flickr-download) - Download photos, sets, etc from Flickr
+> Have a project using this library? Open a PR to add it here!
 
 ## Development
 
-This project uses pipenv to create a virtualenv for development and control dependencies.
-
-To run tests you can simply run it with:
+This project uses [uv](https://docs.astral.sh/uv/) for dependency management.
 
 ```bash
-pipenv install --dev
-pipenv run nose2
+# Install dependencies
+uv sync --dev
+
+# Run tests
+uv run pytest
+
+# Run linter
+uv run flake8 flickr_api/
 ```
 
-To evoke the unittest module directly, one can run from the root directory (the directory with this file):
+## Contributing
 
-```bash
-python -m unittest discover test
-```
-
-## Notes
-
-Any help, including bug reports, is appreciated!
+Bug reports, feature requests, and pull requests are welcome on [GitHub](https://github.com/alexis-mignon/python-flickr-api).
