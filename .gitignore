@@ -78,3 +78,5 @@ api-docs/*
 !api-docs/flickr.photos.geo.getPerms.json
 !api-docs/flickr.photos.geo.photosForLocation.json
 !api-docs/flickr.photos.licenses.getInfo.json
+!api-docs/flickr.photos.notes.add.json
+!api-docs/flickr.photos.people.getList.json
