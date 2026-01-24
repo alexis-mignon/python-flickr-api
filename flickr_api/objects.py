@@ -2253,7 +2253,7 @@ class Walker(object):
         return self.next()
 
     def next(self):
-        if self._curr_index == len(self._curr_list):
+        while self._curr_index == len(self._curr_list):
             if self._page < self._info.pages:
                 self._page += 1
                 self.kwargs["page"] = self._page
