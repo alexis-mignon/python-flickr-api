@@ -197,10 +197,20 @@ def clean_content(d):
         return d
 
 
+# Unix timestamp parameters that must be integers for Flickr API
+_TIMESTAMP_PARAMS = {
+    'min_upload_date', 'max_upload_date',
+    'min_taken_date', 'max_taken_date',
+    'min_date', 'max_date',
+}
+
+
 def clean_args(args):
     """
         Reformat the arguments.
     """
     for k, v in args.items():
         if isinstance(v, bool):
+            args[k] = int(v)
+        elif k in _TIMESTAMP_PARAMS and isinstance(v, float):
             args[k] = int(v)
