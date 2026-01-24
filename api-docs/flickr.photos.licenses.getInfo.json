@@ -1,0 +1,55 @@
+{
+  "name": "flickr.photos.licenses.getInfo",
+  "description": "Fetches a list of available photo licenses for Flickr.",
+  "authentication": " This method does not require authentication. ",
+  "arguments": [
+    {
+      "name": "api_key",
+      "required": true,
+      "description": "Your API application key.See herefor more details."
+    }
+  ],
+  "response": "\n<licenses>\n  <license id=\"0\" name=\"All Rights Reserved\" url=\"https://www.flickrhelp.com/hc/en-us/articles/10710266545556-Using-Flickr-images-shared-by-other-members\" />\n  <license id=\"1\" name=\"CC BY-NC-SA 2.0\" url=\"https://creativecommons.org/licenses/by-nc-sa/2.0/\" />\n  <license id=\"2\" name=\"CC BY-NC 2.0\" url=\"https://creativecommons.org/licenses/by-nc/2.0/\" />\n  <license id=\"3\" name=\"CC BY-NC-ND 2.0\" url=\"https://creativecommons.org/licenses/by-nc-nd/2.0/\" />\n  <license id=\"4\" name=\"CC BY 2.0\" url=\"https://creativecommons.org/licenses/by/2.0/\" />\n  <license id=\"5\" name=\"CC BY-SA 2.0\" url=\"https://creativecommons.org/licenses/by-sa/2.0/\" />\n  <license id=\"6\" name=\"CC BY-ND 2.0\" url=\"https://creativecommons.org/licenses/by-nd/2.0/\" />\n  <license id=\"7\" name=\"No known copyright restrictions\" url=\"https://www.flickr.com/commons/usage/\" />\n  <license id=\"8\" name=\"United States Government Work\" url=\"https://www.usa.gov/government-copyright\" />\n  <license id=\"9\" name=\"Public Domain Dedication (CC0)\" url=\"https://creativecommons.org/publicdomain/zero/1.0/\" />\n  <license id=\"10\" name=\"Public Domain Mark\" url=\"https://creativecommons.org/publicdomain/mark/1.0/\" />\n  <license id=\"11\" name=\"CC BY 4.0\" url=\"https://creativecommons.org/licenses/by/4.0/\" />\n  <license id=\"12\" name=\"CC BY-SA 4.0\" url=\"https://creativecommons.org/licenses/by-sa/4.0/\" />\n  <license id=\"13\" name=\"CC BY-ND 4.0\" url=\"https://creativecommons.org/licenses/by-nd/4.0/\" />\n  <license id=\"14\" name=\"CC BY-NC 4.0\" url=\"https://creativecommons.org/licenses/by-nc/4.0/\" />\n  <license id=\"15\" name=\"CC BY-NC-SA 4.0\" url=\"https://creativecommons.org/licenses/by-nc-sa/4.0/\" />\n  <license id=\"16\" name=\"CC BY-NC-ND 4.0\" url=\"https://creativecommons.org/licenses/by-nc-nd/4.0/\" />\n</licenses>",
+  "errors": [
+    {
+      "code": 100,
+      "title": "Invalid API KeyThe API key passed was not valid or has expired.",
+      "description": ""
+    },
+    {
+      "code": 105,
+      "title": "Service currently unavailableThe requested service is temporarily unavailable.",
+      "description": ""
+    },
+    {
+      "code": 106,
+      "title": "Write operation failedThe requested operation failed due to a temporary issue.",
+      "description": ""
+    },
+    {
+      "code": 111,
+      "title": "Format \"xxx\" not foundThe requested response format was not found.",
+      "description": ""
+    },
+    {
+      "code": 112,
+      "title": "Method \"xxx\" not foundThe requested method was not found.",
+      "description": ""
+    },
+    {
+      "code": 114,
+      "title": "Invalid SOAP envelopeThe SOAP envelope send in the request could not be parsed.",
+      "description": ""
+    },
+    {
+      "code": 115,
+      "title": "Invalid XML-RPC Method CallThe XML-RPC request document could not be parsed.",
+      "description": ""
+    },
+    {
+      "code": 116,
+      "title": "Bad URL foundOne or more arguments contained a URL that has been used for abuse on Flickr.",
+      "description": ""
+    }
+  ]
+}

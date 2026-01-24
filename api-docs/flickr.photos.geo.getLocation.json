@@ -1,0 +1,75 @@
+{
+  "name": "flickr.photos.geo.getLocation",
+  "description": "Get the geo data (latitude and longitude and the accuracy level) for a photo.",
+  "authentication": " This method does not require authentication. ",
+  "arguments": [
+    {
+      "name": "api_key",
+      "required": true,
+      "description": "Your API application key.See herefor more details."
+    },
+    {
+      "name": "photo_id",
+      "required": true,
+      "description": "The id of the photo you want to retrieve location data for."
+    },
+    {
+      "name": "extras",
+      "required": false,
+      "description": "Extra flags."
+    }
+  ],
+  "response": "\n<photo id=\"123\">\n  <location latitude=\"-17.685895\" longitude=\"-63.36914\" accuracy=\"6\" />\n</photo>",
+  "errors": [
+    {
+      "code": 1,
+      "title": "Photo not found.The photo id was either invalid or was for a photo not viewable by the calling user.",
+      "description": ""
+    },
+    {
+      "code": 2,
+      "title": "Photo has no location information.The photo requested has no location data or is not viewable by the calling user.",
+      "description": ""
+    },
+    {
+      "code": 100,
+      "title": "Invalid API KeyThe API key passed was not valid or has expired.",
+      "description": ""
+    },
+    {
+      "code": 105,
+      "title": "Service currently unavailableThe requested service is temporarily unavailable.",
+      "description": ""
+    },
+    {
+      "code": 106,
+      "title": "Write operation failedThe requested operation failed due to a temporary issue.",
+      "description": ""
+    },
+    {
+      "code": 111,
+      "title": "Format \"xxx\" not foundThe requested response format was not found.",
+      "description": ""
+    },
+    {
+      "code": 112,
+      "title": "Method \"xxx\" not foundThe requested method was not found.",
+      "description": ""
+    },
+    {
+      "code": 114,
+      "title": "Invalid SOAP envelopeThe SOAP envelope send in the request could not be parsed.",
+      "description": ""
+    },
+    {
+      "code": 115,
+      "title": "Invalid XML-RPC Method CallThe XML-RPC request document could not be parsed.",
+      "description": ""
+    },
+    {
+      "code": 116,
+      "title": "Bad URL foundOne or more arguments contained a URL that has been used for abuse on Flickr.",
+      "description": ""
+    }
+  ]
+}
