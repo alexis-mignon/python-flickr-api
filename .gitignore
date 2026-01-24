@@ -104,3 +104,13 @@ api-docs/*
 !api-docs/flickr.prefs.getHidden.json
 !api-docs/flickr.prefs.getPrivacy.json
 !api-docs/flickr.prefs.getSafetyLevel.json
+!api-docs/flickr.reflection.getMethodInfo.json
+!api-docs/flickr.reflection.getMethods.json
+!api-docs/flickr.stats.getCSVFiles.json
+!api-docs/flickr.stats.getCollectionDomains.json
+!api-docs/flickr.stats.getCollectionReferrers.json
+!api-docs/flickr.stats.getCollectionStats.json
+!api-docs/flickr.stats.getPhotoDomains.json
+!api-docs/flickr.stats.getPhotoReferrers.json
+!api-docs/flickr.stats.getPhotosetDomains.json
+!api-docs/flickr.stats.getPhotosetReferrers.json
