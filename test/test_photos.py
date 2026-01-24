@@ -1,10 +1,17 @@
 """
 Tests for Photo API methods.
 
+Batch 10:
 flickr.photos.addTags, flickr.photos.delete, flickr.photos.getAllContexts,
 flickr.photos.getContactsPhotos, flickr.photos.getContactsPublicPhotos,
 flickr.photos.getContext, flickr.photos.getCounts, flickr.photos.getExif,
 flickr.photos.getFavorites, flickr.photos.getInfo
+
+Batch 11:
+flickr.photos.getNotInSet, flickr.photos.getPerms, flickr.photos.getRecent,
+flickr.photos.getSizes, flickr.photos.getUntagged, flickr.photos.getWithGeoData,
+flickr.photos.getWithoutGeoData, flickr.photos.recentlyUpdated, flickr.photos.search
+
 Uses example responses from the api-docs/ directory.
 """
 import json
@@ -470,6 +477,312 @@ class TestPhotoMethods(unittest.TestCase):
         self.assertEqual(photo.notes[0].h, "50")
         # Note: _content is renamed to text by clean_content
         self.assertEqual(photo.notes[0].text, "foo")
+
+
+    @patch.object(method_call.requests, "post")
+    def test_person_get_not_in_set_photos(self, mock_post):
+        """Test Person.getNotInSetPhotos (flickr.photos.getNotInSet)"""
+        api_doc = load_api_doc("flickr.photos.getNotInSet")
+        json_response = xml_to_flickr_json(api_doc["response"])
+
+        mock_post.return_value = self._mock_response(json_response)
+
+        # getNotInSetPhotos is a static method on Person
+        photos = f.Person.getNotInSetPhotos()
+
+        # Verify we got 4 photos
+        self.assertEqual(len(photos), 4)
+
+        # First photo - public
+        p1 = photos[0]
+        self.assertIsInstance(p1, f.Photo)
+        self.assertEqual(p1.id, "2636")
+        # owner is converted to Person object by _extract_photo_list
+        self.assertIsInstance(p1.owner, f.Person)
+        self.assertEqual(p1.owner.id, "47058503995@N01")
+        self.assertEqual(p1.secret, "a123456")
+        self.assertEqual(p1.server, "2")
+        self.assertEqual(p1.title, "test_04")
+        self.assertTrue(p1.ispublic)
+        self.assertFalse(p1.isfriend)
+        self.assertFalse(p1.isfamily)
+
+        # Second photo - private (friend & family)
+        p2 = photos[1]
+        self.assertEqual(p2.id, "2635")
+        self.assertEqual(p2.title, "test_03")
+        self.assertFalse(p2.ispublic)
+        self.assertTrue(p2.isfriend)
+        self.assertTrue(p2.isfamily)
+
+        # Third photo
+        p3 = photos[2]
+        self.assertEqual(p3.id, "2633")
+        self.assertEqual(p3.title, "test_01")
+
+        # Fourth photo
+        p4 = photos[3]
+        self.assertEqual(p4.id, "2610")
+        self.assertEqual(p4.owner.id, "12037949754@N01")
+        self.assertEqual(p4.title, "00_tall")
+
+        # Verify pagination info
+        self.assertEqual(photos.info.page, 2)
+        self.assertEqual(photos.info.pages, 89)
+        self.assertEqual(photos.info.perpage, 10)
+        self.assertEqual(photos.info.total, 881)
+
+    @patch.object(method_call.requests, "post")
+    def test_photo_get_perms(self, mock_post):
+        """Test Photo.getPerms (flickr.photos.getPerms)"""
+        api_doc = load_api_doc("flickr.photos.getPerms")
+        json_response = xml_to_flickr_json(api_doc["response"])
+
+        mock_post.return_value = self._mock_response(json_response)
+
+        photo = f.Photo(id="2733")
+        perms = photo.getPerms()
+
+        # Verify permissions response - returns raw dict
+        self.assertEqual(perms["perms"]["id"], "2733")
+        self.assertEqual(perms["perms"]["ispublic"], 1)
+        self.assertEqual(perms["perms"]["isfriend"], 1)
+        self.assertEqual(perms["perms"]["isfamily"], 0)
+        self.assertEqual(perms["perms"]["permcomment"], 0)
+        self.assertEqual(perms["perms"]["permaddmeta"], 1)
+
+    @patch.object(method_call.requests, "post")
+    def test_photo_get_recent(self, mock_post):
+        """Test Photo.getRecent (flickr.photos.getRecent)"""
+        api_doc = load_api_doc("flickr.photos.getRecent")
+        json_response = xml_to_flickr_json(api_doc["response"])
+
+        mock_post.return_value = self._mock_response(json_response)
+
+        photos = f.Photo.getRecent()
+
+        # Verify we got 4 photos
+        self.assertEqual(len(photos), 4)
+
+        # First photo
+        p1 = photos[0]
+        self.assertIsInstance(p1, f.Photo)
+        self.assertEqual(p1.id, "2636")
+        # owner is converted to Person object by _extract_photo_list
+        self.assertIsInstance(p1.owner, f.Person)
+        self.assertEqual(p1.owner.id, "47058503995@N01")
+        self.assertEqual(p1.secret, "a123456")
+        self.assertEqual(p1.title, "test_04")
+        self.assertTrue(p1.ispublic)
+
+        # Verify pagination info
+        self.assertEqual(photos.info.page, 2)
+        self.assertEqual(photos.info.pages, 89)
+        self.assertEqual(photos.info.perpage, 10)
+        self.assertEqual(photos.info.total, 881)
+
+    @patch.object(method_call.requests, "post")
+    def test_photo_get_sizes(self, mock_post):
+        """Test Photo.getSizes (flickr.photos.getSizes)"""
+        api_doc = load_api_doc("flickr.photos.getSizes")
+        json_response = xml_to_flickr_json(api_doc["response"])
+
+        mock_post.return_value = self._mock_response(json_response)
+
+        photo = f.Photo(id="567229075")
+        sizes = photo.getSizes()
+
+        # Verify sizes dict is keyed by label
+        self.assertIn("Square", sizes)
+        self.assertIn("Large Square", sizes)
+        self.assertIn("Thumbnail", sizes)
+        self.assertIn("Small", sizes)
+        self.assertIn("Small 320", sizes)
+        self.assertIn("Medium", sizes)
+        self.assertIn("Medium 640", sizes)
+        self.assertIn("Medium 800", sizes)
+        self.assertIn("Large", sizes)
+        self.assertIn("Original", sizes)
+
+        # Verify Square size details
+        square = sizes["Square"]
+        self.assertEqual(square["label"], "Square")
+        self.assertEqual(square["width"], "75")
+        self.assertEqual(square["height"], "75")
+        self.assertIn("farm2.staticflickr.com", square["source"])
+        self.assertEqual(square["media"], "photo")
+
+        # Verify Large size
+        large = sizes["Large"]
+        self.assertEqual(large["width"], "1024")
+        self.assertEqual(large["height"], "768")
+
+        # Verify Original size
+        original = sizes["Original"]
+        self.assertEqual(original["width"], "2400")
+        self.assertEqual(original["height"], "1800")
+
+    @patch.object(method_call.requests, "post")
+    def test_photo_get_untagged(self, mock_post):
+        """Test Photo.getUntagged (flickr.photos.getUntagged)"""
+        api_doc = load_api_doc("flickr.photos.getUntagged")
+        json_response = xml_to_flickr_json(api_doc["response"])
+
+        mock_post.return_value = self._mock_response(json_response)
+
+        photos = f.Photo.getUntagged()
+
+        # Verify we got 4 photos
+        self.assertEqual(len(photos), 4)
+
+        # First photo
+        p1 = photos[0]
+        self.assertIsInstance(p1, f.Photo)
+        self.assertEqual(p1.id, "2636")
+        self.assertEqual(p1.title, "test_04")
+
+        # Verify pagination info
+        self.assertEqual(photos.info.page, 2)
+        self.assertEqual(photos.info.pages, 89)
+
+    @patch.object(method_call.requests, "post")
+    def test_photo_get_with_geo_data(self, mock_post):
+        """Test Photo.getWithGeoData (flickr.photos.getWithGeoData)"""
+        api_doc = load_api_doc("flickr.photos.getWithGeoData")
+        json_response = xml_to_flickr_json(api_doc["response"])
+
+        mock_post.return_value = self._mock_response(json_response)
+
+        photos = f.Photo.getWithGeoData()
+
+        # Verify we got 4 photos
+        self.assertEqual(len(photos), 4)
+
+        # First photo
+        p1 = photos[0]
+        self.assertIsInstance(p1, f.Photo)
+        self.assertEqual(p1.id, "2636")
+        self.assertEqual(p1.title, "test_04")
+
+        # Verify pagination info
+        self.assertEqual(photos.info.page, 2)
+        self.assertEqual(photos.info.pages, 89)
+
+    @patch.object(method_call.requests, "post")
+    def test_photo_get_without_geo_data(self, mock_post):
+        """Test Photo.getWithoutGeoData (flickr.photos.getWithoutGeoData)"""
+        api_doc = load_api_doc("flickr.photos.getWithoutGeoData")
+        json_response = xml_to_flickr_json(api_doc["response"])
+
+        mock_post.return_value = self._mock_response(json_response)
+
+        photos = f.Photo.getWithoutGeoData()
+
+        # Verify we got 4 photos
+        self.assertEqual(len(photos), 4)
+
+        # First photo
+        p1 = photos[0]
+        self.assertIsInstance(p1, f.Photo)
+        self.assertEqual(p1.id, "2636")
+        self.assertEqual(p1.title, "test_04")
+
+        # Verify pagination info
+        self.assertEqual(photos.info.page, 2)
+        self.assertEqual(photos.info.pages, 89)
+
+    @patch.object(method_call.requests, "post")
+    def test_photo_recently_updated(self, mock_post):
+        """Test Photo.recentlyUpdated (flickr.photos.recentlyUpdated)"""
+        # The api-docs XML has unescaped quotes, so construct JSON manually
+        # Based on the api-docs response structure
+        json_response = {
+            "photos": {
+                "page": 1, "pages": 1, "perpage": 100, "total": 2,
+                "photo": [
+                    {"id": "169885459", "owner": "35034348999@N01",
+                     "secret": "c85114c195", "server": "46",
+                     "title": "Doubting Michael",
+                     "ispublic": 1, "isfriend": 0, "isfamily": 0,
+                     "lastupdate": "1150755888"},
+                    {"id": "85022332", "owner": "35034348999@N01",
+                     "secret": "23de6de0c0", "server": "41",
+                     "title": "Do you think we're allowed to tape stuff?",
+                     "ispublic": 1, "isfriend": 0, "isfamily": 0,
+                     "lastupdate": "1150564974"}
+                ]
+            }
+        }
+
+        mock_post.return_value = self._mock_response(json_response)
+
+        photos = f.Photo.recentlyUpdated(min_date="1150000000")
+
+        # Verify we got 2 photos
+        self.assertEqual(len(photos), 2)
+
+        # First photo - has lastupdate field
+        p1 = photos[0]
+        self.assertIsInstance(p1, f.Photo)
+        self.assertEqual(p1.id, "169885459")
+        self.assertIsInstance(p1.owner, f.Person)
+        self.assertEqual(p1.owner.id, "35034348999@N01")
+        self.assertEqual(p1.secret, "c85114c195")
+        self.assertEqual(p1.server, "46")
+        self.assertEqual(p1.title, "Doubting Michael")
+        self.assertTrue(p1.ispublic)
+        # lastupdate is converted to int by the library
+        self.assertEqual(p1.lastupdate, 1150755888)
+
+        # Second photo
+        p2 = photos[1]
+        self.assertEqual(p2.id, "85022332")
+        self.assertEqual(p2.title, "Do you think we're allowed to tape stuff?")
+        self.assertEqual(p2.lastupdate, 1150564974)
+
+        # Verify pagination info
+        self.assertEqual(photos.info.page, 1)
+        self.assertEqual(photos.info.pages, 1)
+        self.assertEqual(photos.info.perpage, 100)
+        self.assertEqual(photos.info.total, 2)
+
+    @patch.object(method_call.requests, "post")
+    def test_photo_search(self, mock_post):
+        """Test Photo.search (flickr.photos.search)"""
+        api_doc = load_api_doc("flickr.photos.search")
+        json_response = xml_to_flickr_json(api_doc["response"])
+
+        mock_post.return_value = self._mock_response(json_response)
+
+        photos = f.Photo.search(tags="test")
+
+        # Verify we got 4 photos
+        self.assertEqual(len(photos), 4)
+
+        # First photo
+        p1 = photos[0]
+        self.assertIsInstance(p1, f.Photo)
+        self.assertEqual(p1.id, "2636")
+        # owner is converted to Person object by _extract_photo_list
+        self.assertIsInstance(p1.owner, f.Person)
+        self.assertEqual(p1.owner.id, "47058503995@N01")
+        self.assertEqual(p1.secret, "a123456")
+        self.assertEqual(p1.title, "test_04")
+        self.assertTrue(p1.ispublic)
+
+        # Second photo - private
+        p2 = photos[1]
+        self.assertEqual(p2.id, "2635")
+        self.assertEqual(p2.title, "test_03")
+        self.assertFalse(p2.ispublic)
+        self.assertTrue(p2.isfriend)
+        self.assertTrue(p2.isfamily)
+
+        # Verify pagination info
+        self.assertEqual(photos.info.page, 2)
+        self.assertEqual(photos.info.pages, 89)
+        self.assertEqual(photos.info.perpage, 10)
+        self.assertEqual(photos.info.total, 881)
 
 
 if __name__ == "__main__":

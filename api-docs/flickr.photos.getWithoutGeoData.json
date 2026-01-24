@@ -1,0 +1,130 @@
+{
+  "name": "flickr.photos.getWithoutGeoData",
+  "description": "Returns a list of your photos which haven't been geo-tagged.",
+  "authentication": " This method requiresauthenticationwith 'read' permission. ",
+  "arguments": [
+    {
+      "name": "api_key",
+      "required": true,
+      "description": "Your API application key.See herefor more details."
+    },
+    {
+      "name": "max_upload_date",
+      "required": false,
+      "description": "Maximum upload date. Photos with an upload date less than or equal to this value will be returned. The date should be in the form of a unix timestamp."
+    },
+    {
+      "name": "min_taken_date",
+      "required": false,
+      "description": "Minimum taken date. Photos with an taken date greater than or equal to this value will be returned. The date can be in the form of a mysql datetime or unix timestamp."
+    },
+    {
+      "name": "max_taken_date",
+      "required": false,
+      "description": "Maximum taken date. Photos with an taken date less than or equal to this value will be returned. The date can be in the form of a mysql datetime or unix timestamp."
+    },
+    {
+      "name": "privacy_filter",
+      "required": false,
+      "description": "Return photos only matching a certain privacy level. Valid values are:1 public photos2 private photos visible to friends3 private photos visible to family4 private photos visible to friends & family5 completely private photos"
+    },
+    {
+      "name": "sort",
+      "required": false,
+      "description": "The order in which to sort returned photos. Defaults to date-posted-desc. The possible values are: date-posted-asc, date-posted-desc, date-taken-asc, date-taken-desc, interestingness-desc, and interestingness-asc."
+    },
+    {
+      "name": "media",
+      "required": false,
+      "description": "Filter results by media type. Possible values areall(default),photosorvideos"
+    },
+    {
+      "name": "min_upload_date",
+      "required": false,
+      "description": "Minimum upload date. Photos with an upload date greater than or equal to this value will be returned. The date can be in the form of a unix timestamp or mysql datetime."
+    },
+    {
+      "name": "extras",
+      "required": false,
+      "description": "A comma-delimited list of extra information to fetch for each returned record. Currently supported fields are:description,license,date_upload,date_taken,owner_name,icon_server,original_format,last_update,geo,tags,machine_tags,o_dims,views,media,path_alias,url_sq,url_t,url_s,url_q,url_m,url_n,url_z,url_c,url_l,url_o"
+    },
+    {
+      "name": "per_page",
+      "required": false,
+      "description": "Number of photos to return per page. If this argument is omitted, it defaults to 100. The maximum allowed value is 500."
+    },
+    {
+      "name": "page",
+      "required": false,
+      "description": "The page of results to return. If this argument is omitted, it defaults to 1."
+    }
+  ],
+  "response": "<photos page=\"2\" pages=\"89\" perpage=\"10\" total=\"881\">\n\t<photo id=\"2636\" owner=\"47058503995@N01\" \n\t\tsecret=\"a123456\" server=\"2\" title=\"test_04\"\n\t\tispublic=\"1\" isfriend=\"0\" isfamily=\"0\" />\n\t<photo id=\"2635\" owner=\"47058503995@N01\"\n\t\tsecret=\"b123456\" server=\"2\" title=\"test_03\"\n\t\tispublic=\"0\" isfriend=\"1\" isfamily=\"1\" />\n\t<photo id=\"2633\" owner=\"47058503995@N01\"\n\t\tsecret=\"c123456\" server=\"2\" title=\"test_01\"\n\t\tispublic=\"1\" isfriend=\"0\" isfamily=\"0\" />\n\t<photo id=\"2610\" owner=\"12037949754@N01\"\n\t\tsecret=\"d123456\" server=\"2\" title=\"00_tall\"\n\t\tispublic=\"1\" isfriend=\"0\" isfamily=\"0\" />\n</photos>",
+  "errors": [
+    {
+      "code": 95,
+      "title": "SSL is requiredSSL is required to access the Flickr API.",
+      "description": ""
+    },
+    {
+      "code": 96,
+      "title": "Invalid signatureThe passed signature was invalid.",
+      "description": ""
+    },
+    {
+      "code": 97,
+      "title": "Missing signatureThe call required signing but no signature was sent.",
+      "description": ""
+    },
+    {
+      "code": 98,
+      "title": "Login failed / Invalid auth tokenThe login details or auth token passed were invalid.",
+      "description": ""
+    },
+    {
+      "code": 99,
+      "title": "User not logged in / Insufficient permissionsThe method requires user authentication but the user was not logged in, or the authenticated method call did not have the required permissions.",
+      "description": ""
+    },
+    {
+      "code": 100,
+      "title": "Invalid API KeyThe API key passed was not valid or has expired.",
+      "description": ""
+    },
+    {
+      "code": 105,
+      "title": "Service currently unavailableThe requested service is temporarily unavailable.",
+      "description": ""
+    },
+    {
+      "code": 106,
+      "title": "Write operation failedThe requested operation failed due to a temporary issue.",
+      "description": ""
+    },
+    {
+      "code": 111,
+      "title": "Format \"xxx\" not foundThe requested response format was not found.",
+      "description": ""
+    },
+    {
+      "code": 112,
+      "title": "Method \"xxx\" not foundThe requested method was not found.",
+      "description": ""
+    },
+    {
+      "code": 114,
+      "title": "Invalid SOAP envelopeThe SOAP envelope send in the request could not be parsed.",
+      "description": ""
+    },
+    {
+      "code": 115,
+      "title": "Invalid XML-RPC Method CallThe XML-RPC request document could not be parsed.",
+      "description": ""
+    },
+    {
+      "code": 116,
+      "title": "Bad URL foundOne or more arguments contained a URL that has been used for abuse on Flickr.",
+      "description": ""
+    }
+  ]
+}
