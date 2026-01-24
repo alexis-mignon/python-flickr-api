@@ -1,0 +1,90 @@
+{
+  "name": "flickr.places.findByLatLon",
+  "description": "Return a place ID for a latitude, longitude and accuracy triple.The flickr.places.findByLatLon method is not meant to be a (reverse) geocoder in the traditional sense. It is designed to allow users to find photos for \"places\" and will round up to the nearest place type to which corresponding place IDs apply.For example, if you pass it a street level coordinate it will return the city that contains the point rather than the street, or building, itself.It will also truncate latitudes and longitudes to three decimal points.",
+  "authentication": " This method does not require authentication. ",
+  "arguments": [
+    {
+      "name": "api_key",
+      "required": true,
+      "description": "Your API application key.See herefor more details."
+    },
+    {
+      "name": "lat",
+      "required": true,
+      "description": "The latitude whose valid range is -90 to 90. Anything more than 4 decimal places will be truncated."
+    },
+    {
+      "name": "lon",
+      "required": true,
+      "description": "The longitude whose valid range is -180 to 180. Anything more than 4 decimal places will be truncated."
+    },
+    {
+      "name": "accuracy",
+      "required": false,
+      "description": "Recorded accuracy level of the location information. World level is 1, Country is ~3, Region ~6, City ~11, Street ~16. Current range is 1-16. The default is 16."
+    }
+  ],
+  "response": "\n<places latitude=\"37.76513627957266\" longitude=\"-122.42020770907402\" accuracy=\"16\" total=\"1\">\n  <place place_id=\"Y12JWsKbApmnSQpbQg\" woeid=\"23512048\" latitude=\"37.765\" longitude=\"-122.424\" place_url=\"/United+States/California/San+Francisco/Mission+Dolores\" place_type=\"neighbourhood\" place_type_id=\"22\" timezone=\"America/Los_Angeles\" name=\"Mission Dolores, San Francisco, CA, US, United States\" />\n</places>",
+  "errors": [
+    {
+      "code": 1,
+      "title": "Required arguments missingOne or more required parameters was not included with the API request.",
+      "description": ""
+    },
+    {
+      "code": 2,
+      "title": "Not a valid latitudeThe latitude argument failed validation.",
+      "description": ""
+    },
+    {
+      "code": 3,
+      "title": "Not a valid longitudeThe longitude argument failed validation.",
+      "description": ""
+    },
+    {
+      "code": 4,
+      "title": "Not a valid accuracyThe accuracy argument failed validation.",
+      "description": ""
+    },
+    {
+      "code": 100,
+      "title": "Invalid API KeyThe API key passed was not valid or has expired.",
+      "description": ""
+    },
+    {
+      "code": 105,
+      "title": "Service currently unavailableThe requested service is temporarily unavailable.",
+      "description": ""
+    },
+    {
+      "code": 106,
+      "title": "Write operation failedThe requested operation failed due to a temporary issue.",
+      "description": ""
+    },
+    {
+      "code": 111,
+      "title": "Format \"xxx\" not foundThe requested response format was not found.",
+      "description": ""
+    },
+    {
+      "code": 112,
+      "title": "Method \"xxx\" not foundThe requested method was not found.",
+      "description": ""
+    },
+    {
+      "code": 114,
+      "title": "Invalid SOAP envelopeThe SOAP envelope send in the request could not be parsed.",
+      "description": ""
+    },
+    {
+      "code": 115,
+      "title": "Invalid XML-RPC Method CallThe XML-RPC request document could not be parsed.",
+      "description": ""
+    },
+    {
+      "code": 116,
+      "title": "Bad URL foundOne or more arguments contained a URL that has been used for abuse on Flickr.",
+      "description": ""
+    }
+  ]
+}

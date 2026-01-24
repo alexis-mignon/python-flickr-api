@@ -1,0 +1,80 @@
+{
+  "name": "flickr.places.getChildrenWithPhotosPublic",
+  "description": "Return a list of locations with public photos that are parented by a Where on Earth (WOE) or Places ID.",
+  "authentication": " This method does not require authentication. ",
+  "arguments": [
+    {
+      "name": "api_key",
+      "required": true,
+      "description": "Your API application key.See herefor more details."
+    },
+    {
+      "name": "place_id",
+      "required": false,
+      "description": "A Flickr Places ID. (While optional, you must pass either a valid Places ID or a WOE ID.)"
+    },
+    {
+      "name": "woe_id",
+      "required": false,
+      "description": "A Where On Earth (WOE) ID. (While optional, you must pass either a valid Places ID or a WOE ID.)"
+    }
+  ],
+  "response": "\n<places total=\"79\">\n  <place place_id=\"HznQfdKbB58biy8sdA\" woeid=\"26332794\" latitude=\"45.498\" longitude=\"-73.575\" place_url=\"/Canada/Quebec/Montreal  /Montreal+Golden+Square+Mile\" place_type=\"neighbourhood\" photo_count=\"2717\">\n      Montreal Golden Square Mile, Montreal, QC, CA, Canada\n   </place>\n  <place place_id=\"K1rYWmGbB59rwn7lOA\" woeid=\"26332799\" latitude=\"45.502\" longitude=\"-73.578\" place_url=\"/Canada/Quebec/Montreal/Downtown+Montr%C3%A9al\" place_type=\"neighbourhood\" photo_count=\"2317\">\n      Downtown Montréal, Montreal, QC, CA, Canada\n  </place>\n</places>",
+  "errors": [
+    {
+      "code": 1,
+      "title": "Required parameter missingOne or more required parameter is missing from the API call.",
+      "description": ""
+    },
+    {
+      "code": 2,
+      "title": "Not a valid Places IDAn invalid Places (or WOE) ID was passed with the API call.",
+      "description": ""
+    },
+    {
+      "code": 3,
+      "title": "Place not foundNo place could be found for the Places (or WOE) ID passed to the API call.",
+      "description": ""
+    },
+    {
+      "code": 100,
+      "title": "Invalid API KeyThe API key passed was not valid or has expired.",
+      "description": ""
+    },
+    {
+      "code": 105,
+      "title": "Service currently unavailableThe requested service is temporarily unavailable.",
+      "description": ""
+    },
+    {
+      "code": 106,
+      "title": "Write operation failedThe requested operation failed due to a temporary issue.",
+      "description": ""
+    },
+    {
+      "code": 111,
+      "title": "Format \"xxx\" not foundThe requested response format was not found.",
+      "description": ""
+    },
+    {
+      "code": 112,
+      "title": "Method \"xxx\" not foundThe requested method was not found.",
+      "description": ""
+    },
+    {
+      "code": 114,
+      "title": "Invalid SOAP envelopeThe SOAP envelope send in the request could not be parsed.",
+      "description": ""
+    },
+    {
+      "code": 115,
+      "title": "Invalid XML-RPC Method CallThe XML-RPC request document could not be parsed.",
+      "description": ""
+    },
+    {
+      "code": 116,
+      "title": "Bad URL foundOne or more arguments contained a URL that has been used for abuse on Flickr.",
+      "description": ""
+    }
+  ]
+}
