@@ -1169,14 +1169,14 @@ class Photo(FlickrObject):
             galleries = _check_list(info.pop("gallery"))
             galleries_ = []
 
-            for g in galleries_:
-                g["owner"] = Person(g["owner"])
+            for g in galleries:
+                g["owner"] = Person(id=g["owner"])
                 pp_id = g.pop("primary_photo_id")
                 pp_secret = g.pop("primary_photo_secret")
                 pp_farm = g.pop("primary_photo_farm")
                 pp_server = g.pop("primary_photo_server")
 
-                g["primary_photo"] = Gallery(
+                g["primary_photo"] = Photo(
                     id=pp_id, secret=pp_secret,
                     server=pp_server, farm=pp_farm
                 )
