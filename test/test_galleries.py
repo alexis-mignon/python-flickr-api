@@ -165,20 +165,22 @@ class TestGalleryMethods(FlickrApiTestCase):
         # Verify we got 2 galleries
         self.assertEqual(len(galleries), 2)
 
-        # First gallery (returns dicts, so counts stay as strings)
+        # First gallery - Gallery objects with converters applied
         g1 = galleries[0]
-        self.assertEqual(g1["id"], "5704-72157622637971865")
-        self.assertEqual(g1["title"], "I like me some black & white")
-        self.assertEqual(g1["description"], "black and whites")
-        self.assertEqual(g1["count_photos"], "16")
-        self.assertEqual(g1["count_videos"], "2")
-        self.assertIsInstance(g1["owner"], f.Person)
+        self.assertIsInstance(g1, f.Gallery)
+        self.assertEqual(g1.id, "5704-72157622637971865")
+        self.assertEqual(g1.title, "I like me some black & white")
+        self.assertEqual(g1.description, "black and whites")
+        self.assertEqual(g1.count_photos, 16)  # Converted to int by Gallery converter
+        self.assertEqual(g1.count_videos, 2)   # Converted to int by Gallery converter
+        self.assertIsInstance(g1.owner, f.Person)
 
         # Second gallery
         g2 = galleries[1]
-        self.assertEqual(g2["id"], "5704-72157622566655097")
-        self.assertEqual(g2["title"], "People Sleeping in Libraries")
-        self.assertEqual(g2["count_photos"], "18")
+        self.assertIsInstance(g2, f.Gallery)
+        self.assertEqual(g2.id, "5704-72157622566655097")
+        self.assertEqual(g2.title, "People Sleeping in Libraries")
+        self.assertEqual(g2.count_photos, 18)  # Converted to int by Gallery converter
 
         # Verify pagination info
         self.assertEqual(galleries.info.total, 9)
@@ -198,16 +200,18 @@ class TestGalleryMethods(FlickrApiTestCase):
         # Verify we got 2 galleries
         self.assertEqual(len(galleries), 2)
 
-        # First gallery (returns dicts, so counts stay as strings)
+        # First gallery - Gallery objects with converters applied
         g1 = galleries[0]
-        self.assertEqual(g1["id"], "9634-72157621980433950")
-        self.assertEqual(g1["title"], "Vivitar Ultra Wide & Slim Selection")
-        self.assertEqual(g1["count_photos"], "18")
+        self.assertIsInstance(g1, f.Gallery)
+        self.assertEqual(g1.id, "9634-72157621980433950")
+        self.assertEqual(g1.title, "Vivitar Ultra Wide & Slim Selection")
+        self.assertEqual(g1.count_photos, 18)  # Converted to int by Gallery converter
 
         # Second gallery
         g2 = galleries[1]
-        self.assertEqual(g2["id"], "22342631-72157622254010831")
-        self.assertEqual(g2["title"], "Awesome Pics")
+        self.assertIsInstance(g2, f.Gallery)
+        self.assertEqual(g2.id, "22342631-72157622254010831")
+        self.assertEqual(g2.title, "Awesome Pics")
 
         # Verify pagination info
         self.assertEqual(galleries.info.total, 7)

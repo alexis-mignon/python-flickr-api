@@ -24,7 +24,7 @@
       "description": "The page of results to return. If this argument is ommited, it defaults to 1."
     }
   ],
-  "response": "\n<groups page=\"1\" pages=\"14\" perpage=\"5\" total=\"67\">\n  <group nsid=\"3000@N02\" name=\"Frito's Test Group\" eighteenplus=\"0\" />\n  <group nsid=\"32825757@N00\" name=\"Free for All\" eighteenplus=\"0\" />\n  <group nsid=\"33335981560@N01\" name=\"joly's mothers\" eighteenplus=\"0\" />\n  <group nsid=\"33853651681@N01\" name=\"Wintermute tower\" eighteenplus=\"0\" />\n  <group nsid=\"33853651696@N01\" name=\"Art and Literature Hoedown\" eighteenplus=\"0\" />\n</groups>",
+  "response": "\n<groups page=\"1\" pages=\"14\" perpage=\"5\" total=\"67\">\n  <group id=\"3000@N02\" nsid=\"3000@N02\" name=\"Frito's Test Group\" eighteenplus=\"0\" />\n  <group id=\"32825757@N00\" nsid=\"32825757@N00\" name=\"Free for All\" eighteenplus=\"0\" />\n  <group id=\"33335981560@N01\" nsid=\"33335981560@N01\" name=\"joly's mothers\" eighteenplus=\"0\" />\n  <group id=\"33853651681@N01\" nsid=\"33853651681@N01\" name=\"Wintermute tower\" eighteenplus=\"0\" />\n  <group id=\"33853651696@N01\" nsid=\"33853651696@N01\" name=\"Art and Literature Hoedown\" eighteenplus=\"0\" />\n</groups>",
   "errors": [
     {
       "code": 1,
