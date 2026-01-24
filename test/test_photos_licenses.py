@@ -6,39 +6,18 @@ flickr.photos.licenses.getInfo
 
 Uses example responses from the api-docs/ directory.
 """
-import json
 import unittest
 from unittest.mock import patch
 
 import flickr_api as f
 from flickr_api import method_call
-from flickr_api.auth import AuthHandler
 
-from requests import Response
-
+from base_test import FlickrApiTestCase
 from test_utils import xml_to_flickr_json, load_api_doc
 
 
-class TestLicenseMethods(unittest.TestCase):
+class TestLicenseMethods(FlickrApiTestCase):
     """Tests for License API methods"""
-
-    def setUp(self):
-        """Set up auth handler for tests"""
-        auth_handler = AuthHandler(
-            key="test_key",
-            secret="test_secret",
-            access_token_key="test_token",
-            access_token_secret="test_token_secret",
-        )
-        f.set_auth_handler(auth_handler)
-
-    def _mock_response(self, json_data):
-        """Create a mock Response object with the given JSON data"""
-        json_data["stat"] = "ok"
-        resp = Response()
-        resp.status_code = 200
-        resp._content = json.dumps(json_data).encode("utf-8")
-        return resp
 
     @patch.object(method_call.requests, "post")
     def test_license_get_list(self, mock_post):
@@ -103,11 +82,7 @@ class TestLicenseMethods(unittest.TestCase):
     def test_photo_set_license(self, mock_post):
         """Test Photo.setLicence (flickr.photos.licenses.setLicense)"""
         # Empty response for setLicense operation
-        json_data = {"stat": "ok"}
-        resp = Response()
-        resp.status_code = 200
-        resp._content = json.dumps(json_data).encode("utf-8")
-        mock_post.return_value = resp
+        mock_post.return_value = self._mock_response({})
 
         photo = f.Photo(id="12345678")
 
