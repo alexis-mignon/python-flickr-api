@@ -566,9 +566,10 @@ class Group(FlickrObject):
 
     @static_caller("flickr.groups.search")
     def search(**args):
-        def format_result(r, token):
+        def format_result(r, token=None):
             info = r["groups"]
-            groups = [Group(id=g["nsid"], **g) for g in info.pop("group")]
+            group_list = _check_list(info.pop("group", []))
+            groups = [Group(**g) for g in group_list]
             return FlickrList(groups, Info(**info))
         return args, format_result
 
@@ -1794,8 +1795,8 @@ class Place(FlickrObject):
     def getPlaceTypes(**args):
         def format_result(r):
             places_types = r["place_types"]["place_type"]
-            return [Place.Type(id=pt.pop("place_type_id"), **pt)
-                     for pt in places_types]
+            return [Place.Type(id=pt.pop("id"), **pt)
+                    for pt in places_types]
         return args, format_result
 
     @static_caller("flickr.places.getShapeHistory")
