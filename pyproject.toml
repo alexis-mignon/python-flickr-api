@@ -31,6 +31,7 @@ dev = [
     "pytest",
     "flake8",
     "mypy",
+    "types-requests",
 ]
 
 [build-system]
