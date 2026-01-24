@@ -1,0 +1,80 @@
+{
+  "name": "flickr.groups.discuss.replies.getInfo",
+  "description": "Get information on a group topic reply.",
+  "authentication": " This method does not require authentication. ",
+  "arguments": [
+    {
+      "name": "api_key",
+      "required": true,
+      "description": "Your API application key.See herefor more details."
+    },
+    {
+      "name": "group_id",
+      "required": true,
+      "description": "Pass in the group id to where the topic belongs. Can be NSID or group alias. Making this parameter optional for legacy reasons, but it is highly recommended to pass this in to get faster performance."
+    },
+    {
+      "name": "topic_id",
+      "required": true,
+      "description": "The ID of the topic the post is in."
+    },
+    {
+      "name": "reply_id",
+      "required": true,
+      "description": "The ID of the reply to fetch."
+    }
+  ],
+  "response": "<wrapper><?xml version=\"1.0\" encoding=\"utf-8\" ?>\n<rsp stat=\"ok\">\n  <reply id=\"72157607082559968\" author=\"30134652@N05\" authorname=\"JAMAL'S ACCOUNT\" is_pro=\"0\" role=\"admin\" iconserver=\"0\" iconfarm=\"0\" can_edit=\"1\" can_delete=\"1\" datecreate=\"1337975921\" lastedit=\"0\">\n    <message>...well, too bad.</message>\n  </reply>\n</rsp></wrapper>",
+  "errors": [
+    {
+      "code": 1,
+      "title": "Topic not foundThe topic_id is invalid",
+      "description": ""
+    },
+    {
+      "code": 2,
+      "title": "Reply not foundThe reply_id is invalid",
+      "description": ""
+    },
+    {
+      "code": 100,
+      "title": "Invalid API KeyThe API key passed was not valid or has expired.",
+      "description": ""
+    },
+    {
+      "code": 105,
+      "title": "Service currently unavailableThe requested service is temporarily unavailable.",
+      "description": ""
+    },
+    {
+      "code": 106,
+      "title": "Write operation failedThe requested operation failed due to a temporary issue.",
+      "description": ""
+    },
+    {
+      "code": 111,
+      "title": "Format \"xxx\" not foundThe requested response format was not found.",
+      "description": ""
+    },
+    {
+      "code": 112,
+      "title": "Method \"xxx\" not foundThe requested method was not found.",
+      "description": ""
+    },
+    {
+      "code": 114,
+      "title": "Invalid SOAP envelopeThe SOAP envelope send in the request could not be parsed.",
+      "description": ""
+    },
+    {
+      "code": 115,
+      "title": "Invalid XML-RPC Method CallThe XML-RPC request document could not be parsed.",
+      "description": ""
+    },
+    {
+      "code": 116,
+      "title": "Bad URL foundOne or more arguments contained a URL that has been used for abuse on Flickr.",
+      "description": ""
+    }
+  ]
+}
