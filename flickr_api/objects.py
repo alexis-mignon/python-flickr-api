@@ -118,9 +118,8 @@ class FlickrObject(metaclass=FlickrAutoDoc):
     def __getattr__(self, name):
         if name == 'id' and name not in self.__dict__:
             raise AttributeError(
-              "'%s' object has no attribute '%s'" % (
-                    self.__class__.__name__, name)
-              )
+                f"'{self.__class__.__name__}' object has no attribute '{name}'"
+            )
         if name not in self.__dict__:
             if not self.loaded:
                 self.load()
@@ -128,10 +127,8 @@ class FlickrObject(metaclass=FlickrAutoDoc):
             return self.__dict__[name]
         except KeyError:
             raise AttributeError(
-                "'%s' object has no attribute '%s'" % (
-                     self.__class__.__name__, name
-                    )
-                )
+                f"'{self.__class__.__name__}' object has no attribute '{name}'"
+            ) from None
 
     def __setattr__(self, name, values):
         raise FlickrError("Readonly attribute")
@@ -162,13 +159,13 @@ class FlickrObject(metaclass=FlickrAutoDoc):
             if not val_found:
                 continue
             if isinstance(value, str):
-                value = "'%s'" % value
+                value = f"'{value}'"
             else:
                 value = str(value)
             if len(value) > 20:
                 value = value[:20] + "..."
-            vals.append("%s=%s" % (k, value))
-        return "%s(%s)" % (self.__class__.__name__, ", ".join(vals))
+            vals.append(f"{k}={value}")
+        return f"{self.__class__.__name__}({', '.join(vals)})"
 
     def __repr__(self):
         return str(self)
@@ -187,15 +184,15 @@ class FlickrObject(metaclass=FlickrAutoDoc):
 
 
 class FlickrList(UserList):
-    def __init__(self, data=[], info=None):
-        UserList.__init__(self, data)
+    def __init__(self, data=None, info=None):
+        UserList.__init__(self, data if data is not None else [])
         self.info = info
 
     def __str__(self):
-        return '%s;%s' % (str(self.data), str(self.info))
+        return f'{self.data!s};{self.info!s}'
 
     def __repr__(self):
-        return '%s;%s' % (repr(self.data), repr(self.info))
+        return f'{self.data!r};{self.info!r}'
 
 
 class Activity(FlickrObject):
@@ -1116,7 +1113,7 @@ class Photo(FlickrObject):
 
             sizes = photo.pop("sizes", None)
             if sizes:
-                photo["sizes"] = dict([(s['label'], s) for s in sizes["size"]])
+                photo["sizes"] = {s['label']: s for s in sizes["size"]}
 
             return photo
         return args, format_result
@@ -1240,7 +1237,7 @@ class Photo(FlickrObject):
     @caller("flickr.photos.getSizes")
     def _getSizes(self, **args):
         def format_result(r):
-            return dict([(s["label"], s) for s in r["sizes"]["size"]])
+            return {s["label"]: s for s in r["sizes"]["size"]}
         return args, format_result
 
     def getSizes(self, force=False, **args):
@@ -1253,7 +1250,7 @@ class Photo(FlickrObject):
         args["date"] = date
         return (
             args,
-            lambda r: dict([(k, int(v)) for k, v in r["stats"].items()])
+            lambda r: {k: int(v) for k, v in r["stats"].items()}
         )
 
     @caller("flickr.tags.getListPhoto")
@@ -1264,7 +1261,7 @@ class Photo(FlickrObject):
         """
             returns the URL to the photo's page.
         """
-        return "http://www.flickr.com/photos/%s/%s" % (self.owner.id, self.id)
+        return f"http://www.flickr.com/photos/{self.owner.id}/{self.id}"
 
     @caller("flickr.photos.getPerms")
     def getPerms(self):
@@ -1309,7 +1306,7 @@ class Photo(FlickrObject):
         try:
             return self.getSizes()[size_label]["url"]
         except KeyError:
-            raise FlickrError("The requested size is not available")
+            raise FlickrError("The requested size is not available") from None
 
     def getPhotoFile(self, size_label=None):
         """
@@ -1332,7 +1329,7 @@ class Photo(FlickrObject):
         try:
             return self.getSizes()[size_label]["source"]
         except KeyError:
-            raise FlickrError("The requested size is not available")
+            raise FlickrError("The requested size is not available") from None
 
     def _getOutputFilename(self, filename, size_label):
         photo_file = self.getPhotoFile(size_label)
@@ -1658,7 +1655,7 @@ class Photoset(FlickrObject):
         args["date"] = date
         return (
             args,
-            lambda r: dict([(k, int(v)) for k, v in r["stats"].items()])
+            lambda r: {k: int(v) for k, v in r["stats"].items()}
         )
 
     @static_caller("flickr.photosets.orderSets")
@@ -2162,18 +2159,20 @@ def _extract_photo_list(r, token=None):
 
 def _parse_inline_sizes(p):
     keys = [k for k in p.keys() if k.startswith("url_")]
-    size_keys = set(k.split("_")[-1] for k in keys)
+    size_keys = {k.split("_")[-1] for k in keys}
 
     sizes = {}
     for s in size_keys:
         w = p["width_"+s]
         h = p["height_"+s]
-        url = "https://www.flickr.com/photos/%s/%s/sizes/%s/" % (p["owner"].id, p["id"], s)
+        url = f"https://www.flickr.com/photos/{p['owner'].id}/{p['id']}/sizes/{s}/"
         source = p["url_"+s]
         label = _SIZES_LABEL[s]
         media = p["media"]
 
-        sizes[label] = dict(width=w, height=h, url=url, source=source, label=label, media=media)
+        sizes[label] = {
+            "width": w, "height": h, "url": url, "source": source, "label": label, "media": media
+        }
 
     return sizes
 
@@ -2294,12 +2293,12 @@ class SlicedWalker:
 
     def next(self):
         if self._begin:
-            for i in range(self.start):
+            for _ in range(self.start):
                 self.walker.next()
                 self._total += 1
             self._begin = False
         else:
-            for i in range(self.step - 1):
+            for _ in range(self.step - 1):
                 self._total += 1
                 self.walker.next()
 

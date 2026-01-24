@@ -21,6 +21,7 @@
 
 """
 
+# ruff: noqa: I001
 from ._version import __version__ as __version__  # noqa: F401
 from .auth import set_auth_handler as set_auth_handler  # noqa: F401
 from .keys import set_keys as set_keys  # noqa: F401
