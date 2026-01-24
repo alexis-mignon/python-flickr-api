@@ -30,6 +30,7 @@ Repository = "https://github.com/alexis-mignon/python-flickr-api"
 dev = [
     "pytest",
     "flake8",
+    "ruff",
     "mypy",
     "types-requests",
 ]
@@ -43,3 +44,6 @@ packages = ["flickr_api"]
 
 [tool.pytest.ini_options]
 testpaths = ["test"]
+
+[tool.ruff]
+line-length = 100
