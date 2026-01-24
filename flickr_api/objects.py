@@ -1447,7 +1447,7 @@ class Photo(FlickrObject):
         args["degrees"] = degrees
 
         def format_result(r, token):
-            photo_id = r["photo_id"]["_content"]
+            photo_id = r["photo_id"]["text"]
             photo_secret = r["photo_id"]["secret"]
             return Photo(token=token, id=photo_id, secret=photo_secret)
         return args, format_result
