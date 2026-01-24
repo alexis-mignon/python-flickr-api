@@ -12,6 +12,10 @@ flickr.photos.getNotInSet, flickr.photos.getPerms, flickr.photos.getRecent,
 flickr.photos.getSizes, flickr.photos.getUntagged, flickr.photos.getWithGeoData,
 flickr.photos.getWithoutGeoData, flickr.photos.recentlyUpdated, flickr.photos.search
 
+Batch 15:
+flickr.photos.removeTag, flickr.photos.setContentType, flickr.photos.setDates,
+flickr.photos.setMeta, flickr.photos.setPerms, flickr.photos.setSafetyLevel
+
 Uses example responses from the api-docs/ directory.
 """
 import json
@@ -769,6 +773,137 @@ class TestPhotoMethods(unittest.TestCase):
         self.assertEqual(photos.info.pages, 89)
         self.assertEqual(photos.info.perpage, 10)
         self.assertEqual(photos.info.total, 881)
+
+    # Batch 15 tests
+
+    @patch.object(method_call.requests, "post")
+    def test_tag_remove(self, mock_post):
+        """Test Tag.remove (flickr.photos.removeTag)"""
+        # Empty response for remove operation
+        mock_post.return_value = self._mock_response({})
+
+        tag = f.Tag(id="12345-67890")
+        result = tag.remove()
+
+        # Remove returns None
+        self.assertIsNone(result)
+
+    @patch.object(method_call.requests, "post")
+    def test_photo_set_content_type(self, mock_post):
+        """Test Photo.setContentType (flickr.photos.setContentType)"""
+        # Empty response (library ignores response content)
+        mock_post.return_value = self._mock_response({})
+
+        photo = f.Photo(id="14814")
+        result = photo.setContentType(content_type=3)
+
+        # setContentType returns None
+        self.assertIsNone(result)
+
+    @patch.object(method_call.requests, "post")
+    def test_photo_set_dates(self, mock_post):
+        """Test Photo.setDates (flickr.photos.setDates)"""
+        # Empty response for set operation
+        mock_post.return_value = self._mock_response({})
+
+        photo = f.Photo(id="12345")
+        result = photo.setDates(date_taken="2024-01-15 10:30:00")
+
+        # setDates returns None
+        self.assertIsNone(result)
+
+    @patch.object(method_call.requests, "post")
+    def test_photo_set_dates_with_granularity(self, mock_post):
+        """Test Photo.setDates with granularity (flickr.photos.setDates)"""
+        # Empty response for set operation
+        mock_post.return_value = self._mock_response({})
+
+        photo = f.Photo(id="12345")
+        result = photo.setDates(
+            date_taken="2024-01-15 10:30:00",
+            date_taken_granularity=0
+        )
+
+        # setDates returns None
+        self.assertIsNone(result)
+
+    @patch.object(method_call.requests, "post")
+    def test_photo_set_meta(self, mock_post):
+        """Test Photo.setMeta (flickr.photos.setMeta)"""
+        # Empty response for set operation
+        mock_post.return_value = self._mock_response({})
+
+        photo = f.Photo(id="12345")
+        result = photo.setMeta(title="New Title", description="New description")
+
+        # setMeta returns None
+        self.assertIsNone(result)
+
+    @patch.object(method_call.requests, "post")
+    def test_photo_set_meta_title_only(self, mock_post):
+        """Test Photo.setMeta with title only (flickr.photos.setMeta)"""
+        # Empty response for set operation
+        mock_post.return_value = self._mock_response({})
+
+        photo = f.Photo(id="12345")
+        result = photo.setMeta(title="New Title")
+
+        # setMeta returns None
+        self.assertIsNone(result)
+
+    @patch.object(method_call.requests, "post")
+    def test_photo_set_perms(self, mock_post):
+        """Test Photo.setPerms (flickr.photos.setPerms)"""
+        # Empty response (library ignores response content)
+        mock_post.return_value = self._mock_response({})
+
+        photo = f.Photo(id="12345")
+        result = photo.setPerms(is_public=1, is_friend=1, is_family=0)
+
+        # setPerms returns None
+        self.assertIsNone(result)
+
+    @patch.object(method_call.requests, "post")
+    def test_photo_set_perms_with_comments(self, mock_post):
+        """Test Photo.setPerms with comment perms (flickr.photos.setPerms)"""
+        # Empty response (library ignores response content)
+        mock_post.return_value = self._mock_response({})
+
+        photo = f.Photo(id="12345")
+        result = photo.setPerms(
+            is_public=0,
+            is_friend=1,
+            is_family=1,
+            perm_comment=1,
+            perm_addmeta=2
+        )
+
+        # setPerms returns None
+        self.assertIsNone(result)
+
+    @patch.object(method_call.requests, "post")
+    def test_photo_set_safety_level(self, mock_post):
+        """Test Photo.setSafetyLevel (flickr.photos.setSafetyLevel)"""
+        # Empty response (library ignores response content)
+        mock_post.return_value = self._mock_response({})
+
+        photo = f.Photo(id="14814")
+        result = photo.setSafetyLevel(safety_level=2)
+
+        # setSafetyLevel returns None
+        self.assertIsNone(result)
+
+    @patch.object(method_call.requests, "post")
+    def test_photo_set_safety_level_with_hidden(self, mock_post):
+        """Test Photo.setSafetyLevel with hidden (flickr.photos.setSafetyLevel)"""
+        # Empty response (library ignores response content)
+        mock_post.return_value = self._mock_response({})
+
+        photo = f.Photo(id="14814")
+        result = photo.setSafetyLevel(safety_level=3, hidden=1)
+
+        # setSafetyLevel returns None
+        self.assertIsNone(result)
 
 
 if __name__ == "__main__":
