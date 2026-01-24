@@ -1230,7 +1230,7 @@ class Photo(FlickrObject):
             suggestions = []
             for s in suggestions_:
                 if "photo_id" in s:
-                    s["photo"] = s.pop(Photo(id=s.pop("photo_id")))
+                    s["photo"] = Photo(id=s.pop("photo_id"))
                 if "suggested_by" in s:
                     s["suggested_by"] = Person(id=s["suggested_by"])
                 suggestions.append(Photo.Suggestion(**s))
