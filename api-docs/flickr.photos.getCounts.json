@@ -1,0 +1,95 @@
+{
+  "name": "flickr.photos.getCounts",
+  "description": "Gets a list of photo counts for the given date ranges for the calling user.",
+  "authentication": " This method requiresauthenticationwith 'read' permission. ",
+  "arguments": [
+    {
+      "name": "api_key",
+      "required": true,
+      "description": "Your API application key.See herefor more details."
+    },
+    {
+      "name": "dates",
+      "required": false,
+      "description": "A comma delimited list of unix timestamps, denoting the periods to return counts for. They should be specifiedsmallest first."
+    },
+    {
+      "name": "taken_dates",
+      "required": false,
+      "description": "A comma delimited list of mysql datetimes, denoting the periods to return counts for. They should be specifiedsmallest first."
+    }
+  ],
+  "response": "\n<photocounts>\n  <photocount count=\"4\" fromdate=\"1093566950\" todate=\"1093653350\" />\n  <photocount count=\"0\" fromdate=\"1093653350\" todate=\"1093739750\" />\n  <photocount count=\"0\" fromdate=\"1093739750\" todate=\"1093826150\" />\n  <photocount count=\"2\" fromdate=\"1093826150\" todate=\"1093912550\" />\n  <photocount count=\"0\" fromdate=\"1093912550\" todate=\"1093998950\" />\n  <photocount count=\"0\" fromdate=\"1093998950\" todate=\"1094085350\" />\n  <photocount count=\"0\" fromdate=\"1094085350\" todate=\"1094171750\" />\n</photocounts>",
+  "errors": [
+    {
+      "code": 1,
+      "title": "No dates specifiedNeither dates nor taken_dates were specified.",
+      "description": ""
+    },
+    {
+      "code": 95,
+      "title": "SSL is requiredSSL is required to access the Flickr API.",
+      "description": ""
+    },
+    {
+      "code": 96,
+      "title": "Invalid signatureThe passed signature was invalid.",
+      "description": ""
+    },
+    {
+      "code": 97,
+      "title": "Missing signatureThe call required signing but no signature was sent.",
+      "description": ""
+    },
+    {
+      "code": 98,
+      "title": "Login failed / Invalid auth tokenThe login details or auth token passed were invalid.",
+      "description": ""
+    },
+    {
+      "code": 99,
+      "title": "User not logged in / Insufficient permissionsThe method requires user authentication but the user was not logged in, or the authenticated method call did not have the required permissions.",
+      "description": ""
+    },
+    {
+      "code": 100,
+      "title": "Invalid API KeyThe API key passed was not valid or has expired.",
+      "description": ""
+    },
+    {
+      "code": 105,
+      "title": "Service currently unavailableThe requested service is temporarily unavailable.",
+      "description": ""
+    },
+    {
+      "code": 106,
+      "title": "Write operation failedThe requested operation failed due to a temporary issue.",
+      "description": ""
+    },
+    {
+      "code": 111,
+      "title": "Format \"xxx\" not foundThe requested response format was not found.",
+      "description": ""
+    },
+    {
+      "code": 112,
+      "title": "Method \"xxx\" not foundThe requested method was not found.",
+      "description": ""
+    },
+    {
+      "code": 114,
+      "title": "Invalid SOAP envelopeThe SOAP envelope send in the request could not be parsed.",
+      "description": ""
+    },
+    {
+      "code": 115,
+      "title": "Invalid XML-RPC Method CallThe XML-RPC request document could not be parsed.",
+      "description": ""
+    },
+    {
+      "code": 116,
+      "title": "Bad URL foundOne or more arguments contained a URL that has been used for abuse on Flickr.",
+      "description": ""
+    }
+  ]
+}
