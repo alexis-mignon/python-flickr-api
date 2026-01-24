@@ -37,3 +37,7 @@ api-docs/*
 !api-docs/flickr.groups.discuss.topics.getList.json
 !api-docs/flickr.groups.discuss.replies.getInfo.json
 !api-docs/flickr.groups.discuss.replies.getList.json
+!api-docs/flickr.groups.members.getList.json
+!api-docs/flickr.groups.pools.getGroups.json
+!api-docs/flickr.groups.pools.getPhotos.json
+!api-docs/flickr.interestingness.getList.json
