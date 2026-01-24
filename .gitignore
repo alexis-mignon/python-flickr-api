@@ -8,6 +8,11 @@
 .pytest_cache
 # Ignore api-docs except specific files needed for tests
 api-docs/*
+!api-docs/flickr.activity.userComments.json
+!api-docs/flickr.activity.userPhotos.json
+!api-docs/flickr.blogs.getList.json
+!api-docs/flickr.blogs.getServices.json
+!api-docs/flickr.blogs.postPhoto.json
 !api-docs/flickr.tags.getHotList.json
 !api-docs/flickr.tags.getListUser.json
 !api-docs/flickr.tags.getListUserPopular.json
