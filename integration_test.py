@@ -63,9 +63,11 @@ Coverage:
         - Photo.photosForLocation (flickr.photos.geo.photosForLocation)
         - Place.getByUrl (flickr.places.getInfoByUrl)
 
-    NOT COVERED - Places API (returns empty results, possibly deprecated):
-        - Place.find, Place.findByLatLon return 0 results
+    NOT COVERED - Places API (known Flickr backend issue, not a library bug):
+        - Place.find, Place.findByLatLon return 0 results (reported by many users)
         - Place.getInfo, Place.getChildrenWithPhotoPublic, Place.getTags skipped
+        - See: https://www.flickr.com/help/forum/en-us/72157709175964671/
+        - API is still documented but effectively broken on Flickr's end
 """
 
 import argparse
