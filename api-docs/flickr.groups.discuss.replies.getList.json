@@ -1,0 +1,80 @@
+{
+  "name": "flickr.groups.discuss.replies.getList",
+  "description": "Get a list of replies from a group discussion topic.",
+  "authentication": " This method does not require authentication. ",
+  "arguments": [
+    {
+      "name": "api_key",
+      "required": true,
+      "description": "Your API application key.See herefor more details."
+    },
+    {
+      "name": "group_id",
+      "required": true,
+      "description": "Pass in the group id to where the topic belongs. Can be NSID or group alias. Making this parameter optional for legacy reasons, but it is highly recommended to pass this in to get faster performance."
+    },
+    {
+      "name": "topic_id",
+      "required": true,
+      "description": "The ID of the topic to fetch replies for."
+    },
+    {
+      "name": "per_page",
+      "required": true,
+      "description": "Number of photos to return per page. If this argument is omitted, it defaults to 100. The maximum allowed value is 500."
+    },
+    {
+      "name": "page",
+      "required": false,
+      "description": "The page of results to return. If this argument is omitted, it defaults to 1."
+    }
+  ],
+  "response": "\n<rsp stat=\"ok\">\n  <replies>\n    <topic topic_id=\"72157625038324579\" subject=\"A long time ago in a galaxy far, far away...\" group_id=\"46744914@N00\" iconserver=\"1\" iconfarm=\"1\" name=\"Tell a story in 5 frames (Visual story telling)\" author=\"53930889@N04\" authorname=\"Smallportfolio_jm08\" role=\"member\" author_iconserver=\"5169\" author_iconfarm=\"6\" can_edit=\"0\" can_delete=\"0\" can_reply=\"0\" is_sticky=\"0\" is_locked=\"\" datecreate=\"1287070965\" datelastpost=\"1336905518\" total=\"8\" page=\"1\" per_page=\"3\" pages=\"2\">\n      <message>&lt;div&gt;&lt;span class=&quot;photo_container pc_m bbml_img&quot;&gt;&lt;a href=&quot;/photos/53930889@N04/5080874079/&quot; title=&quot;Star Wars 1 by Smallportfolio_jm08&quot;&gt;&lt;img class=&quot;notsowide&quot; src=&quot;http://farm5.staticflickr.com/4035/5080874079_684cf874e0_m.jpg&quot; width=&quot;240&quot; height=&quot;180&quot; alt=&quot;Star Wars 1 by Smallportfolio_jm08&quot;  class=&quot;pc_img&quot; border=&quot;0&quot; /&gt;&lt;/a&gt;&lt;/span&gt;&lt;/div&gt;\n\n&lt;div&gt;&lt;span class=&quot;photo_container pc_m bbml_img&quot;&gt;&lt;a href=&quot;/photos/53930889@N04/5081467846/&quot; title=&quot;Star Wars 2 by Smallportfolio_jm08&quot;&gt;&lt;img class=&quot;notsowide&quot; src=&quot;http://farm5.staticflickr.com/4071/5081467846_2eec86176d_m.jpg&quot; width=&quot;240&quot; height=&quot;180&quot; alt=&quot;Star Wars 2 by Smallportfolio_jm08&quot;  class=&quot;pc_img&quot; border=&quot;0&quot; /&gt;&lt;/a&gt;&lt;/span&gt;&lt;/div&gt;\n\n&lt;div&gt;&lt;span class=&quot;photo_container pc_m bbml_img&quot;&gt;&lt;a href=&quot;/photos/53930889@N04/5081467886/&quot; title=&quot;Star Wars 3 by Smallportfolio_jm08&quot;&gt;&lt;img class=&quot;notsowide&quot; src=&quot;http://farm5.staticflickr.com/4021/5081467886_d8cca6c8e8_m.jpg&quot; width=&quot;240&quot; height=&quot;180&quot; alt=&quot;Star Wars 3 by Smallportfolio_jm08&quot;  class=&quot;pc_img&quot; border=&quot;0&quot; /&gt;&lt;/a&gt;&lt;/span&gt;&lt;/div&gt;\n\n&lt;div&gt;&lt;span class=&quot;photo_container pc_m bbml_img&quot;&gt;&lt;a href=&quot;/photos/53930889@N04/5081467910/&quot; title=&quot;Star Wars 4 by Smallportfolio_jm08&quot;&gt;&lt;img class=&quot;notsowide&quot; src=&quot;http://farm5.staticflickr.com/4084/5081467910_274bb11fdc_m.jpg&quot; width=&quot;240&quot; height=&quot;180&quot; alt=&quot;Star Wars 4 by Smallportfolio_jm08&quot;  class=&quot;pc_img&quot; border=&quot;0&quot; /&gt;&lt;/a&gt;&lt;/span&gt;&lt;/div&gt;\n\n&lt;div&gt;&lt;span class=&quot;photo_container pc_m bbml_img&quot;&gt;&lt;a href=&quot;/photos/53930889@N04/5081467948/&quot; title=&quot;Star Wars 5 by Smallportfolio_jm08&quot;&gt;&lt;img class=&quot;notsowide&quot; src=&quot;http://farm5.staticflickr.com/4154/5081467948_1a5f200bc0_m.jpg&quot; width=&quot;240&quot; height=&quot;180&quot; alt=&quot;Star Wars 5 by Smallportfolio_jm08&quot;  class=&quot;pc_img&quot; border=&quot;0&quot; /&gt;&lt;/a&gt;&lt;/span&gt;&lt;/div&gt;</message>\n    </topic>\n    <reply id=\"72157625163054214\" author=\"41380738@N05\" authorname=\"BlueRidgeKitties\" role=\"member\" iconserver=\"2459\" iconfarm=\"3\" can_edit=\"0\" can_delete=\"0\" datecreate=\"1287071539\" lastedit=\"0\">\n      <message>*LOL* The universe is full of &lt;a href=&quot;http://www.flickr.com/groups/visualstory/discuss/72157622533160886/&quot;&gt;giant furry space monsters&lt;/a&gt; it seems! Love it.</message>\n    </reply>\n    <reply id=\"72157625163539300\" author=\"52101018@N00\" authorname=\"pterandon\" role=\"admin\" iconserver=\"1\" iconfarm=\"1\" can_edit=\"0\" can_delete=\"0\" datecreate=\"1287076748\" lastedit=\"0\">\n      <message>Great work. Good focus on different aspects of scene in each frame.  Funny ending-- even better that I didn't notice the cat right away!  Being a hopeless Trekkie, I was wondering why Han was doing the Vulcan death grip on one of his allies....</message>\n    </reply>\n    <reply id=\"72157625040116805\" author=\"54830408@N02\" authorname=\"tay.grisham\" role=\"member\" iconserver=\"0\" iconfarm=\"0\" can_edit=\"0\" can_delete=\"0\" datecreate=\"1287089858\" lastedit=\"0\">\n      <message>On a scale of 1 to 10 of awesome. This is a 15</message>\n    </reply>\n  </replies>\n</rsp>",
+  "errors": [
+    {
+      "code": 1,
+      "title": "Topic not foundThe topic_id is invalid.",
+      "description": ""
+    },
+    {
+      "code": 100,
+      "title": "Invalid API KeyThe API key passed was not valid or has expired.",
+      "description": ""
+    },
+    {
+      "code": 105,
+      "title": "Service currently unavailableThe requested service is temporarily unavailable.",
+      "description": ""
+    },
+    {
+      "code": 106,
+      "title": "Write operation failedThe requested operation failed due to a temporary issue.",
+      "description": ""
+    },
+    {
+      "code": 111,
+      "title": "Format \"xxx\" not foundThe requested response format was not found.",
+      "description": ""
+    },
+    {
+      "code": 112,
+      "title": "Method \"xxx\" not foundThe requested method was not found.",
+      "description": ""
+    },
+    {
+      "code": 114,
+      "title": "Invalid SOAP envelopeThe SOAP envelope send in the request could not be parsed.",
+      "description": ""
+    },
+    {
+      "code": 115,
+      "title": "Invalid XML-RPC Method CallThe XML-RPC request document could not be parsed.",
+      "description": ""
+    },
+    {
+      "code": 116,
+      "title": "Bad URL foundOne or more arguments contained a URL that has been used for abuse on Flickr.",
+      "description": ""
+    }
+  ]
+}

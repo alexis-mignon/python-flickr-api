@@ -459,7 +459,7 @@ class Group(FlickrObject):
                 author = {
                     'id': reply.pop("author"),
                     'role': reply.pop("role"),
-                    'is_pro': bool(reply.pop("is_pro")),
+                    'is_pro': bool(reply.pop("is_pro", 0)),
                 }
                 reply["author"] = Person(**author)
                 return reply
@@ -471,6 +471,12 @@ class Group(FlickrObject):
             @caller("flickr.groups.discuss.replies.delete")
             def delete(self, **args):
                 args["topic_id"] = self.topic.id
+                return args, _none
+
+            @caller("flickr.groups.discuss.replies.edit")
+            def edit(self, **args):
+                args["topic_id"] = self.topic.id
+                return args, _none
 
         def getToken(self):
             return self.group.getToken()
@@ -486,7 +492,7 @@ class Group(FlickrObject):
 
             author = {
                 'id': topic.pop("author"),
-                'is_pro': bool(topic.pop('is_pro')),
+                'is_pro': bool(topic.pop('is_pro', 0)),
                 'role': topic.pop("role"),
             }
             topic["author"] = Person(**author)
@@ -502,26 +508,31 @@ class Group(FlickrObject):
         def getReplies(self, **args):
             def format_result(r):
                 info = r["replies"]
+                # Pagination info is in the topic element, not at replies level
+                topic_info = info.pop("topic", {})
+                pagination = {
+                    k: topic_info.get(k)
+                    for k in ("total", "page", "pages", "per_page")
+                    if topic_info.get(k) is not None
+                }
                 return FlickrList(
                     [Group.Topic.Reply(topic=self,
                                        **Group.Topic.Reply._format_reply(rep))
                             for rep in info.pop("reply", [])],
-                     Info(**info)
+                     Info(**pagination)
                 )
             return args, format_result
 
         @caller("flickr.groups.discuss.replies.delete")
-        def delete(self, **args):
-            args["topic_id"] = self.topic.id
-            return args, _none
+        def deleteReply(self, **args):
+            return _format_id("reply", args), _none
 
         @caller("flickr.groups.discuss.replies.edit")
-        def edit(self, **args):
-            args["topic_id"] = self.topic.id
-            return args, _none
+        def editReply(self, **args):
+            return _format_id("reply", args), _none
 
     @caller("flickr.groups.discuss.topics.add")
-    def addDiscussTopic(**args):
+    def addDiscussTopic(self, **args):
         return args, _none
 
     @static_caller("flickr.groups.browse")
