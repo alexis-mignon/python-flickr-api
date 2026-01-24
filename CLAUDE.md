@@ -26,8 +26,10 @@ uv run pytest test/test_parse_sizes.py::TestPhotoSizes::test_video_largest_size
 ```
 
 ### Linting
+Always run both linters before committing changes:
 ```bash
 uv run flake8 flickr_api/
+uv run ruff check flickr_api/
 ```
 
 ## Architecture

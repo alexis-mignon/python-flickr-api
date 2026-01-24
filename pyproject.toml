@@ -30,6 +30,7 @@ Repository = "https://github.com/alexis-mignon/python-flickr-api"
 dev = [
     "pytest",
     "flake8",
+    "ruff",
 ]
 
 [build-system]
@@ -41,3 +42,24 @@ packages = ["flickr_api"]
 
 [tool.pytest.ini_options]
 testpaths = ["test"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"
+
+[tool.ruff.lint]
+select = [
+    "E",      # pycodestyle errors
+    "W",      # pycodestyle warnings
+    "F",      # Pyflakes
+    "I",      # isort
+    "B",      # flake8-bugbear
+    "C4",     # flake8-comprehensions
+    "UP",     # pyupgrade
+]
+ignore = [
+    "E501",   # line too long (handled by formatter)
+]
+
+[tool.ruff.lint.isort]
+known-first-party = ["flickr_api"]
