@@ -63,8 +63,10 @@ _SIZES_LABEL = {
     'o': 'Original'
 }
 
-def dict_converter(keys, func):
-    def convert(dict_):
+def dict_converter(
+    keys: list[str], func: Callable[[Any], Any]
+) -> Callable[[dict[str, Any]], None]:
+    def convert(dict_: dict[str, Any]) -> None:
         for k in keys:
             try:
                 dict_[k] = func(dict_[k])
@@ -373,6 +375,9 @@ class Gallery(FlickrObject):
     ]
     __self_name__ = "gallery_id"
 
+    id: str
+    title: str
+
     @caller("flickr.galleries.addPhoto")
     def addPhoto(self, **args):
         return _format_id("photo", args), _none
@@ -449,6 +454,9 @@ class Group(FlickrObject):
     ]
     __display__ = ["id", "name"]
     __self_name__ = "group_id"
+
+    id: str
+    name: str
 
     class Topic(FlickrObject):
         __display__ = ["id", "subject"]
@@ -773,6 +781,10 @@ class Person(FlickrObject):
     __display__ = ["id", "username"]
     __self_name__ = "user_id"
 
+    id: str
+    username: str
+    nsid: str
+
     def __init__(self, **params):
         if not "id" in params:
             if "nsid" in params:
@@ -955,6 +967,12 @@ class Photo(FlickrObject):
     ]
     __display__ = ["id", "title"]
     __self_name__ = "photo_id"
+
+    id: str
+    secret: str
+    server: str
+    farm: str
+    title: str
 
     class Comment(FlickrObject):
         __display__ = ["id", "author"]
@@ -1551,6 +1569,10 @@ class Photoset(FlickrObject):
     __display__ = ["id", "title"]
     __self_name__ = "photoset_id"
 
+    id: str
+    title: str
+    description: str
+
     class Comment(FlickrObject):
         __display__ = ["id"]
         __self_name__ = "comment_id"
@@ -1999,6 +2021,10 @@ class Tag(FlickrObject):
     __converters__ = [
         dict_converter(["count"], int),
     ]
+
+    id: str
+    text: str
+    raw: str
 
     class Cluster(FlickrObject):
         __display__ = ["total"]
