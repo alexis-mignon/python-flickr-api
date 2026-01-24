@@ -24,8 +24,9 @@
 from . import method_call
 from .flickrerrors import FlickrError
 from .reflection import caller, static_caller, FlickrAutoDoc
-from six import text_type, iteritems, with_metaclass
-from six.moves import UserList, urllib, cStringIO, range
+from collections import UserList
+import io
+import urllib.request
 from . import auth
 import warnings
 from itertools import groupby
@@ -69,7 +70,7 @@ def dict_converter(keys, func):
     return convert
 
 
-class FlickrObject(with_metaclass(FlickrAutoDoc, object)):
+class FlickrObject(object, metaclass=FlickrAutoDoc):
     """
         Base Object for Flickr API Objects.
         Flickr Objects are dynamically created from the
@@ -151,8 +152,6 @@ class FlickrObject(with_metaclass(FlickrAutoDoc, object)):
                     pass
             if not val_found:
                 continue
-            if isinstance(value, text_type):
-                value = value.encode("utf8")
             if isinstance(value, str):
                 value = "'%s'" % value
             else:
@@ -1234,7 +1233,7 @@ class Photo(FlickrObject):
         args["date"] = date
         return (
             args,
-            lambda r: dict([(k, int(v)) for k, v in iteritems(r["stats"])])
+            lambda r: dict([(k, int(v)) for k, v in r["stats"].items()])
         )
 
     @caller("flickr.tags.getListPhoto")
@@ -1258,7 +1257,7 @@ class Photo(FlickrObject):
         sizes = {k:v for k,v in self.getSizes().items() if v["media"] == self.media}
         max_size = None
         max_area = None
-        for sl, s in iteritems(sizes):
+        for sl, s in sizes.items():
             try:
                 area = int(s["height"]) * int(s["width"])
             except TypeError:
@@ -1379,7 +1378,7 @@ class Photo(FlickrObject):
         if size_label is None:
             size_label = self._getLargestSizeLabel()
         r = urllib.request.urlopen(self.getPhotoFile(size_label))
-        b = cStringIO(r.read())
+        b = io.BytesIO(r.read())
         Image.open(b).show()
 
     @static_caller("flickr.photos.getUntagged")
@@ -1633,7 +1632,7 @@ class Photoset(FlickrObject):
         args["date"] = date
         return (
             args,
-            lambda r: dict([(k, int(v)) for k, v in iteritems(r["stats"])])
+            lambda r: dict([(k, int(v)) for k, v in r["stats"].items()])
         )
 
     @static_caller("flickr.photosets.orderSets")

@@ -10,24 +10,24 @@ Python Flickr API is an object-oriented Python wrapper for the Flickr REST API. 
 
 ### Install Dependencies
 ```bash
-pipenv install --dev
+uv sync --dev
 ```
 
 ### Run Tests
 ```bash
 # All tests
-pipenv run nose2
+uv run pytest
 
 # Single test file
-python -m unittest test.test_parse_sizes
+uv run pytest test/test_parse_sizes.py
 
 # Specific test method
-python -m unittest test.test_parse_sizes.TestPhotoSizes.test_video_largest_size
+uv run pytest test/test_parse_sizes.py::TestPhotoSizes::test_video_largest_size
 ```
 
 ### Linting
 ```bash
-flake8 flickr_api/
+uv run flake8 flickr_api/
 ```
 
 ## Architecture
@@ -72,7 +72,7 @@ method_call.py → requests, cache, auth, keys
 
 ## Important Conventions
 
-- Python 2.7+ and 3.3+ supported via `six` library
+- Python 3.10+ required
 - API keys required before use: `flickr_api.set_keys(api_key="...", api_secret="...")`
 - OAuth authentication optional for read-only, required for write operations
-- Version defined in `flickr_api/_version.py`
+- Version defined in `flickr_api/_version.py` and `pyproject.toml`

@@ -34,11 +34,8 @@
 
 """
 
-import oauth2
-import time
-from six import string_types
-from six.moves import urllib
-from .utils import urlopen_and_read
+from requests_oauthlib import OAuth1
+import requests
 from . import keys
 
 TOKEN_REQUEST_URL = "https://www.flickr.com/services/oauth/request_token"
@@ -67,100 +64,80 @@ class AuthHandler(object):
             callback = ("https://api.flickr.com/services/rest/"
                         "?method=flickr.test.echo&api_key=%s" % self.key)
 
-        params = {
-            'oauth_timestamp': str(int(time.time())),
-            'oauth_signature_method': "HMAC-SHA1",
-            'oauth_version': "1.0",
-            'oauth_callback': callback,
-            'oauth_nonce': oauth2.generate_nonce(),
-            'oauth_consumer_key': self.key
-        }
+        self.callback = callback
 
-        self.consumer = oauth2.Consumer(key=self.key, secret=self.secret)
         if (access_token_key is None) and (request_token_key is None):
-            req = oauth2.Request(method="GET",
-                                 url=TOKEN_REQUEST_URL,
-                                 parameters=params)
-            req.sign_request(oauth2.SignatureMethod_HMAC_SHA1(),
-                             self.consumer, None)
+            # Fetch request token
+            oauth = OAuth1(self.key, client_secret=self.secret, callback_uri=callback)
+            resp = requests.post(TOKEN_REQUEST_URL, auth=oauth)
+            resp.raise_for_status()
 
-            resp = urlopen_and_read(req.to_url())
-            request_token = dict(urllib.parse.parse_qsl(resp))
+            # Parse response
+            token_data = dict(pair.split('=') for pair in resp.text.split('&'))
 
-            self.request_token = oauth2.Token(
-                request_token['oauth_token'],
-                request_token['oauth_token_secret']
-            )
-            self.access_token = None
+            self.request_token_key = token_data['oauth_token']
+            self.request_token_secret = token_data['oauth_token_secret']
+            self.access_token_key = None
+            self.access_token_secret = None
         elif request_token_key is not None:
-            self.access_token = None
-            self.request_token = oauth2.Token(
-                request_token_key,
-                request_token_secret
-            )
+            self.request_token_key = request_token_key
+            self.request_token_secret = request_token_secret
+            self.access_token_key = None
+            self.access_token_secret = None
         else:
-            self.request_token = None
-            self.access_token = oauth2.Token(
-                access_token_key,
-                access_token_secret
-            )
+            self.request_token_key = None
+            self.request_token_secret = None
+            self.access_token_key = access_token_key
+            self.access_token_secret = access_token_secret
 
     def get_authorization_url(self, perms='read'):
-        if self.request_token is None:
+        if self.request_token_key is None:
             raise AuthHandlerError(
                 ("Request token is not defined. This ususally means that the"
                  " access token has been loaded from a file.")
             )
         return "%s?oauth_token=%s&perms=%s" % (
-            AUTHORIZE_URL, self.request_token.key, perms
+            AUTHORIZE_URL, self.request_token_key, perms
         )
 
     def set_verifier(self, oauth_verifier):
-        if self.request_token is None:
+        if self.request_token_key is None:
             raise AuthHandlerError(
                 ("Request token is not defined. "
                  "This ususally means that the access token has been loaded "
                  "from a file.")
             )
-        self.request_token.set_verifier(oauth_verifier)
 
-        access_token_parms = {
-            'oauth_consumer_key': self.key,
-            'oauth_nonce': oauth2.generate_nonce(),
-            'oauth_signature_method': "HMAC-SHA1",
-            'oauth_timestamp': str(int(time.time())),
-            'oauth_token': self.request_token.key,
-            'oauth_verifier': self.request_token.verifier
-        }
-
-        req = oauth2.Request(method="GET", url=ACCESS_TOKEN_URL,
-                             parameters=access_token_parms)
-        req.sign_request(oauth2.SignatureMethod_HMAC_SHA1(),
-                         self.consumer, self.request_token)
-        resp = urlopen_and_read(req.to_url())
-        access_token_resp = dict(urllib.parse.parse_qsl(resp))
-
-        self.access_token = oauth2.Token(
-            access_token_resp["oauth_token"],
-            access_token_resp["oauth_token_secret"]
+        oauth = OAuth1(
+            self.key,
+            client_secret=self.secret,
+            resource_owner_key=self.request_token_key,
+            resource_owner_secret=self.request_token_secret,
+            verifier=oauth_verifier
         )
+        resp = requests.post(ACCESS_TOKEN_URL, auth=oauth)
+        resp.raise_for_status()
+
+        # Parse response
+        token_data = dict(pair.split('=') for pair in resp.text.split('&'))
+
+        self.access_token_key = token_data['oauth_token']
+        self.access_token_secret = token_data['oauth_token_secret']
 
     def complete_parameters(self, url, params={}):
-
-        defaults = {
-            'oauth_timestamp': str(int(time.time())),
-            'oauth_nonce': oauth2.generate_nonce(),
-            'signature_method': "HMAC-SHA1",
-            'oauth_token': self.access_token.key,
-            'oauth_consumer_key': self.consumer.key,
-        }
-
-        defaults.update(params)
-        req = oauth2.Request(method="POST", url=url, parameters=defaults)
-        req.sign_request(oauth2.SignatureMethod_HMAC_SHA1(), self.consumer,
-                         self.access_token)
-
-        return req
+        """
+        Returns an OAuth1 auth object that can be used with requests.
+        For compatibility with existing code that expects a dict-like object,
+        we return a wrapper that contains both the auth and the params.
+        """
+        oauth = OAuth1(
+            self.key,
+            client_secret=self.secret,
+            resource_owner_key=self.access_token_key,
+            resource_owner_secret=self.access_token_secret
+        )
+        # Return an OAuthRequest object for compatibility
+        return OAuthRequest(url, params, oauth)
 
     def tofile(self, filename, include_api_keys=False):
         """ saves authentication information to a file.
@@ -175,15 +152,15 @@ class AuthHandler(object):
         is recommended not to save the API keys information in several places
         and the default behaviour is thus not to save the API keys.
 """
-        if self.access_token is None:
+        if self.access_token_key is None:
             raise AuthHandlerError("Access token not set yet.")
         with open(filename, "w") as f:
             if include_api_keys:
                 f.write("\n".join([self.key, self.secret,
-                                   self.access_token.key, self.access_token.secret]))
+                                   self.access_token_key, self.access_token_secret]))
             else:
-                f.write("\n".join([self.access_token.key,
-                                   self.access_token.secret]))
+                f.write("\n".join([self.access_token_key,
+                                   self.access_token_secret]))
 
     def save(self, filename, include_api_keys=False):
         self.tofile(filename, include_api_keys)
@@ -198,12 +175,12 @@ class AuthHandler(object):
         - include_api_keys: Whether API-keys should be included, False if you
         have control of them.
         """
-        if self.access_token is not None:
-            dump = {'access_token_key': self.access_token.key,
-                    'access_token_secret': self.access_token.secret}
+        if self.access_token_key is not None:
+            dump = {'access_token_key': self.access_token_key,
+                    'access_token_secret': self.access_token_secret}
         else:
-            dump = {'request_token_key': self.request_token.key,
-                    'request_token_secret': self.request_token.secret}
+            dump = {'request_token_key': self.request_token_key,
+                    'request_token_secret': self.request_token_secret}
         if include_api_keys:
             dump['api_key'] = self.key
             dump['api_secret'] = self.secret
@@ -294,6 +271,40 @@ class AuthHandler(object):
                            access_token_secret=access_secret)
 
 
+class OAuthRequest:
+    """
+    Wrapper class that provides compatibility with the old oauth2.Request interface.
+    It holds the URL, parameters, and OAuth1 auth object for signing requests.
+    """
+    def __init__(self, url, params, oauth):
+        self._url = url
+        self._params = dict(params)
+        self._oauth = oauth
+
+    def __iter__(self):
+        return iter(self._params)
+
+    def __getitem__(self, key):
+        return self._params[key]
+
+    def __setitem__(self, key, value):
+        self._params[key] = value
+
+    def __contains__(self, key):
+        return key in self._params
+
+    def items(self):
+        return self._params.items()
+
+    def get(self, key, default=None):
+        return self._params.get(key, default)
+
+    @property
+    def oauth(self):
+        """Return the OAuth1 auth object for use with requests."""
+        return self._oauth
+
+
 def token_factory(filename=None, token_key=None, token_secret=None):
     if filename is None:
         if (token_key is None) or (token_secret is None):
@@ -321,7 +332,7 @@ def set_auth_handler(auth_handler, set_api_keys=False):
         as a conveniency only for single user settings.
     """
     global AUTH_HANDLER
-    if isinstance(auth_handler, string_types):
+    if isinstance(auth_handler, str):
         ah = AuthHandler.load(auth_handler, set_api_keys)
         set_auth_handler(ah)
     else:

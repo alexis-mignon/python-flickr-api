@@ -8,8 +8,9 @@
     Date: 06/08/2011
 
 """
-from six.moves import urllib
-from six import iteritems
+import urllib.parse
+import urllib.request
+import urllib.error
 import requests
 import hashlib
 import json
@@ -117,6 +118,8 @@ def call_api(api_key=None, api_secret=None, auth_handler=None,
         args["format"] = 'json'
         args["nojsoncallback"] = 1
 
+    # Get OAuth auth object if using authentication
+    oauth_auth = None
     if auth_handler is None:
         if needssigning:
             query_elements = list(args.items())
@@ -128,18 +131,21 @@ def call_api(api_key=None, api_secret=None, auth_handler=None,
             api_sig = m.digest()
             args["api_sig"] = api_sig
     else:
-        args = auth_handler.complete_parameters(
+        oauth_request = auth_handler.complete_parameters(
             url=request_url, params=args
         )
+        # Extract the OAuth auth object and params from the OAuthRequest
+        oauth_auth = oauth_request.oauth
+        args = dict(oauth_request.items())
 
     if CACHE is None:
-        resp = requests.post(request_url, args, timeout=get_timeout())
+        resp = requests.post(request_url, args, auth=oauth_auth, timeout=get_timeout())
     else:
         cachekey = {k:v for k,v in args.items() if k not in IGNORED_FIELDS}
         cachekey = urllib.parse.urlencode(cachekey)
 
         resp = CACHE.get(cachekey) or requests.post(request_url, args,
-            timeout=get_timeout())
+            auth=oauth_auth, timeout=get_timeout())
         if cachekey not in CACHE:
             CACHE.set(cachekey, resp)
             logger.debug("NO HIT for cache key: %s" % cachekey)
@@ -180,7 +186,7 @@ def clean_content(d):
         d_clean = {}
         if len(d) == 1 and "_content" in d:
             return clean_content(d["_content"])
-        for k, v in iteritems(d):
+        for k, v in d.items():
             if k == "_content":
                 k = "text"
             d_clean[k] = clean_content(v)
