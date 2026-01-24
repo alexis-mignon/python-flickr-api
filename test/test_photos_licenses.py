@@ -99,5 +99,27 @@ class TestLicenseMethods(unittest.TestCase):
         )
 
 
+    @patch.object(method_call.requests, "post")
+    def test_photo_set_license(self, mock_post):
+        """Test Photo.setLicence (flickr.photos.licenses.setLicense)"""
+        # Empty response for setLicense operation
+        json_data = {"stat": "ok"}
+        resp = Response()
+        resp.status_code = 200
+        resp._content = json.dumps(json_data).encode("utf-8")
+        mock_post.return_value = resp
+
+        photo = f.Photo(id="12345678")
+
+        # Test with license_id directly
+        result = photo.setLicence(licence=4)
+        self.assertIsNone(result)
+
+        # Test with a License object
+        license_obj = f.License(id=4, name="CC BY 2.0")
+        result = photo.setLicence(licence=license_obj)
+        self.assertIsNone(result)
+
+
 if __name__ == "__main__":
     unittest.main()

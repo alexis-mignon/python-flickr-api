@@ -1415,12 +1415,10 @@ class Photo(FlickrObject):
 
     @caller("flickr.photos.people.getList")
     def getPeople(self, **args):
-        def format_result(r, token):
+        def format_result(r, token=None):
             info = r["people"]
-            people = info.pop("person")
+            people = _check_list(info.pop("person"))
             people_ = []
-            if isinstance(people, Person):
-                people = [people]
             for p in people:
                 p["id"] = p["nsid"]
                 p["photo"] = self
@@ -1484,8 +1482,12 @@ class Photo(FlickrObject):
         return args, _none
 
     @caller("flickr.photos.licenses.setLicense")
-    def setLicence(self, license, **args):
-        return _format_id("licence", args), _none
+    def setLicence(self, licence, **args):
+        if hasattr(licence, "id"):
+            args["licence_id"] = licence.id
+        else:
+            args["licence_id"] = licence
+        return args, _none
 
     @caller("flickr.photos.geo.setLocation")
     def setLocation(self, **args):
