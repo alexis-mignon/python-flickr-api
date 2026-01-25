@@ -35,8 +35,11 @@ except Exception as e:
 from .auth import set_auth_handler as set_auth_handler
 from .method_call import disable_cache as disable_cache
 from .method_call import enable_cache as enable_cache
+from .method_call import get_rate_limit as get_rate_limit
+from .method_call import get_rate_limit_status as get_rate_limit_status
 from .method_call import get_retry_config as get_retry_config
 from .method_call import get_timeout as get_timeout
+from .method_call import set_rate_limit as set_rate_limit
 from .method_call import set_retry_config as set_retry_config
 from .method_call import set_timeout as set_timeout
 from .keys import set_keys as set_keys

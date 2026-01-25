@@ -36,6 +36,10 @@ MAX_RETRIES: int = 3
 RETRY_BASE_DELAY: float = 1.0  # Base delay in seconds for exponential backoff
 RETRY_MAX_DELAY: float = 60.0  # Maximum delay between retries
 
+# Proactive rate limiting configuration
+_RATE_LIMIT_REQUESTS_PER_HOUR: float | None = None
+_RATE_LIMIT_LAST_REQUEST: float | None = None
+
 
 def enable_cache(cache_object: Any | None = None) -> None:
     """enable caching
@@ -107,6 +111,85 @@ def get_retry_config() -> dict[str, Any]:
         "base_delay": RETRY_BASE_DELAY,
         "max_delay": RETRY_MAX_DELAY,
     }
+
+
+def set_rate_limit(requests_per_hour: float | None) -> None:
+    """Enable or disable proactive rate limiting.
+
+    Parameters:
+    -----------
+    requests_per_hour: float | None
+        Maximum requests per hour. Set to None to disable rate limiting.
+        Flickr's documented limit is 3600 requests per hour.
+
+    Raises:
+    -------
+    ValueError: If requests_per_hour is not positive (zero or negative).
+    """
+    if requests_per_hour is not None and requests_per_hour <= 0:
+        raise ValueError("requests_per_hour must be positive")
+    global _RATE_LIMIT_REQUESTS_PER_HOUR
+    _RATE_LIMIT_REQUESTS_PER_HOUR = requests_per_hour
+
+
+def get_rate_limit() -> dict[str, float | None]:
+    """Get current rate limit configuration.
+
+    Returns:
+    --------
+    dict with key: requests_per_hour (float | None)
+    """
+    return {"requests_per_hour": _RATE_LIMIT_REQUESTS_PER_HOUR}
+
+
+def get_rate_limit_status() -> dict[str, Any]:
+    """Get detailed rate limit status.
+
+    Returns:
+    --------
+    dict with keys:
+        - enabled: bool - Whether rate limiting is active
+        - requests_per_hour: float | None - Configured limit
+        - interval_seconds: float - Minimum time between requests (0.0 if disabled)
+        - last_request_time: float | None - Timestamp of last request
+    """
+    enabled = _RATE_LIMIT_REQUESTS_PER_HOUR is not None
+    interval = 3600.0 / _RATE_LIMIT_REQUESTS_PER_HOUR if enabled else 0.0
+    return {
+        "enabled": enabled,
+        "requests_per_hour": _RATE_LIMIT_REQUESTS_PER_HOUR,
+        "interval_seconds": interval,
+        "last_request_time": _RATE_LIMIT_LAST_REQUEST,
+    }
+
+
+def _maybe_wait_for_rate_limit() -> None:
+    """Wait if necessary to respect rate limit.
+
+    This function should be called before making a request. It will:
+    1. Do nothing if rate limiting is disabled
+    2. Do nothing if this is the first request
+    3. Sleep for the remaining interval time if needed
+    4. Update the last request timestamp
+    """
+    global _RATE_LIMIT_LAST_REQUEST
+
+    if _RATE_LIMIT_REQUESTS_PER_HOUR is None:
+        return
+
+    current_time = time.time()
+
+    if _RATE_LIMIT_LAST_REQUEST is not None:
+        interval = 3600.0 / _RATE_LIMIT_REQUESTS_PER_HOUR
+        elapsed = current_time - _RATE_LIMIT_LAST_REQUEST
+        remaining = interval - elapsed
+
+        if remaining > 0:
+            logger.debug("Rate limiting: sleeping for %.2f seconds", remaining)
+            time.sleep(remaining)
+            current_time = time.time()
+
+    _RATE_LIMIT_LAST_REQUEST = current_time
 
 
 def _calculate_retry_delay(attempt: int, retry_after: float | None) -> float:
@@ -181,6 +264,8 @@ def _make_request_with_retry(
     -------
     FlickrRateLimitError: If rate limit exceeded and max retries exhausted
     """
+    _maybe_wait_for_rate_limit()
+
     last_error: FlickrRateLimitError | None = None
 
     for attempt in range(MAX_RETRIES + 1):
