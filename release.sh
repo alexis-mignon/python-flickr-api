@@ -10,3 +10,5 @@ git push origin "v$VERSION"
 
 uv build
 uv run twine upload dist/*
+
+gh release create "v$VERSION" --title "v$VERSION" --generate-notes
