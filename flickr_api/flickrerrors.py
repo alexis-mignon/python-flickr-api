@@ -65,3 +65,39 @@ class FlickrServerError(FlickrError):
         FlickrError.__init__(self, "HTTP Server Error %i: %s" % (status_code, content))
         self.status_code = status_code
         self.content = content
+
+
+class FlickrRateLimitError(FlickrError):
+    """Exception for Flickr Rate Limit Errors (HTTP 429)
+
+    Raised when the API rate limit has been exceeded. Contains retry
+    information to help callers implement backoff strategies.
+
+    Parameters:
+    -----------
+    retry_after: float | None
+        Seconds to wait before retrying, from Retry-After header (if provided)
+    content: str
+        error content message
+    """
+
+    retry_after: float | None
+    content: str
+
+    def __init__(self, retry_after: float | None, content: str) -> None:
+        """Constructor
+
+        Parameters:
+        -----------
+        retry_after: float | None
+            Seconds to wait before retrying (from Retry-After header, if available)
+        content: str
+            error content message
+        """
+        if retry_after:
+            msg = f"Rate limit exceeded. Retry after {retry_after} seconds: {content}"
+        else:
+            msg = f"Rate limit exceeded: {content}"
+        FlickrError.__init__(self, msg)
+        self.retry_after = retry_after
+        self.content = content

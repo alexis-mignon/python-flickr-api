@@ -9,6 +9,7 @@ Date: 06/08/2011
 
 """
 
+import time
 import urllib.parse
 import urllib.request
 import urllib.error
@@ -19,7 +20,7 @@ from typing import Any
 
 from . import keys
 from .utils import urlopen_and_read
-from .flickrerrors import FlickrError, FlickrAPIError, FlickrServerError
+from .flickrerrors import FlickrError, FlickrAPIError, FlickrServerError, FlickrRateLimitError
 from .cache import SimpleCache
 
 REST_URL = "https://api.flickr.com/services/rest/"
@@ -29,6 +30,11 @@ CACHE = None
 IGNORED_FIELDS = set(["oauth_nonce", "oauth_timestamp", "oauth_signature"])
 
 logger = logging.getLogger(__name__)
+
+# Rate limit retry configuration
+MAX_RETRIES: int = 3
+RETRY_BASE_DELAY: float = 1.0  # Base delay in seconds for exponential backoff
+RETRY_MAX_DELAY: float = 60.0  # Maximum delay between retries
 
 
 def enable_cache(cache_object: Any | None = None) -> None:
@@ -62,6 +68,150 @@ def set_timeout(seconds: float) -> None:
 
 def get_timeout() -> float:
     return TIMEOUT
+
+
+def set_retry_config(
+    max_retries: int | None = None,
+    base_delay: float | None = None,
+    max_delay: float | None = None,
+) -> None:
+    """Configure rate limit retry behavior.
+
+    Parameters:
+    -----------
+    max_retries: int, optional
+        Maximum number of retries on rate limit (default 3). Set to 0 to disable.
+    base_delay: float, optional
+        Base delay in seconds for exponential backoff (default 1.0)
+    max_delay: float, optional
+        Maximum delay between retries in seconds (default 60.0)
+    """
+    global MAX_RETRIES, RETRY_BASE_DELAY, RETRY_MAX_DELAY
+    if max_retries is not None:
+        MAX_RETRIES = max_retries
+    if base_delay is not None:
+        RETRY_BASE_DELAY = base_delay
+    if max_delay is not None:
+        RETRY_MAX_DELAY = max_delay
+
+
+def get_retry_config() -> dict[str, Any]:
+    """Get current retry configuration.
+
+    Returns:
+    --------
+    dict with keys: max_retries, base_delay, max_delay
+    """
+    return {
+        "max_retries": MAX_RETRIES,
+        "base_delay": RETRY_BASE_DELAY,
+        "max_delay": RETRY_MAX_DELAY,
+    }
+
+
+def _calculate_retry_delay(attempt: int, retry_after: float | None) -> float:
+    """Calculate delay before next retry.
+
+    Uses Retry-After header if available, otherwise exponential backoff.
+
+    Parameters:
+    -----------
+    attempt: int
+        Current retry attempt number (0-indexed)
+    retry_after: float | None
+        Value from Retry-After header, if present
+
+    Returns:
+    --------
+    Delay in seconds
+    """
+    if retry_after is not None and retry_after > 0:
+        return min(retry_after, RETRY_MAX_DELAY)
+
+    # Exponential backoff: base_delay * 2^attempt
+    delay = RETRY_BASE_DELAY * (2**attempt)
+    return min(delay, RETRY_MAX_DELAY)
+
+
+def _parse_retry_after(response: requests.Response) -> float | None:
+    """Parse Retry-After header from response.
+
+    Parameters:
+    -----------
+    response: requests.Response
+        The HTTP response
+
+    Returns:
+    --------
+    Seconds to wait, or None if header not present/parseable
+    """
+    retry_after = response.headers.get("Retry-After")
+    if retry_after is None:
+        return None
+
+    try:
+        return float(retry_after)
+    except ValueError:
+        # Could be an HTTP-date format, but Flickr typically uses seconds
+        logger.warning("Could not parse Retry-After header: %s", retry_after)
+        return None
+
+
+def _make_request_with_retry(
+    request_url: str,
+    args: dict[str, Any],
+    oauth_auth: Any,
+) -> requests.Response:
+    """Make HTTP request with automatic retry on rate limit errors.
+
+    Parameters:
+    -----------
+    request_url: str
+        The URL to request
+    args: dict
+        Request arguments
+    oauth_auth: Any
+        OAuth authentication object (or None)
+
+    Returns:
+    --------
+    requests.Response
+
+    Raises:
+    -------
+    FlickrRateLimitError: If rate limit exceeded and max retries exhausted
+    """
+    last_error: FlickrRateLimitError | None = None
+
+    for attempt in range(MAX_RETRIES + 1):
+        resp = requests.post(request_url, args, auth=oauth_auth, timeout=get_timeout())
+
+        if resp.status_code != 429:
+            return resp
+
+        # Rate limited - parse retry info and potentially retry
+        retry_after = _parse_retry_after(resp)
+        content = resp.content.decode("utf8") if resp.content else "Too Many Requests"
+        last_error = FlickrRateLimitError(retry_after, content)
+
+        if attempt >= MAX_RETRIES:
+            logger.warning(
+                "Rate limit exceeded, max retries (%d) exhausted",
+                MAX_RETRIES,
+            )
+            break
+
+        delay = _calculate_retry_delay(attempt, retry_after)
+        logger.warning(
+            "Rate limit exceeded (attempt %d/%d), retrying in %.1f seconds",
+            attempt + 1,
+            MAX_RETRIES + 1,
+            delay,
+        )
+        time.sleep(delay)
+
+    # If we get here, we've exhausted retries
+    raise last_error  # type: ignore[misc]
 
 
 def send_request(url, data):
@@ -145,19 +295,19 @@ def call_api(
         args = dict(oauth_request.items())
 
     if CACHE is None:
-        resp = requests.post(request_url, args, auth=oauth_auth, timeout=get_timeout())
+        resp = _make_request_with_retry(request_url, args, oauth_auth)
     else:
         cachekey = {k: v for k, v in args.items() if k not in IGNORED_FIELDS}
         cachekey = urllib.parse.urlencode(cachekey)
 
-        resp = CACHE.get(cachekey) or requests.post(
-            request_url, args, auth=oauth_auth, timeout=get_timeout()
-        )
-        if cachekey not in CACHE:
-            CACHE.set(cachekey, resp)
-            logger.debug("NO HIT for cache key: %s" % cachekey)
+        cached_resp = CACHE.get(cachekey)
+        if cached_resp:
+            resp = cached_resp
+            logger.debug("   HIT for cache key: %s", cachekey)
         else:
-            logger.debug("   HIT for cache key: %s" % cachekey)
+            resp = _make_request_with_retry(request_url, args, oauth_auth)
+            CACHE.set(cachekey, resp)
+            logger.debug("NO HIT for cache key: %s", cachekey)
 
     if raw:
         return resp.content
