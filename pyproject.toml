@@ -33,6 +33,7 @@ dev = [
     "ruff",
     "mypy",
     "types-requests",
+    "twine",
 ]
 
 [build-system]
