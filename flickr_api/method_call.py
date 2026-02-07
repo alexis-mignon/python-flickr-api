@@ -20,7 +20,12 @@ from typing import Any
 
 from . import keys
 from .utils import urlopen_and_read
-from .flickrerrors import FlickrError, FlickrAPIError, FlickrServerError, FlickrRateLimitError
+from .flickrerrors import (
+    FlickrAPIError,
+    FlickrError,
+    FlickrServerError,
+)
+from . import retry as retry_module
 from .cache import SimpleCache
 
 REST_URL = "https://api.flickr.com/services/rest/"
@@ -39,6 +44,13 @@ RETRY_MAX_DELAY: float = 60.0  # Maximum delay between retries
 # Proactive rate limiting configuration
 _RATE_LIMIT_REQUESTS_PER_HOUR: float | None = None
 _RATE_LIMIT_LAST_REQUEST: float | None = None
+
+
+# Initialize retry module with our config getters
+def _init_retry_module() -> None:
+    """Initialize retry module with config getters."""
+    retry_module.set_retry_config_getter(get_retry_config)
+    retry_module.set_rate_limit_wait_func(_maybe_wait_for_rate_limit)
 
 
 def enable_cache(cache_object: Any | None = None) -> None:
@@ -208,12 +220,8 @@ def _calculate_retry_delay(attempt: int, retry_after: float | None) -> float:
     --------
     Delay in seconds
     """
-    if retry_after is not None and retry_after > 0:
-        return min(retry_after, RETRY_MAX_DELAY)
-
-    # Exponential backoff: base_delay * 2^attempt
-    delay = RETRY_BASE_DELAY * (2**attempt)
-    return min(delay, RETRY_MAX_DELAY)
+    # Delegate to retry module for consistency
+    return retry_module.calculate_retry_delay(attempt, retry_after)
 
 
 def _parse_retry_after(response: requests.Response) -> float | None:
@@ -228,16 +236,8 @@ def _parse_retry_after(response: requests.Response) -> float | None:
     --------
     Seconds to wait, or None if header not present/parseable
     """
-    retry_after = response.headers.get("Retry-After")
-    if retry_after is None:
-        return None
-
-    try:
-        return float(retry_after)
-    except ValueError:
-        # Could be an HTTP-date format, but Flickr typically uses seconds
-        logger.warning("Could not parse Retry-After header: %s", retry_after)
-        return None
+    # Delegate to retry module for consistency
+    return retry_module.parse_retry_after(response)
 
 
 def _make_request_with_retry(
@@ -245,7 +245,10 @@ def _make_request_with_retry(
     args: dict[str, Any],
     oauth_auth: Any,
 ) -> requests.Response:
-    """Make HTTP request with automatic retry on rate limit errors.
+    """Make HTTP request with automatic retry on transient errors.
+
+    Handles HTTP 429 (rate limit), 5xx (server errors), timeouts, and
+    connection errors with configurable retry behavior.
 
     Parameters:
     -----------
@@ -263,40 +266,16 @@ def _make_request_with_retry(
     Raises:
     -------
     FlickrRateLimitError: If rate limit exceeded and max retries exhausted
+    FlickrServerError: If server error and max retries exhausted
+    FlickrTimeoutError: If timeout/connection error and max retries exhausted
     """
-    _maybe_wait_for_rate_limit()
+    # Ensure retry module is initialized
+    _init_retry_module()
 
-    last_error: FlickrRateLimitError | None = None
+    def make_request() -> requests.Response:
+        return requests.post(request_url, args, auth=oauth_auth, timeout=get_timeout())
 
-    for attempt in range(MAX_RETRIES + 1):
-        resp = requests.post(request_url, args, auth=oauth_auth, timeout=get_timeout())
-
-        if resp.status_code != 429:
-            return resp
-
-        # Rate limited - parse retry info and potentially retry
-        retry_after = _parse_retry_after(resp)
-        content = resp.content.decode("utf8") if resp.content else "Too Many Requests"
-        last_error = FlickrRateLimitError(retry_after, content)
-
-        if attempt >= MAX_RETRIES:
-            logger.warning(
-                "Rate limit exceeded, max retries (%d) exhausted",
-                MAX_RETRIES,
-            )
-            break
-
-        delay = _calculate_retry_delay(attempt, retry_after)
-        logger.warning(
-            "Rate limit exceeded (attempt %d/%d), retrying in %.1f seconds",
-            attempt + 1,
-            MAX_RETRIES + 1,
-            delay,
-        )
-        time.sleep(delay)
-
-    # If we get here, we've exhausted retries
-    raise last_error  # type: ignore[misc]
+    return retry_module.retry_request(make_request, operation_name="API call")
 
 
 def send_request(url, data):

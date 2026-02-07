@@ -44,4 +44,5 @@ from .method_call import set_retry_config as set_retry_config
 from .method_call import set_timeout as set_timeout
 from .keys import set_keys as set_keys
 from .flickrerrors import FlickrRateLimitError as FlickrRateLimitError
+from .flickrerrors import FlickrTimeoutError as FlickrTimeoutError
 from ._version import __version__ as __version__
