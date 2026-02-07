@@ -1,22 +1,23 @@
 """Tests for shared retry logic in retry module."""
 
+import sys
 import unittest
-from io import BytesIO
-from unittest.mock import MagicMock, patch
+from unittest.mock import patch
 
-import requests
 from requests import Response
 from requests.exceptions import ConnectionError, ReadTimeout
 
 import flickr_api as f
+import flickr_api.upload  # noqa: F401 - ensure module is loaded
 from flickr_api import method_call
 from flickr_api import retry as retry_module
 from flickr_api.auth import AuthHandler
 from flickr_api.flickrerrors import (
-    FlickrRateLimitError,
     FlickrServerError,
     FlickrTimeoutError,
 )
+
+upload_module = sys.modules["flickr_api.upload"]
 
 
 class TestRetryOnTimeout(unittest.TestCase):
@@ -255,7 +256,7 @@ class TestUploadRetry(unittest.TestCase):
         resp._content = b'<?xml version="1.0" encoding="utf-8" ?><rsp stat="ok"><photoid>12345</photoid></rsp>'
         return resp
 
-    @patch("flickr_api.upload.requests.post")
+    @patch.object(upload_module.requests, "post")
     @patch.object(retry_module.time, "sleep")
     def test_upload_retries_on_timeout(self, mock_sleep, mock_post):
         """Upload retries on ReadTimeout."""
@@ -272,7 +273,7 @@ class TestUploadRetry(unittest.TestCase):
         self.assertEqual(2, mock_post.call_count)
         self.assertEqual("12345", result.id)
 
-    @patch("flickr_api.upload.requests.post")
+    @patch.object(upload_module.requests, "post")
     @patch.object(retry_module.time, "sleep")
     def test_upload_raises_timeout_error_after_max_retries(self, mock_sleep, mock_post):
         """Upload raises FlickrTimeoutError after max retries."""
