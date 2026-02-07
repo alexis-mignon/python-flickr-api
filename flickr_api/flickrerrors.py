@@ -101,3 +101,29 @@ class FlickrRateLimitError(FlickrError):
         FlickrError.__init__(self, msg)
         self.retry_after = retry_after
         self.content = content
+
+
+class FlickrTimeoutError(FlickrError):
+    """Exception for request timeout or connection errors.
+
+    Raised when a request times out or fails due to connection issues
+    and max retries have been exhausted.
+
+    Parameters:
+    -----------
+    message: str
+        Error message describing the timeout/connection issue
+    """
+
+    message: str
+
+    def __init__(self, message: str) -> None:
+        """Constructor
+
+        Parameters:
+        -----------
+        message: str
+            Error message describing the timeout/connection issue
+        """
+        FlickrError.__init__(self, f"Request failed: {message}")
+        self.message = message

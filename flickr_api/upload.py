@@ -18,7 +18,8 @@ from typing import Any
 
 from .flickrerrors import FlickrError, FlickrAPIError
 from .objects import Photo, UploadTicket
-from .method_call import get_timeout
+from .method_call import get_timeout, get_retry_config, _maybe_wait_for_rate_limit
+from . import retry as retry_module
 from . import auth
 import os
 from xml.etree import ElementTree as ET
@@ -119,7 +120,14 @@ def post(url, auth_handler, args, photo_file, photo_file_data=None):
 
     files = {"photo": (os.path.basename(photo_file), photo_file_data.read())}
 
-    resp = requests.post(url, data=form_data, files=files, timeout=get_timeout())
+    # Initialize retry module with config getters
+    retry_module.set_retry_config_getter(get_retry_config)
+    retry_module.set_rate_limit_wait_func(_maybe_wait_for_rate_limit)
+
+    def make_request():
+        return requests.post(url, data=form_data, files=files, timeout=get_timeout())
+
+    resp = retry_module.retry_request(make_request, operation_name="upload")
     data = resp.content
 
     if resp.status_code != 200:
