@@ -30,6 +30,9 @@ jobs:
       - name: Run ruff format check
         run: uv run ruff format --check flickr_api/
 
+      - name: Run mypy
+        run: uv run mypy flickr_api/
+
   test:
     runs-on: ubuntu-latest
     strategy:

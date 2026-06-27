@@ -165,8 +165,12 @@ def get_rate_limit_status() -> dict[str, Any]:
         - interval_seconds: float - Minimum time between requests (0.0 if disabled)
         - last_request_time: float | None - Timestamp of last request
     """
-    enabled = _RATE_LIMIT_REQUESTS_PER_HOUR is not None
-    interval = 3600.0 / _RATE_LIMIT_REQUESTS_PER_HOUR if enabled else 0.0
+    if _RATE_LIMIT_REQUESTS_PER_HOUR is not None:
+        enabled = True
+        interval = 3600.0 / _RATE_LIMIT_REQUESTS_PER_HOUR
+    else:
+        enabled = False
+        interval = 0.0
     return {
         "enabled": enabled,
         "requests_per_hour": _RATE_LIMIT_REQUESTS_PER_HOUR,
