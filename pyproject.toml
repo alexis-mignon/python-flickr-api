@@ -48,3 +48,17 @@ testpaths = ["test"]
 
 [tool.ruff]
 line-length = 100
+
+[tool.mypy]
+python_version = "3.10"
+
+# Third-party libraries without type information. `requests_oauthlib` ships no
+# stubs, and `PIL` (Pillow) is an optional runtime dependency that is not
+# installed by default.
+[[tool.mypy.overrides]]
+module = [
+    "requests_oauthlib",
+    "PIL",
+    "PIL.*",
+]
+ignore_missing_imports = true
