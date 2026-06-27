@@ -7,17 +7,39 @@ based on OAuth.
 The authentication process is in 3 steps.
 
 - Authorisation request:
->>> a = AuthHandler(call_back_url)
+>>> a = AuthHandler(callback="oob")
 >>> a.get_authorization_url('write')
 print  ('http://www.flickr.com/services/oauth/'
         'authorize?oauth_token=xxxx&perms=write')
 
-- The user gives his authorization at the url given by
-'get_authorization_url' and is redirected to the 'call_back_url' with
-the `oauth_verifier` encoded in the url. This value can then be given to
-the `AuthHandler`:
+- The user gives their authorization at the url given by
+'get_authorization_url'. After authorizing, Flickr provides an
+`oauth_verifier` value (a short string, typically 9 digits). Where it
+appears depends on the `callback` you passed to `AuthHandler`:
+
+  * callback="oob" (out-of-band): Flickr shows a confirmation page that
+    displays the verifier directly. This is the simplest option for
+    desktop/console applications.
+
+  * callback=<your URL>: the browser is redirected to your URL with the
+    verifier appended as the `oauth_verifier` query parameter, e.g.
+    `https://your.app/callback?oauth_token=...&oauth_verifier=66455xxxxx`.
+
+Only the `oauth_verifier` value is passed to the handler (not the whole
+URL, and not the `oauth_token`):
 
 >>> a.set_verifier("66455xxxxx")
+
+NOTE: If you construct `AuthHandler()` without a `callback`, it defaults
+to a `flickr.test.echo` REST endpoint. After authorizing you will be
+redirected there and Flickr will *echo back all the OAuth parameters* as
+a response that looks like::
+
+    flickr.test.echo  <api_key>  <oauth_token>  <oauth_verifier>
+
+This is a frequent source of confusion: the value you need is just the
+`oauth_verifier` portion (the last token). Passing `callback="oob"`
+avoids this entirely.
 
 - The authorization handler can then be set for the python session
   and will be automatically used when needed.
@@ -34,6 +56,7 @@ Author: Christoffer Viken <christoffer@viken.me>
 
 """
 
+import warnings
 from typing import Any
 from collections.abc import Iterator, ItemsView
 
@@ -71,6 +94,18 @@ class AuthHandler(object):
         request_token_key: str | None = None,
         request_token_secret: str | None = None,
     ) -> None:
+        """Create an authentication handler.
+
+        Parameters
+        ----------
+        callback: str, optional
+            The OAuth callback. Pass "oob" (out-of-band) to have Flickr
+            display the `oauth_verifier` on a confirmation page, or a URL
+            to be redirected to with `oauth_verifier` as a query
+            parameter. If omitted, a `flickr.test.echo` endpoint is used
+            as the callback, which echoes the OAuth parameters back and is
+            a common source of confusion (see the module docstring).
+        """
         resolved_key = key or keys.API_KEY
         resolved_secret = secret or keys.API_SECRET
 
@@ -84,6 +119,15 @@ class AuthHandler(object):
         self.secret = resolved_secret
 
         if callback is None:
+            warnings.warn(
+                "No 'callback' was provided to AuthHandler, so it defaults to a "
+                "flickr.test.echo endpoint. After authorizing, you will be "
+                "redirected there and Flickr will echo back the OAuth parameters; "
+                "the value you need for set_verifier() is only the 'oauth_verifier' "
+                "part. Pass callback='oob' to get the verifier on a simple "
+                "confirmation page instead.",
+                stacklevel=2,
+            )
             callback = (
                 "https://api.flickr.com/services/rest/"
                 "?method=flickr.test.echo&api_key=%s" % self.key
