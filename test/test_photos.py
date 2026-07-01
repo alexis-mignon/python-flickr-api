@@ -464,6 +464,74 @@ class TestPhotoMethods(FlickrApiTestCase):
         # Note: _content is renamed to text by clean_content
         self.assertEqual(photo.notes[0].text, "foo")
 
+    @patch.object(method_call.requests, "post")
+    def test_photo_get_info_safety_level(self, mock_post):
+        """Test that getInfo exposes safety_level as an int (issue #173)"""
+        json_response = {
+            "photo": {
+                "id": "2733",
+                "secret": "123456",
+                "server": "12",
+                "safety_level": "2",
+                "owner": {"nsid": "12037949754@N01"},
+                "title": {"_content": "t"},
+                "visibility": {"ispublic": 1, "isfriend": 0, "isfamily": 0},
+                "dates": {"posted": "1100897479", "lastupdate": "1093022469"},
+                "usage": {"candownload": 1},
+                "publiceditability": {"cancomment": 1, "canaddmeta": 1},
+                "tags": {"tag": []},
+                "notes": {"note": []},
+            }
+        }
+        mock_post.return_value = self._mock_response(json_response)
+
+        photo = f.Photo(id="2733")
+        photo.getInfo()
+
+        # safety_level is converted from the API string to an int
+        self.assertEqual(photo.safety_level, 2)
+
+    @patch.object(method_call.requests, "post")
+    def test_photo_get_safety_level_loads(self, mock_post):
+        """Test Photo.getSafetyLevel loads the photo when needed (issue #173)"""
+        json_response = {
+            "photo": {
+                "id": "2733",
+                "secret": "123456",
+                "server": "12",
+                "safety_level": "3",
+                "owner": {"nsid": "12037949754@N01"},
+                "title": {"_content": "t"},
+                "visibility": {"ispublic": 1, "isfriend": 0, "isfamily": 0},
+                "dates": {"posted": "1100897479", "lastupdate": "1093022469"},
+                "usage": {"candownload": 1},
+                "publiceditability": {"cancomment": 1, "canaddmeta": 1},
+                "tags": {"tag": []},
+                "notes": {"note": []},
+            }
+        }
+        mock_post.return_value = self._mock_response(json_response)
+
+        # Photo has not been loaded, so getSafetyLevel triggers getInfo
+        photo = f.Photo(id="2733")
+        level = photo.getSafetyLevel()
+
+        self.assertEqual(level, 3)
+        self.assertIsInstance(level, int)
+        # getInfo was called exactly once to load the photo
+        self.assertEqual(mock_post.call_count, 1)
+
+    @patch.object(method_call.requests, "post")
+    def test_photo_get_safety_level_already_loaded(self, mock_post):
+        """Test Photo.getSafetyLevel avoids a call when already known (issue #173)"""
+        # safety_level already present (e.g. from search extras="safety_level")
+        photo = f.Photo(id="2733", safety_level="1")
+        level = photo.getSafetyLevel()
+
+        self.assertEqual(level, 1)
+        self.assertIsInstance(level, int)
+        # No API call needed
+        self.assertEqual(mock_post.call_count, 0)
 
     @patch.object(method_call.requests, "post")
     def test_person_get_not_in_set_photos(self, mock_post):

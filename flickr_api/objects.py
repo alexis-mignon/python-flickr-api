@@ -995,6 +995,7 @@ class Photo(FlickrObject):
         ),
         dict_converter(["posted", "lastupdate"], int),
         dict_converter(["views", "comments"], int),
+        dict_converter(["safety_level"], int),
     ]
     __display__ = ["id", "title"]
     __self_name__ = "photo_id"
@@ -1181,6 +1182,21 @@ class Photo(FlickrObject):
             return photo
 
         return args, format_result
+
+    def getSafetyLevel(self) -> int:
+        """Return the safety level of the photo.
+
+        Flickr does not provide a dedicated ``flickr.photos.getSafetyLevel``
+        method, so the value is read from ``flickr.photos.getInfo`` (loading
+        the photo first if it has not been loaded yet).
+
+        Returns an integer safety level:
+        ``0`` (none), ``1`` (safe), ``2`` (moderate) or ``3`` (restricted).
+        These match the values accepted by :meth:`setSafetyLevel`.
+        """
+        if not hasattr(self, "safety_level"):
+            self.load()
+        return int(self.safety_level)
 
     @caller("flickr.photos.getContactsPhotos")
     def getContactsPhotos(self, **args):
