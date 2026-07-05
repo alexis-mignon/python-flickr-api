@@ -3,4 +3,4 @@
 Allows to define the version number uniquely.
 """
 
-__version__ = "0.8.0"
+__version__ = "0.8.1"
