@@ -119,15 +119,17 @@ class AuthHandler(object):
         self.secret = resolved_secret
 
         if callback is None:
-            warnings.warn(
-                "No 'callback' was provided to AuthHandler, so it defaults to a "
-                "flickr.test.echo endpoint. After authorizing, you will be "
-                "redirected there and Flickr will echo back the OAuth parameters; "
-                "the value you need for set_verifier() is only the 'oauth_verifier' "
-                "part. Pass callback='oob' to get the verifier on a simple "
-                "confirmation page instead.",
-                stacklevel=2,
-            )
+            # Callbacks only matter when requesting a new token, not restoring one.
+            if access_token_key is None and request_token_key is None:
+                warnings.warn(
+                    "No 'callback' was provided to AuthHandler, so it defaults to a "
+                    "flickr.test.echo endpoint. After authorizing, you will be "
+                    "redirected there and Flickr will echo back the OAuth parameters; "
+                    "the value you need for set_verifier() is only the 'oauth_verifier' "
+                    "part. Pass callback='oob' to get the verifier on a simple "
+                    "confirmation page instead.",
+                    stacklevel=2,
+                )
             callback = (
                 "https://api.flickr.com/services/rest/"
                 "?method=flickr.test.echo&api_key=%s" % self.key
