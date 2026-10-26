@@ -995,6 +995,11 @@ class Photo(FlickrObject):
         ),
         dict_converter(["posted", "lastupdate"], int),
         dict_converter(["views", "comments"], int),
+        # Kept 0-indexed exactly as Flickr returns it from getInfo/search
+        # (0=safe, 1=moderate, 2=restricted). This intentionally differs by
+        # one from setSafetyLevel, which is 1-indexed (1=safe, 2=moderate,
+        # 3=restricted): the asymmetry is in the Flickr API, and we mirror it
+        # rather than normalise it. See Photo.getSafetyLevel().
         dict_converter(["safety_level"], int),
     ]
     __display__ = ["id", "title"]
@@ -1190,9 +1195,27 @@ class Photo(FlickrObject):
         method, so the value is read from ``flickr.photos.getInfo`` (loading
         the photo first if it has not been loaded yet).
 
-        Returns an integer safety level:
-        ``0`` (none), ``1`` (safe), ``2`` (moderate) or ``3`` (restricted).
-        These match the values accepted by :meth:`setSafetyLevel`.
+        This returns the raw value exactly as Flickr reports it through
+        ``getInfo`` / ``search`` (identical to the :attr:`safety_level`
+        attribute), intentionally left un-normalised so it mirrors the
+        underlying API. That scale is **0-indexed**:
+
+        - ``0`` -- safe
+        - ``1`` -- moderate
+        - ``2`` -- restricted
+
+        .. warning::
+            By design these values do **not** match :meth:`setSafetyLevel`.
+            This mismatch is not a bug in this library: it reflects a
+            long-standing asymmetry in the Flickr API itself, where
+            ``flickr.photos.getInfo`` reports the 0-indexed value above but
+            ``flickr.photos.setSafetyLevel`` expects a **1-indexed** value
+            (``1`` safe, ``2`` moderate, ``3`` restricted). We deliberately
+            pass both through unchanged rather than hide the discrepancy. To
+            feed a level read here back into :meth:`setSafetyLevel`, add one::
+
+                level = photo.getSafetyLevel()            # 0 / 1 / 2
+                photo.setSafetyLevel(safety_level=level + 1)
         """
         if not hasattr(self, "safety_level"):
             self.load()
