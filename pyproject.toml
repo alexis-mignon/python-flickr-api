@@ -53,7 +53,8 @@ branch = true
 show_missing = true
 
 [tool.pytest.ini_options]
-testpaths = ["test"]
+testpaths = ["test", "flickr_api"]
+addopts = "--doctest-modules"
 
 [tool.ruff]
 line-length = 100
