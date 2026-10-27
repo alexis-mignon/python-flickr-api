@@ -104,11 +104,12 @@ def bindings_to(flickr_method):
     Returns the list of bindings to the given Flickr API method
     in the object API.
 
-    ex:
-    >>> bindings_to("flickr.people.getPhotos")
-    ['Person.getPhotos']
-    this tells that the method from Flickr API 'flickr.people.getPhotos'
-    is bound to the 'Person.getPhotos' method of the object API.
+    ex::
+
+    bindings_to("flickr.people.getPhotos")
+    returns ['Person.getPhotos'], which tells that the method from the
+    Flickr API 'flickr.people.getPhotos' is bound to the
+    'Person.getPhotos' method of the object API.
     """
     try:
         return __bindings__[flickr_method]
