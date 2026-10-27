@@ -2348,13 +2348,13 @@ class Walker(Generic[T]):
     ex:
     >>> w = Walker(Photo.search, tags="animals")
     >>> for photo in w:
-    >>>     print photo.title
+    ...     print(photo.title)
 
     You can also use slices:
     ex:
     >>> w = Walker(Photo.search, tags="animals")
     >>> for photo in w[:20]:
-    >>>     print photo.title
+    ...     print(photo.title)
 
     but be aware that if a starting index is given all the items
     till the wanted one will be iterated, so using a large
