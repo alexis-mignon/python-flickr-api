@@ -34,6 +34,7 @@ dev = [
     "mypy",
     "types-requests",
     "twine",
+    "pytest-cov>=7.1.0",
 ]
 
 [build-system]
@@ -42,6 +43,13 @@ build-backend = "hatchling.build"
 
 [tool.hatch.build.targets.wheel]
 packages = ["flickr_api"]
+
+[tool.coverage.run]
+source = ["flickr_api"]
+branch = true
+
+[tool.coverage.report]
+show_missing = true
 
 [tool.pytest.ini_options]
 testpaths = ["test"]
