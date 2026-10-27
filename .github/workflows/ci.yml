@@ -21,9 +21,6 @@ jobs:
       - name: Install dependencies
         run: uv sync --dev
 
-      - name: Run flake8
-        run: uv run flake8 flickr_api/
-
       - name: Run ruff check
         run: uv run ruff check flickr_api/
 

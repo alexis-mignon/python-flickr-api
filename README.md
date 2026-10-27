@@ -129,7 +129,8 @@ uv sync --dev
 uv run pytest
 
 # Run linter
-uv run flake8 flickr_api/
+uv run ruff check flickr_api/
+uv run ruff format --check flickr_api/
 ```
 
 ## Contributing

@@ -57,7 +57,8 @@ ACCESS_TOKEN_SECRET
 
 ### Linting
 ```bash
-uv run flake8 flickr_api/
+uv run ruff check flickr_api/
+uv run ruff format --check flickr_api/
 ```
 
 ## Architecture

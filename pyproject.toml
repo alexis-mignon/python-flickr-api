@@ -29,7 +29,6 @@ Repository = "https://github.com/alexis-mignon/python-flickr-api"
 [dependency-groups]
 dev = [
     "pytest",
-    "flake8",
     "ruff",
     "mypy",
     "types-requests",
