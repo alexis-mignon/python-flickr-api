@@ -7,3 +7,6 @@
 /dist
 .pytest_cache
 .DS_Store
+
+# coverage artifacts
+.coverage*
