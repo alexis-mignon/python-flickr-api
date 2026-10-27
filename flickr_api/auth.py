@@ -8,9 +8,8 @@ The authentication process is in 3 steps.
 
 - Authorisation request:
 >>> a = AuthHandler(callback="oob")
->>> a.get_authorization_url('write')
-print  ('http://www.flickr.com/services/oauth/'
-        'authorize?oauth_token=xxxx&perms=write')
+>>> print(a.get_authorization_url('write'))
+http://www.flickr.com/services/oauth/authorize?oauth_token=xxxx&perms=write
 
 - The user gives their authorization at the url given by
 'get_authorization_url'. After authorizing, Flickr provides an
