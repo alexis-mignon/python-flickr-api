@@ -23,7 +23,7 @@ class Test5XXHandler(unittest.TestCase):
             access_token_key="test",
             access_token_secret="test")
         set_auth_handler(auth_handler)
-        args = dict(
+        dict(
             photo_file='/tmp/test_file', photo_file_data=StringIO("000000"))
 
         module = inspect.getmodule(method_call)
