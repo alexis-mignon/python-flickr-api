@@ -1,5 +1,4 @@
 import unittest
-from unittest.mock import MagicMock
 
 import flickr_api as f
 

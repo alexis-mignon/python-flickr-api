@@ -10,7 +10,6 @@ Uses example responses from the api-docs/ directory.
 import unittest
 from unittest.mock import patch
 
-import flickr_api as f
 from flickr_api import method_call
 from flickr_api.objects import Gallery, Group, Person
 
